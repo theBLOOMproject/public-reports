@@ -24,24 +24,45 @@ No package.json, no dependencies, no test suite, no linter. Node is used only fo
 
 ## Build model
 
-`build.js` string-replaces `<!--INJECT:{id}-->` placeholders in `index.template.html` with
-minified JSON from `data/`, writes `dist/index.html`, copies `static/`, and touches
-`.nojekyll`. The `BLOCKS` map in `build.js` binds each placeholder id to its source file;
-adding a data file means adding an entry there *and* a matching
-`<script type="application/json" id="...">` element in the template. The build fails loudly
-on missing placeholders, unreplaced placeholders, or invalid JSON. `<` is escaped to
-`<` so a `</script>` inside a quote string can't break out of the inline script tag.
+`build.js` string-replaces `<!--INJECT:{id}-->` placeholders in `index.template.html`,
+writes `dist/index.html`, copies `static/`, and touches `.nojekyll`. The output is one
+self-contained file — no external CSS or JS requests.
+
+The `BLOCKS` map in `build.js` binds each placeholder id to a source file and a `kind`:
+
+- `raw` (`src/app.css`, `src/app.js`) — inlined verbatim into the wrapping `<style>` /
+  `<script>` tag, minus the file’s own trailing newline.
+- `json` (`data/*.json`) — parsed, then re-serialized without indentation; that parse *is*
+  both the minification and the validity check.
+
+Adding a data file means adding a `BLOCKS` entry *and* a matching
+`<script type="application/json" id="...">` element in the template. The build fails
+loudly on a missing source file, a missing placeholder, an unreplaced placeholder, or
+invalid JSON.
+
+Two different escapes stop injected content from closing its own tag, and they are not
+interchangeable. JSON gets every `<` rewritten as `\u003c` — safe because it is all
+inside string literals. Source cannot take that blanket treatment (`a < b` would break), so
+only the exact sequence `</script` / `</style` is neutralized to `<\/…`, which is
+inert in every position JS or CSS actually allows it.
 
 `dist/` is gitignored and rebuilt from scratch every time — never edit it, and never commit
 it. Only what lands in `dist/` is public, which is why repo sources can stay in the repo.
 
 ## Architecture
 
-Everything that isn't data is in **`index.template.html`** (~1500 lines: markup, `<style>`,
-one IIFE `<script>`). There is no bundler, framework, or module system — plain DOM APIs and
-a few helpers (`$`, `el`, `esc`). Keep it that way; new UI goes in the same file.
+`index.template.html` is markup only (~105 lines). All app code is **`src/app.js`** (~770
+lines, one function) and all styling is **`src/app.css`** (~675 lines). There is no bundler,
+framework, or module system — plain DOM APIs and a few helpers (the `$` / `el` / `esc`
+trio at the top of app.js). Keep it that way; new UI goes in these same files.
 
-Three nested levels, all in that one document:
+`src/app.js` is sectioned by banner comments following the level structure below. If it is
+ever split into real ES modules, note that the top-level reassigned `let`s (`bubbleTimer`,
+`scrollRaf`, `scrubRaf`, `kivTimer`, `l1Scroll`, `listAsc`, the `preview*` flags) are shared
+across those section boundaries, and an imported binding cannot be reassigned — each would
+need an owning module or a shared state object.
+
+Three nested levels, all in the one page:
 
 - **L1 (`#l1`)** — theme grid, one block per theme, built by `buildL1()`.
 - **L2 (`#l2`)** — one theme, with three tabs ("modes"): `map` (statements scattered on a

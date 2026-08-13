@@ -1,0 +1,673 @@
+/* ─────────────────────────────────────────────
+   TOKENS
+   ───────────────────────────────────────────── */
+:root{
+  --ink:#101011;
+  --paper:#fff;
+  --agree:#1F8A3B;
+  --disagree:#D8362F;
+  --pass:#C4C4C4;
+  --home:#0D1B3E;
+
+  --geom:'Geom','Futura',system-ui,sans-serif;
+  --body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  --mono:'DM Mono',ui-monospace,'SF Mono',monospace;
+
+  --nav-h:46px;
+  --pill-h:58px;
+  --scrub-h:34px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+/* overflow-x here (not on body) — putting it on body makes browsers treat
+   body as the sticky/scroll containing block instead of the viewport,
+   which silently breaks every position:sticky element on the page */
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{
+  background:var(--ink);
+  color:#fff;
+  font-family:var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2.5px solid currentColor;outline-offset:3px;border-radius:3px}
+
+/* The whole product lives in one column. Mobile = full bleed.
+   Wide viewports = a ~50% column, same layout, nothing reflows. */
+.shell{
+  width:100%;
+  max-width:600px;
+  margin:0 auto;
+  position:relative;
+  min-height:100vh;
+  min-height:100dvh;
+  background:var(--ink);
+}
+@media (min-width:660px){
+  /* on the roomier desktop layout, the gutter around the column tints to
+     match whatever's active — the open theme's color, or --home on L1 */
+  body{background:var(--c,var(--home))}
+  .shell{max-width:800px}
+}
+
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+
+/* ─────────────────────────────────────────────
+   LEVEL 1 — THEMES
+   ───────────────────────────────────────────── */
+#l1{display:block}
+.masthead{padding:26px 22px 20px}
+.masthead .eyebrow{color:rgba(255,255,255,.45);margin-bottom:9px}
+.masthead h1{
+  font-family:var(--geom);font-weight:700;font-size:23px;line-height:1.14;
+  margin:0;letter-spacing:-.012em;max-width:16em;
+}
+.masthead p{
+  font-size:14px;line-height:1.45;color:rgba(255,255,255,.5);
+  margin:12px 0 0;max-width:32em;
+}
+
+.theme-block{
+  display:block;width:100%;text-align:left;
+  background:var(--c);
+  padding:22px 22px 24px;
+  position:relative;
+  transition:filter .25s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.theme-block + .theme-block{box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.theme-block h2{
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(26px,7.4vw,32px);line-height:1.06;
+  letter-spacing:-.02em;margin:0 0 11px;
+  max-width:13em;
+}
+.theme-block .count{color:rgba(255,255,255,.78);margin-bottom:16px}
+.theme-block .arrow{
+  position:absolute;top:24px;right:20px;font-size:17px;
+  opacity:.45;transition:transform .3s ease,opacity .3s ease;
+}
+@media (hover:hover){
+  .theme-block:hover{filter:brightness(1.12) saturate(1.05)}
+  .theme-block:hover .arrow{transform:translateX(5px);opacity:1}
+}
+.theme-block:active{filter:brightness(.94)}
+
+/* the tally: one cell per record. filled = poll statement, ring = session quote */
+.tally{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,12px);
+  gap:4px;
+}
+.tally i{
+  display:block;width:12px;height:12px;border-radius:1.5px;
+  background:#fff;
+  animation:tallyIn .5s cubic-bezier(.2,.8,.3,1) both;
+}
+.tally i.q{background:rgba(255,255,255,.26);box-shadow:inset 0 0 0 1.5px #fff}
+@keyframes tallyIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+
+.legend{
+  padding:20px 22px 46px;display:flex;gap:20px;flex-wrap:wrap;
+  color:rgba(255,255,255,.42);
+}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:11px;height:11px;border-radius:1.5px;background:rgba(255,255,255,.6);flex:none}
+.legend i.q{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)}
+
+/* ─────────────────────────────────────────────
+   LEVEL 2 — THEME VIEWER
+   ───────────────────────────────────────────── */
+#l2{
+  display:none;background:var(--c);min-height:100vh;min-height:100dvh;
+  position:relative;
+}
+#l2.on{display:block}
+
+.l2nav{
+  position:sticky;top:0;z-index:30;
+  transition:opacity .28s ease;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;
+  background:var(--c);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.2);
+}
+.l2nav button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  color:rgba(255,255,255,.82);padding:6px 0;
+  transition:color .2s ease;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.l2nav button:hover{color:#fff}
+.l2nav .nextT{max-width:62%;text-align:right}
+.l2nav .nextT b{font-weight:400;color:#fff}
+
+.hero{padding:26px 22px 0;position:relative}
+.hero::before{
+  content:'';position:absolute;inset:calc(-1 * var(--nav-h)) 0 auto 0;height:340px;
+  background:linear-gradient(180deg,rgba(0,0,0,.26),rgba(0,0,0,0));
+  pointer-events:none;
+}
+.hero > *{position:relative}
+.hero h1{
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(30px,9vw,40px);line-height:1.02;letter-spacing:-.024em;
+  margin:0 0 9px;
+}
+.hero .count{color:rgba(255,255,255,.72);margin-bottom:20px}
+.hero .desc{
+  font-size:16.5px;line-height:1.5;margin:0 0 26px;
+  color:#fff;letter-spacing:-.003em;
+}
+.hero .cta{font-size:15px;font-weight:600;margin-bottom:28px}
+@media (min-width:660px){
+  /* placed after the base rules above so it actually wins the cascade —
+     an earlier attempt put this override before them and silently lost */
+  .masthead p{font-size:16px}
+  .hero .desc{font-size:18.5px}
+  .hero .cta{font-size:17px}
+}
+
+/* mode pills — stay reachable while you scroll the lane. A sibling of
+   .hero and .lane (not nested in .hero) so its sticky containing block
+   is the whole scrollable section, not just the short intro block —
+   otherwise it un-sticks the moment .hero itself scrolls out of view. */
+.pills{
+  position:sticky;top:var(--nav-h);z-index:25;
+  display:flex;justify-content:center;gap:8px;
+  padding:18px 22px;
+  background:var(--c);
+  border-top:1px solid rgba(255,255,255,.17);
+  border-bottom:1px solid rgba(255,255,255,.17);
+}
+.pills::before{
+  content:'';position:absolute;left:0;right:0;top:-14px;height:14px;
+  background:var(--c);
+}
+/* while a statement is open, fade the chrome so the selected square
+   stays visible in the strip above the card */
+body.reading .l2nav,body.reading .pills{opacity:0;pointer-events:none}
+/* extra runway so even the last square in the lane can be lifted into
+   the strip above the card. Collapses again when the card closes. */
+body.reading #l2{padding-bottom:82vh}
+.pills{transition:opacity .28s ease}
+
+.pills button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 15px;border-radius:999px;
+  background:rgba(255,255,255,.17);color:#fff;
+  transition:background .2s ease,color .2s ease;
+}
+.pills button:hover{background:rgba(255,255,255,.28)}
+.pills button[aria-pressed="true"]{background:#fff;color:var(--c);font-weight:500}
+
+/* the lane */
+.lane{
+  position:relative;
+  overflow:visible;
+  display:flow-root;   /* stop scrub/minimap's margin-top from collapsing into .lane's own position */
+}
+.axisrow{
+  position:absolute;left:0;right:0;height:0;
+  border-top:1px solid rgba(255,255,255,.17);
+  pointer-events:none;
+}
+.axisrow span{
+  position:absolute;right:9px;top:5px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.78);
+}
+
+/* QUOTES mode — a plain stack of cards instead of the scattered lane */
+.lane.quotesList{
+  display:flex;flex-direction:column;gap:12px;
+  padding:6px 22px 46px;
+}
+.qcard{
+  display:block;width:100%;text-align:left;
+  background:#fff;border-radius:20px;
+  padding:18px 20px 20px;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease,box-shadow .2s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+.qeyebrow{color:var(--c);margin-bottom:9px}
+.qtext{
+  margin:0;color:var(--ink);
+  font-family:var(--geom);font-weight:600;
+  font-size:16.5px;line-height:1.4;letter-spacing:-.006em;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+@media (hover:hover){
+  .qcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
+}
+.qcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
+
+/* LIST mode — same records/order as Map, but a plain card stack like
+   Quotes: full statement text, an emoji icon, and a tiered score pill */
+.lane.listView{
+  display:flex;flex-direction:column;gap:12px;
+  padding:6px 22px 46px;
+}
+/* sticks directly below the nav + pills (same measured offset the
+   minimap uses in Map mode), bleeding edge-to-edge like .pills despite
+   the lane's own side padding */
+.listTop{
+  position:sticky;z-index:24;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin:0 -22px;
+  padding:14px 22px;
+  background:var(--c);
+  border-bottom:1px solid rgba(255,255,255,.17);
+  transition:opacity .28s ease;
+}
+body.reading .listTop{opacity:0;pointer-events:none}
+.orderSwitch{
+  font-family:var(--body);font-size:13px;font-weight:600;
+  color:#fff;
+  background:rgba(255,255,255,.1);
+  padding:9px 16px;border-radius:999px;
+  transition:background .2s ease;
+}
+.orderSwitch:hover{background:rgba(255,255,255,.18)}
+.orderSwitch:active{background:rgba(255,255,255,.08)}
+.listKey{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  color:rgba(255,255,255,.85);
+}
+.lKeySq{
+  flex:none;display:grid;place-items:center;
+  width:17px;height:17px;
+  background:#fff;border-radius:4px;
+  font-family:var(--geom);font-weight:700;font-size:10px;color:var(--c);
+}
+.lcard{
+  display:block;width:100%;text-align:left;
+  background:#fff;border-radius:20px;
+  padding:16px 18px 0;
+  overflow:hidden;   /* so the bottom viz's bleed can meet the card's own rounded corners */
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease,box-shadow .2s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+@media (hover:hover){
+  .lcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
+}
+.lcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
+
+/* eyebrow — the participant's emoji plus their demographic chips,
+   marqueeing sideways when the text is too long for the card */
+.lWho{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:9px;
+  color:color-mix(in srgb,var(--c) 62%,#000);
+}
+.lWho .lEmoji{flex:none;font-size:15px;line-height:1}
+.lWho .lDemoWrap{flex:1;min-width:0;overflow:hidden}
+.lWho .lDemoTrack{
+  display:inline-flex;gap:2.4em;white-space:nowrap;
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+}
+.lWho .lDemoTrack.marquee{animation:lDemoScroll var(--marquee-dur,10s) linear infinite}
+@keyframes lDemoScroll{from{transform:translateX(0)}to{transform:translateX(var(--marquee-dist,-50%))}}
+
+.lText{
+  margin:0 0 16px;color:var(--ink);
+  font-family:var(--geom);font-weight:600;
+  font-size:23px;line-height:1.32;letter-spacing:-.012em;
+}
+
+/* bottom viz — where each group's agreement % lands on a disagree-to-
+   agree track. Labels sit in the card's normal (uncolored) flow; only
+   the track itself is tinted and bled flush to the card's edges (and
+   its bottom corners). */
+.lBarLabels{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(0,0,0,.8);
+  margin-bottom:8px;
+}
+.lBarLabels .who{flex:none}
+.lBar{
+  margin:0 -18px;
+  padding:10px 18px 14px;
+  background:color-mix(in srgb,var(--c) 13%,transparent);
+}
+.lBarTrack{position:relative;height:26px}
+/* 0%/100% end labels — centered on the same 13px inset the A/B squares
+   use at their own extremes (HALF_SQ in the JS), so a square sitting
+   right on 0% or 100% lands directly on top of its label */
+.lBarEdge{
+  position:absolute;top:50%;
+  font-family:var(--geom);font-weight:700;font-size:14px;
+  color:var(--c);opacity:.65;
+}
+.lBarEdge.lo{left:13px;transform:translate(-50%,-50%)}
+.lBarEdge.hi{right:13px;transform:translate(50%,-50%)}
+.lBarMid{
+  position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:rgba(0,0,0,.18);
+  transform:translateX(-50%);
+}
+.lBarLine{
+  position:absolute;top:50%;height:2.5px;
+  background:var(--c);transform:translateY(-50%);
+}
+.lBarSq{
+  position:absolute;top:50%;width:26px;height:26px;
+  transform:translate(-50%,-50%);
+  background:var(--c);border-radius:6px;
+  display:grid;place-items:center;
+  font-family:var(--geom);font-weight:700;font-size:11px;color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+
+.sq{
+  position:absolute;padding:0;
+  background:none;border:0;
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .35s ease;
+  z-index:20;   /* above the scrub line (18) so it never draws over a statement circle */
+}
+/* while a bubble is surfacing a couple of statements, dim the rest so
+   the callouts read clearly — everything stays clickable underneath.
+   Whatever the scrub indicator is crossing stays fully visible too. */
+.lane.bubbling .sq:not(.hl):not(.hit){opacity:.3}
+/* same idea for the scrub indicator (and hovering a circle directly) —
+   dim everything but whatever's hit/hovered so it reads clearly */
+.lane:has(.sq.hit, .sq:hover) .sq:not(.hit):not(:hover){opacity:.3}
+.sq .face{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;height:100%;
+  background:#fff;border-radius:50%;
+  line-height:1;
+  animation:breathe var(--dur,4s) ease-in-out var(--del,0s) infinite;
+  transition:box-shadow .25s ease;
+  will-change:transform;
+}
+@keyframes breathe{
+  0%,100%{transform:scale(.955)}
+  50%{transform:scale(1.075)}
+}
+@media (hover:hover){
+  .sq:hover .face{
+    animation-play-state:paused;transform:scale(1.09);
+    box-shadow:0 0 0 5px #fff,0 8px 26px rgba(0,0,0,.3);
+  }
+}
+.sq.sel .face{
+  animation-play-state:paused;transform:scale(1.06);
+  box-shadow:0 0 0 4px rgba(255,255,255,.4),0 8px 26px rgba(0,0,0,.3);
+}
+/* the square currently crossed by the scrub line */
+.sq.hit .face{box-shadow:0 0 0 5px #ffd400,0 8px 26px rgba(0,0,0,.3)}
+
+/* the little text bubbles that surface every few seconds */
+.bubble{
+  position:absolute;z-index:12;
+  max-width:min(210px,calc(100vw - 24px));
+  font-size:11.5px;line-height:1.35;
+  font-weight:500;
+  padding:6px 11px;border-radius:999px;
+  background:#fff;color:var(--c);
+  box-shadow:0 4px 16px rgba(0,0,0,.22);
+  pointer-events:none;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  opacity:0;transform:scale(.8);
+  transition:opacity .3s cubic-bezier(.3,.7,.3,1),transform .3s cubic-bezier(.3,.7,.3,1);
+}
+.bubble.in{opacity:1;transform:scale(1)}
+
+/* the scrub — a readout that lives at the max line of the lane (where it
+   sits in normal flow, via margin-top) until scrolling would carry it
+   above the screen's midpoint, at which point it sticks there. */
+.scrub{
+  position:sticky;top:50vh;
+  height:var(--scrub-h);
+  z-index:18;   /* below .sq (20) so statement circles draw over the line, above .minimap (15) */
+  display:flex;align-items:center;
+  pointer-events:none;
+  transition:opacity .28s ease;
+}
+.scrub .pill{
+  flex:none;
+  font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;
+  background:#fff;color:var(--c);
+  padding:9px 14px 9px 13px;
+  border-radius:0 999px 999px 0;
+  white-space:nowrap;
+}
+.scrub .line{
+  flex:1 1 auto;height:2px;
+  background:#fff;
+}
+body.reading .scrub{opacity:0;pointer-events:none}
+
+/* the minimap — a condensed sparkline of every statement's position on
+   the current axis, living only inside the lane. Scrolls up with the
+   lane until fully below the nav + pills, then sticks there — top and
+   height are set in JS since they depend on the pills bar's rendered
+   height and the viewport size. z-index sits below .scrub so the
+   indicator line draws over it where the two cross. */
+.minimap{
+  position:sticky;left:0;
+  width:40px;
+  z-index:15;
+  background:rgba(255,255,255,.12);
+  border-radius:4px;
+  pointer-events:none;
+  transition:opacity .28s ease;
+}
+.minimap[hidden]{display:none}
+.minimap i{
+  position:absolute;left:0;right:0;height:2px;
+  background:rgba(255,255,255,.55);
+  border-radius:1px;
+  transform:translateY(-50%);
+}
+.minimap .now{
+  position:absolute;left:0;right:0;height:3px;
+  background:#ffd400;
+  border-radius:2px;
+  box-shadow:0 0 8px rgba(255,212,0,.75);
+  transform:translateY(-50%);
+}
+body.reading .minimap{opacity:0;pointer-events:none}
+
+/* statement preview — a bottom sheet previewing whatever the scrub is
+   currently crossing. Slides up once, the first time it has something
+   to show; after that it only ever fades between shown/empty, never
+   slides away again. */
+.statPreview{
+  position:fixed;left:0;right:0;bottom:0;
+  z-index:26;
+  display:flex;justify-content:center;
+  pointer-events:none;
+  transform:translateY(115%);
+  transition:transform .4s cubic-bezier(.2,.85,.3,1),opacity .3s ease;
+}
+.statPreview[hidden]{display:none}
+.statPreview.shown{transform:translateY(0)}
+.statPreview.empty{opacity:0}
+body.reading .statPreview{opacity:0;pointer-events:none}
+
+.spCard{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:12px;
+  width:calc(100% - 28px);max-width:572px;   /* matches .card (the statement modal) */
+  background:#fff;
+  border-radius:24px 24px 0 0;
+  padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)) 10px;
+  text-align:left;
+  box-shadow:0 10px 30px rgba(0,0,0,.32);
+  transition:transform .15s ease;
+}
+.spCard:active{transform:scale(.97)}
+.spAv{
+  flex:none;width:44px;height:44px;border-radius:50%;
+  background:#fff;
+  display:grid;place-items:center;
+  font-size:23px;
+  box-shadow:0 0 0 3px var(--c);
+}
+.spBody{min-width:0}
+.spEyebrow{
+  display:block;
+  font-family:var(--mono);font-size:0.8rem;letter-spacing:.09em;text-transform:uppercase;font-weight: 500;
+  color:var(--c);margin-bottom:3px;
+}
+.spText{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  color:#333;font-size:1.1rem;line-height:1.35;font-weight:500;
+}
+
+.lane-end{
+  padding:34px 22px 60px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);text-align:center;
+}
+
+/* ─────────────────────────────────────────────
+   LEVEL 3 — STATEMENT
+   ───────────────────────────────────────────── */
+#l3{display:none;position:fixed;inset:0;z-index:60}
+#l3.on{display:block}
+.scrim{
+  position:absolute;inset:0;background:rgba(10,10,12,.42);
+  animation:fadeIn .3s ease both;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.card{
+  position:absolute;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  width:calc(100% - 28px);max-width:572px;
+  height:min(76vh,720px);
+  background:var(--paper);color:var(--c);
+  border-radius:24px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 22px 60px rgba(0,0,0,.34);
+  animation:cardIn .34s cubic-bezier(.2,.85,.3,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translate(-50%,-46%) scale(.985)}to{opacity:1;transform:translate(-50%,-50%)}}
+
+.cardtop{
+  display:flex;align-items:center;
+  padding:13px 16px 13px 14px;flex:none;
+  background:var(--paper);
+  border-bottom:1px solid color-mix(in srgb,var(--c) 16%,#fff);
+  border-radius:24px 24px 0 0;
+}
+/* consensus / difference / plain-agreement indicator for poll statements
+   (quotes have no vote data, so the pill is hidden entirely for those) */
+.who{
+  display:inline-flex;align-items:center;gap:8px;
+  color:#fff;
+  border-radius:999px;padding:5px 13px 5px 5px;
+  min-height:30px;max-width:82%;
+}
+.who[hidden]{display:none}
+.who.consensus{background:var(--agree)}
+.who.difference{background:var(--disagree)}
+.who.neutral{background:#484848}
+.who .av{
+  width:21px;height:21px;border-radius:50%;background:#fff;flex:none;
+  display:grid;place-items:center;
+}
+.who .av img{width:14px;height:14px;object-fit:contain;display:block}
+.who .txt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.closeb{
+  flex:none;width:32px;height:32px;display:grid;place-items:center;
+  color:var(--c);margin:0 -2px 0 auto;border-radius:50%;
+  transition:background .2s ease;
+}
+.closeb:hover{background:rgba(0,0,0,.06)}
+.closeb svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.2;fill:none}
+
+.cardbody{
+  flex:1 1 auto;min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+}
+.quotewrap{padding:26px 22px 26px}
+.quotewrap blockquote{
+  margin:0;font-family:var(--geom);font-weight:600;
+  font-size:var(--qs,26px);line-height:1.16;letter-spacing:-.016em;
+  color:var(--c);
+  text-wrap:pretty;
+}
+
+.meta{
+  border-top:1px solid color-mix(in srgb,var(--c) 18%,#fff);
+  padding:18px 22px 24px;
+}
+.meta h4{
+  font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 55%,#fff);
+  margin:0 0 7px;
+}
+.meta .src{font-size:14px;line-height:1.4;margin:0 0 16px;font-weight:500}
+.meta .src small{display:block;font-weight:400;font-size:12.5px;margin-top:2px}
+.meta section + section{margin-top:16px}
+
+.grow{margin-bottom:11px}
+.grow:last-child{margin-bottom:2px}
+.grow .top{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 62%,#fff);
+  margin-bottom:5px;
+}
+.grow .top b{font-weight:500;color:var(--c)}
+.bar{display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;transition:flex-grow .4s ease}
+.bar .d{background:var(--disagree)}
+.bar .p{background:var(--pass)}
+.bar .a{background:var(--agree)}
+.barkey{
+  display:flex;gap:13px;margin-top:9px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 48%,#fff);
+}
+.barkey span{display:inline-flex;align-items:center;gap:5px}
+.barkey i{width:9px;height:3px;border-radius:2px;flex:none}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags i{
+  font-style:normal;
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  padding:4px 9px;border-radius:999px;
+  background:color-mix(in srgb,var(--c) 11%,#fff);
+  color:var(--c);
+}
+
+.cardfoot{
+  flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;
+  border-top:1px solid color-mix(in srgb,var(--c) 20%,#fff);
+  background:var(--paper);
+}
+.cardfoot button{
+  width:44px;height:36px;display:grid;place-items:center;color:var(--c);
+  border-radius:10px;transition:background .18s ease,opacity .18s ease;
+}
+.cardfoot button:hover{background:color-mix(in srgb,var(--c) 9%,#fff)}
+.cardfoot button[disabled]{opacity:.24;cursor:default;background:none}
+.cardfoot svg{width:26px;height:14px;stroke:currentColor;stroke-width:1.9;fill:none}
+.cardfoot .pos{
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--c);
+}
+.cardfoot .pos em{font-style:normal;opacity:.45}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}

@@ -8,11 +8,15 @@ Interactive bloom report, published as a GitHub pages website via GitHub actions
 
 | Path                           | Role                                                                   |
 |--------------------------------|------------------------------------------------------------------------|
-| `index.template.html`          | The app — markup, CSS, and JS. Edit this for anything that isn't data. |
+| `src/app.js`                   | The app code.                                                          |
+| `src/app.css`                  | The styles.                                                            |
+| `index.template.html`          | Markup only. The rest is inlined into it at build time.                |
 | `data/`                        | JSON data files                                                        |
 | `static/`                      | SVG icons.                                                             |
-| `build.js`                     | Injects the JSON into the template, writes `dist/`.                    |
+| `build.js`                     | Inlines `src/` and the JSON into the template, writes `dist/`.         |
 | `dist/`                        | Build output. Gitignored; regenerated on every deploy.                 |
+
+The build produces one self-contained `index.html` — no external CSS or JS requests.
 
 ## Local preview
 
