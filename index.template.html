@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bloom — A Conversation on AI in Central Oregon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geom:wght@500;600;700&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   TOKENS
+   ───────────────────────────────────────────── */
+:root{
+  --ink:#101011;
+  --paper:#fff;
+  --agree:#1F8A3B;
+  --disagree:#D8362F;
+  --pass:#C4C4C4;
+  --home:#0D1B3E;
+
+  --geom:'Geom','Futura',system-ui,sans-serif;
+  --body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  --mono:'DM Mono',ui-monospace,'SF Mono',monospace;
+
+  --nav-h:46px;
+  --pill-h:58px;
+  --scrub-h:34px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+/* overflow-x here (not on body) — putting it on body makes browsers treat
+   body as the sticky/scroll containing block instead of the viewport,
+   which silently breaks every position:sticky element on the page */
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{
+  background:var(--ink);
+  color:#fff;
+  font-family:var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2.5px solid currentColor;outline-offset:3px;border-radius:3px}
+
+/* The whole product lives in one column. Mobile = full bleed.
+   Wide viewports = a ~50% column, same layout, nothing reflows. */
+.shell{
+  width:100%;
+  max-width:600px;
+  margin:0 auto;
+  position:relative;
+  min-height:100vh;
+  min-height:100dvh;
+  background:var(--ink);
+}
+@media (min-width:660px){
+  /* on the roomier desktop layout, the gutter around the column tints to
+     match whatever's active — the open theme's color, or --home on L1 */
+  body{background:var(--c,var(--home))}
+  .shell{max-width:800px}
+}
+
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+
+/* ─────────────────────────────────────────────
+   LEVEL 1 — THEMES
+   ───────────────────────────────────────────── */
+#l1{display:block}
+.masthead{padding:26px 22px 20px}
+.masthead .eyebrow{color:rgba(255,255,255,.45);margin-bottom:9px}
+.masthead h1{
+  font-family:var(--geom);font-weight:700;font-size:23px;line-height:1.14;
+  margin:0;letter-spacing:-.012em;max-width:16em;
+}
+.masthead p{
+  font-size:14px;line-height:1.45;color:rgba(255,255,255,.5);
+  margin:12px 0 0;max-width:32em;
+}
+
+.theme-block{
+  display:block;width:100%;text-align:left;
+  background:var(--c);
+  padding:22px 22px 24px;
+  position:relative;
+  transition:filter .25s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.theme-block + .theme-block{box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.theme-block h2{
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(26px,7.4vw,32px);line-height:1.06;
+  letter-spacing:-.02em;margin:0 0 11px;
+  max-width:13em;
+}
+.theme-block .count{color:rgba(255,255,255,.78);margin-bottom:16px}
+.theme-block .arrow{
+  position:absolute;top:24px;right:20px;font-size:17px;
+  opacity:.45;transition:transform .3s ease,opacity .3s ease;
+}
+@media (hover:hover){
+  .theme-block:hover{filter:brightness(1.12) saturate(1.05)}
+  .theme-block:hover .arrow{transform:translateX(5px);opacity:1}
+}
+.theme-block:active{filter:brightness(.94)}
+
+/* the tally: one cell per record. filled = poll statement, ring = session quote */
+.tally{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,12px);
+  gap:4px;
+}
+.tally i{
+  display:block;width:12px;height:12px;border-radius:1.5px;
+  background:#fff;
+  animation:tallyIn .5s cubic-bezier(.2,.8,.3,1) both;
+}
+.tally i.q{background:rgba(255,255,255,.26);box-shadow:inset 0 0 0 1.5px #fff}
+@keyframes tallyIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+
+.legend{
+  padding:20px 22px 46px;display:flex;gap:20px;flex-wrap:wrap;
+  color:rgba(255,255,255,.42);
+}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:11px;height:11px;border-radius:1.5px;background:rgba(255,255,255,.6);flex:none}
+.legend i.q{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)}
+
+/* ─────────────────────────────────────────────
+   LEVEL 2 — THEME VIEWER
+   ───────────────────────────────────────────── */
+#l2{
+  display:none;background:var(--c);min-height:100vh;min-height:100dvh;
+  position:relative;
+}
+#l2.on{display:block}
+
+.l2nav{
+  position:sticky;top:0;z-index:30;
+  transition:opacity .28s ease;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;
+  background:var(--c);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.2);
+}
+.l2nav button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  color:rgba(255,255,255,.82);padding:6px 0;
+  transition:color .2s ease;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.l2nav button:hover{color:#fff}
+.l2nav .nextT{max-width:62%;text-align:right}
+.l2nav .nextT b{font-weight:400;color:#fff}
+
+.hero{padding:26px 22px 0;position:relative}
+.hero::before{
+  content:'';position:absolute;inset:calc(-1 * var(--nav-h)) 0 auto 0;height:340px;
+  background:linear-gradient(180deg,rgba(0,0,0,.26),rgba(0,0,0,0));
+  pointer-events:none;
+}
+.hero > *{position:relative}
+.hero h1{
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(30px,9vw,40px);line-height:1.02;letter-spacing:-.024em;
+  margin:0 0 9px;
+}
+.hero .count{color:rgba(255,255,255,.72);margin-bottom:20px}
+.hero .desc{
+  font-size:16.5px;line-height:1.5;margin:0 0 26px;
+  color:#fff;letter-spacing:-.003em;
+}
+.hero .cta{font-size:15px;font-weight:600;margin-bottom:28px}
+@media (min-width:660px){
+  /* placed after the base rules above so it actually wins the cascade —
+     an earlier attempt put this override before them and silently lost */
+  .masthead p{font-size:16px}
+  .hero .desc{font-size:18.5px}
+  .hero .cta{font-size:17px}
+}
+
+/* mode pills — stay reachable while you scroll the lane. A sibling of
+   .hero and .lane (not nested in .hero) so its sticky containing block
+   is the whole scrollable section, not just the short intro block —
+   otherwise it un-sticks the moment .hero itself scrolls out of view. */
+.pills{
+  position:sticky;top:var(--nav-h);z-index:25;
+  display:flex;justify-content:center;gap:8px;
+  padding:18px 22px;
+  background:var(--c);
+  border-top:1px solid rgba(255,255,255,.17);
+  border-bottom:1px solid rgba(255,255,255,.17);
+}
+.pills::before{
+  content:'';position:absolute;left:0;right:0;top:-14px;height:14px;
+  background:var(--c);
+}
+/* while a statement is open, fade the chrome so the selected square
+   stays visible in the strip above the card */
+body.reading .l2nav,body.reading .pills{opacity:0;pointer-events:none}
+/* extra runway so even the last square in the lane can be lifted into
+   the strip above the card. Collapses again when the card closes. */
+body.reading #l2{padding-bottom:82vh}
+.pills{transition:opacity .28s ease}
+
+.pills button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 15px;border-radius:999px;
+  background:rgba(255,255,255,.17);color:#fff;
+  transition:background .2s ease,color .2s ease;
+}
+.pills button:hover{background:rgba(255,255,255,.28)}
+.pills button[aria-pressed="true"]{background:#fff;color:var(--c);font-weight:500}
+
+/* the lane */
+.lane{
+  position:relative;
+  overflow:visible;
+  display:flow-root;   /* stop scrub/minimap's margin-top from collapsing into .lane's own position */
+}
+.axisrow{
+  position:absolute;left:0;right:0;height:0;
+  border-top:1px solid rgba(255,255,255,.17);
+  pointer-events:none;
+}
+.axisrow span{
+  position:absolute;right:9px;top:5px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.78);
+}
+
+/* QUOTES mode — a plain stack of cards instead of the scattered lane */
+.lane.quotesList{
+  display:flex;flex-direction:column;gap:12px;
+  padding:6px 22px 46px;
+}
+.qcard{
+  display:block;width:100%;text-align:left;
+  background:#fff;border-radius:20px;
+  padding:18px 20px 20px;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease,box-shadow .2s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+.qeyebrow{color:var(--c);margin-bottom:9px}
+.qtext{
+  margin:0;color:var(--ink);
+  font-family:var(--geom);font-weight:600;
+  font-size:16.5px;line-height:1.4;letter-spacing:-.006em;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+@media (hover:hover){
+  .qcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
+}
+.qcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
+
+/* LIST mode — same records/order as Map, but a plain card stack like
+   Quotes: full statement text, an emoji icon, and a tiered score pill */
+.lane.listView{
+  display:flex;flex-direction:column;gap:12px;
+  padding:6px 22px 46px;
+}
+/* sticks directly below the nav + pills (same measured offset the
+   minimap uses in Map mode), bleeding edge-to-edge like .pills despite
+   the lane's own side padding */
+.listTop{
+  position:sticky;z-index:24;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin:0 -22px;
+  padding:14px 22px;
+  background:var(--c);
+  border-bottom:1px solid rgba(255,255,255,.17);
+  transition:opacity .28s ease;
+}
+body.reading .listTop{opacity:0;pointer-events:none}
+.orderSwitch{
+  font-family:var(--body);font-size:13px;font-weight:600;
+  color:#fff;
+  background:rgba(255,255,255,.1);
+  padding:9px 16px;border-radius:999px;
+  transition:background .2s ease;
+}
+.orderSwitch:hover{background:rgba(255,255,255,.18)}
+.orderSwitch:active{background:rgba(255,255,255,.08)}
+.listKey{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  color:rgba(255,255,255,.85);
+}
+.lKeySq{
+  flex:none;display:grid;place-items:center;
+  width:17px;height:17px;
+  background:#fff;border-radius:4px;
+  font-family:var(--geom);font-weight:700;font-size:10px;color:var(--c);
+}
+.lcard{
+  display:block;width:100%;text-align:left;
+  background:#fff;border-radius:20px;
+  padding:16px 18px 0;
+  overflow:hidden;   /* so the bottom viz's bleed can meet the card's own rounded corners */
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease,box-shadow .2s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+@media (hover:hover){
+  .lcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
+}
+.lcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
+
+/* eyebrow — the participant's emoji plus their demographic chips,
+   marqueeing sideways when the text is too long for the card */
+.lWho{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:9px;
+  color:color-mix(in srgb,var(--c) 62%,#000);
+}
+.lWho .lEmoji{flex:none;font-size:15px;line-height:1}
+.lWho .lDemoWrap{flex:1;min-width:0;overflow:hidden}
+.lWho .lDemoTrack{
+  display:inline-flex;gap:2.4em;white-space:nowrap;
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+}
+.lWho .lDemoTrack.marquee{animation:lDemoScroll var(--marquee-dur,10s) linear infinite}
+@keyframes lDemoScroll{from{transform:translateX(0)}to{transform:translateX(var(--marquee-dist,-50%))}}
+
+.lText{
+  margin:0 0 16px;color:var(--ink);
+  font-family:var(--geom);font-weight:600;
+  font-size:23px;line-height:1.32;letter-spacing:-.012em;
+}
+
+/* bottom viz — where each group's agreement % lands on a disagree-to-
+   agree track. Labels sit in the card's normal (uncolored) flow; only
+   the track itself is tinted and bled flush to the card's edges (and
+   its bottom corners). */
+.lBarLabels{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(0,0,0,.8);
+  margin-bottom:8px;
+}
+.lBarLabels .who{flex:none}
+.lBar{
+  margin:0 -18px;
+  padding:10px 18px 14px;
+  background:color-mix(in srgb,var(--c) 13%,transparent);
+}
+.lBarTrack{position:relative;height:26px}
+/* 0%/100% end labels — centered on the same 13px inset the A/B squares
+   use at their own extremes (HALF_SQ in the JS), so a square sitting
+   right on 0% or 100% lands directly on top of its label */
+.lBarEdge{
+  position:absolute;top:50%;
+  font-family:var(--geom);font-weight:700;font-size:14px;
+  color:var(--c);opacity:.65;
+}
+.lBarEdge.lo{left:13px;transform:translate(-50%,-50%)}
+.lBarEdge.hi{right:13px;transform:translate(50%,-50%)}
+.lBarMid{
+  position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:rgba(0,0,0,.18);
+  transform:translateX(-50%);
+}
+.lBarLine{
+  position:absolute;top:50%;height:2.5px;
+  background:var(--c);transform:translateY(-50%);
+}
+.lBarSq{
+  position:absolute;top:50%;width:26px;height:26px;
+  transform:translate(-50%,-50%);
+  background:var(--c);border-radius:6px;
+  display:grid;place-items:center;
+  font-family:var(--geom);font-weight:700;font-size:11px;color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+
+.sq{
+  position:absolute;padding:0;
+  background:none;border:0;
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .35s ease;
+  z-index:20;   /* above the scrub line (18) so it never draws over a statement circle */
+}
+/* while a bubble is surfacing a couple of statements, dim the rest so
+   the callouts read clearly — everything stays clickable underneath.
+   Whatever the scrub indicator is crossing stays fully visible too. */
+.lane.bubbling .sq:not(.hl):not(.hit){opacity:.3}
+/* same idea for the scrub indicator (and hovering a circle directly) —
+   dim everything but whatever's hit/hovered so it reads clearly */
+.lane:has(.sq.hit, .sq:hover) .sq:not(.hit):not(:hover){opacity:.3}
+.sq .face{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;height:100%;
+  background:#fff;border-radius:50%;
+  line-height:1;
+  animation:breathe var(--dur,4s) ease-in-out var(--del,0s) infinite;
+  transition:box-shadow .25s ease;
+  will-change:transform;
+}
+@keyframes breathe{
+  0%,100%{transform:scale(.955)}
+  50%{transform:scale(1.075)}
+}
+@media (hover:hover){
+  .sq:hover .face{
+    animation-play-state:paused;transform:scale(1.09);
+    box-shadow:0 0 0 5px #fff,0 8px 26px rgba(0,0,0,.3);
+  }
+}
+.sq.sel .face{
+  animation-play-state:paused;transform:scale(1.06);
+  box-shadow:0 0 0 4px rgba(255,255,255,.4),0 8px 26px rgba(0,0,0,.3);
+}
+/* the square currently crossed by the scrub line */
+.sq.hit .face{box-shadow:0 0 0 5px #ffd400,0 8px 26px rgba(0,0,0,.3)}
+
+/* the little text bubbles that surface every few seconds */
+.bubble{
+  position:absolute;z-index:12;
+  max-width:min(210px,calc(100vw - 24px));
+  font-size:11.5px;line-height:1.35;
+  font-weight:500;
+  padding:6px 11px;border-radius:999px;
+  background:#fff;color:var(--c);
+  box-shadow:0 4px 16px rgba(0,0,0,.22);
+  pointer-events:none;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  opacity:0;transform:scale(.8);
+  transition:opacity .3s cubic-bezier(.3,.7,.3,1),transform .3s cubic-bezier(.3,.7,.3,1);
+}
+.bubble.in{opacity:1;transform:scale(1)}
+
+/* the scrub — a readout that lives at the max line of the lane (where it
+   sits in normal flow, via margin-top) until scrolling would carry it
+   above the screen's midpoint, at which point it sticks there. */
+.scrub{
+  position:sticky;top:50vh;
+  height:var(--scrub-h);
+  z-index:18;   /* below .sq (20) so statement circles draw over the line, above .minimap (15) */
+  display:flex;align-items:center;
+  pointer-events:none;
+  transition:opacity .28s ease;
+}
+.scrub .pill{
+  flex:none;
+  font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;
+  background:#fff;color:var(--c);
+  padding:9px 14px 9px 13px;
+  border-radius:0 999px 999px 0;
+  white-space:nowrap;
+}
+.scrub .line{
+  flex:1 1 auto;height:2px;
+  background:#fff;
+}
+body.reading .scrub{opacity:0;pointer-events:none}
+
+/* the minimap — a condensed sparkline of every statement's position on
+   the current axis, living only inside the lane. Scrolls up with the
+   lane until fully below the nav + pills, then sticks there — top and
+   height are set in JS since they depend on the pills bar's rendered
+   height and the viewport size. z-index sits below .scrub so the
+   indicator line draws over it where the two cross. */
+.minimap{
+  position:sticky;left:0;
+  width:40px;
+  z-index:15;
+  background:rgba(255,255,255,.12);
+  border-radius:4px;
+  pointer-events:none;
+  transition:opacity .28s ease;
+}
+.minimap[hidden]{display:none}
+.minimap i{
+  position:absolute;left:0;right:0;height:2px;
+  background:rgba(255,255,255,.55);
+  border-radius:1px;
+  transform:translateY(-50%);
+}
+.minimap .now{
+  position:absolute;left:0;right:0;height:3px;
+  background:#ffd400;
+  border-radius:2px;
+  box-shadow:0 0 8px rgba(255,212,0,.75);
+  transform:translateY(-50%);
+}
+body.reading .minimap{opacity:0;pointer-events:none}
+
+/* statement preview — a bottom sheet previewing whatever the scrub is
+   currently crossing. Slides up once, the first time it has something
+   to show; after that it only ever fades between shown/empty, never
+   slides away again. */
+.statPreview{
+  position:fixed;left:0;right:0;bottom:0;
+  z-index:26;
+  display:flex;justify-content:center;
+  pointer-events:none;
+  transform:translateY(115%);
+  transition:transform .4s cubic-bezier(.2,.85,.3,1),opacity .3s ease;
+}
+.statPreview[hidden]{display:none}
+.statPreview.shown{transform:translateY(0)}
+.statPreview.empty{opacity:0}
+body.reading .statPreview{opacity:0;pointer-events:none}
+
+.spCard{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:12px;
+  width:calc(100% - 28px);max-width:572px;   /* matches .card (the statement modal) */
+  background:#fff;
+  border-radius:24px 24px 0 0;
+  padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)) 10px;
+  text-align:left;
+  box-shadow:0 10px 30px rgba(0,0,0,.32);
+  transition:transform .15s ease;
+}
+.spCard:active{transform:scale(.97)}
+.spAv{
+  flex:none;width:44px;height:44px;border-radius:50%;
+  background:#fff;
+  display:grid;place-items:center;
+  font-size:23px;
+  box-shadow:0 0 0 3px var(--c);
+}
+.spBody{min-width:0}
+.spEyebrow{
+  display:block;
+  font-family:var(--mono);font-size:0.8rem;letter-spacing:.09em;text-transform:uppercase;font-weight: 500;
+  color:var(--c);margin-bottom:3px;
+}
+.spText{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  color:#333;font-size:1.1rem;line-height:1.35;font-weight:500;
+}
+
+.lane-end{
+  padding:34px 22px 60px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);text-align:center;
+}
+
+/* ─────────────────────────────────────────────
+   LEVEL 3 — STATEMENT
+   ───────────────────────────────────────────── */
+#l3{display:none;position:fixed;inset:0;z-index:60}
+#l3.on{display:block}
+.scrim{
+  position:absolute;inset:0;background:rgba(10,10,12,.42);
+  animation:fadeIn .3s ease both;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.card{
+  position:absolute;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  width:calc(100% - 28px);max-width:572px;
+  height:min(76vh,720px);
+  background:var(--paper);color:var(--c);
+  border-radius:24px;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 22px 60px rgba(0,0,0,.34);
+  animation:cardIn .34s cubic-bezier(.2,.85,.3,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translate(-50%,-46%) scale(.985)}to{opacity:1;transform:translate(-50%,-50%)}}
+
+.cardtop{
+  display:flex;align-items:center;
+  padding:13px 16px 13px 14px;flex:none;
+  background:var(--paper);
+  border-bottom:1px solid color-mix(in srgb,var(--c) 16%,#fff);
+  border-radius:24px 24px 0 0;
+}
+/* consensus / difference / plain-agreement indicator for poll statements
+   (quotes have no vote data, so the pill is hidden entirely for those) */
+.who{
+  display:inline-flex;align-items:center;gap:8px;
+  color:#fff;
+  border-radius:999px;padding:5px 13px 5px 5px;
+  min-height:30px;max-width:82%;
+}
+.who[hidden]{display:none}
+.who.consensus{background:var(--agree)}
+.who.difference{background:var(--disagree)}
+.who.neutral{background:#484848}
+.who .av{
+  width:21px;height:21px;border-radius:50%;background:#fff;flex:none;
+  display:grid;place-items:center;
+}
+.who .av img{width:14px;height:14px;object-fit:contain;display:block}
+.who .txt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.closeb{
+  flex:none;width:32px;height:32px;display:grid;place-items:center;
+  color:var(--c);margin:0 -2px 0 auto;border-radius:50%;
+  transition:background .2s ease;
+}
+.closeb:hover{background:rgba(0,0,0,.06)}
+.closeb svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.2;fill:none}
+
+.cardbody{
+  flex:1 1 auto;min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+}
+.quotewrap{padding:26px 22px 26px}
+.quotewrap blockquote{
+  margin:0;font-family:var(--geom);font-weight:600;
+  font-size:var(--qs,26px);line-height:1.16;letter-spacing:-.016em;
+  color:var(--c);
+  text-wrap:pretty;
+}
+
+.meta{
+  border-top:1px solid color-mix(in srgb,var(--c) 18%,#fff);
+  padding:18px 22px 24px;
+}
+.meta h4{
+  font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 55%,#fff);
+  margin:0 0 7px;
+}
+.meta .src{font-size:14px;line-height:1.4;margin:0 0 16px;font-weight:500}
+.meta .src small{display:block;font-weight:400;font-size:12.5px;margin-top:2px}
+.meta section + section{margin-top:16px}
+
+.grow{margin-bottom:11px}
+.grow:last-child{margin-bottom:2px}
+.grow .top{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 62%,#fff);
+  margin-bottom:5px;
+}
+.grow .top b{font-weight:500;color:var(--c)}
+.bar{display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;transition:flex-grow .4s ease}
+.bar .d{background:var(--disagree)}
+.bar .p{background:var(--pass)}
+.bar .a{background:var(--agree)}
+.barkey{
+  display:flex;gap:13px;margin-top:9px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 48%,#fff);
+}
+.barkey span{display:inline-flex;align-items:center;gap:5px}
+.barkey i{width:9px;height:3px;border-radius:2px;flex:none}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags i{
+  font-style:normal;
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  padding:4px 9px;border-radius:999px;
+  background:color-mix(in srgb,var(--c) 11%,#fff);
+  color:var(--c);
+}
+
+.cardfoot{
+  flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;
+  border-top:1px solid color-mix(in srgb,var(--c) 20%,#fff);
+  background:var(--paper);
+}
+.cardfoot button{
+  width:44px;height:36px;display:grid;place-items:center;color:var(--c);
+  border-radius:10px;transition:background .18s ease,opacity .18s ease;
+}
+.cardfoot button:hover{background:color-mix(in srgb,var(--c) 9%,#fff)}
+.cardfoot button[disabled]{opacity:.24;cursor:default;background:none}
+.cardfoot svg{width:26px;height:14px;stroke:currentColor;stroke-width:1.9;fill:none}
+.cardfoot .pos{
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--c);
+}
+.cardfoot .pos em{font-style:normal;opacity:.45}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══ LEVEL 1 ══ -->
+  <main id="l1">
+    <div class="masthead">
+      <div class="eyebrow label">Bloom Project · COCAP · Central Oregon</div>
+      <h1>What 400+ people had to say about AI in Central Oregon</h1>
+      <p>Six listening sessions and one open poll, sorted into eight themes. Each square below is one statement or one thing somebody said out loud.</p>
+    </div>
+    <div id="blocks"></div>
+    <div class="legend label">
+      <span><i></i> Poll statement</span>
+      <span><i class="q"></i> Session quote</span>
+    </div>
+  </main>
+
+  <!-- ══ LEVEL 2 ══ -->
+  <section id="l2" aria-hidden="true">
+    <div class="l2nav">
+      <button id="back">← Back</button>
+      <button class="nextT" id="nextT"></button>
+    </div>
+    <div class="statPreview" id="statPreview" hidden aria-hidden="true">
+      <button class="spCard" id="spCard" type="button">
+        <span class="spAv" id="spAv"></span>
+        <span class="spBody">
+          <span class="spEyebrow" id="spEyebrow"></span>
+          <span class="spText" id="spText"></span>
+        </span>
+      </button>
+    </div>
+    <div class="hero">
+      <h1 id="t-title"></h1>
+      <div class="count label" id="t-count"></div>
+      <p class="desc" id="t-desc"></p>
+      <div class="cta">Click on any perspectives below:</div>
+    </div>
+    <div class="pills" role="group" aria-label="Sort perspectives">
+      <button data-mode="map" aria-pressed="false">Map</button>
+      <button data-mode="list" aria-pressed="true">List</button>
+      <button data-mode="quotes" aria-pressed="false">Quotes</button>
+    </div>
+    <div class="lane" id="lane"></div>
+    <div class="lane-end" id="laneEnd"></div>
+  </section>
+
+  <!-- ══ LEVEL 3 ══ -->
+  <div id="l3" role="dialog" aria-modal="true" aria-label="Statement detail" aria-hidden="true">
+    <div class="scrim" id="scrim"></div>
+    <div class="card">
+      <div class="cardtop">
+        <div class="who" id="who">
+          <span class="av" id="whoAv"></span>
+          <span class="txt" id="whoTxt"></span>
+        </div>
+        <button class="closeb" id="closeb" aria-label="Close">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5l11 11M13.5 2.5l-11 11" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="cardbody" id="cardbody">
+        <div class="quotewrap"><blockquote id="s-text"></blockquote></div>
+        <div class="meta" id="s-meta"></div>
+      </div>
+      <div class="cardfoot">
+        <button id="prev" aria-label="Previous statement"><svg viewBox="0 0 26 14" aria-hidden="true"><path d="M25 7H1.6M7.4 1.4L1.2 7l6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="pos" id="pos"></div>
+        <button id="next" aria-label="Next statement"><svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     DATA — injected at build time by build.js from data/*.json.
+     Edit the JSON files, not this file, then run: node build.js
+     ═══════════════════════════════════════════════════════════════════ -->
+<script type="application/json" id="theme-descriptions"><!--INJECT:theme-descriptions--></script>
+<script type="application/json" id="bloom-data"><!--INJECT:bloom-data--></script>
+
+<script>
+(() => {
+'use strict';
+
+const J = id => JSON.parse(document.getElementById(id).textContent);
+const DATA = J('bloom-data');
+const DESC = J('theme-descriptions');
+
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+const esc = s => s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+// title-cases a raw ALL-CAPS chip (e.g. demographic tags), with one special
+// case: a bare "or" stays uppercase right after a comma — that's the Oregon
+// abbreviation ("Bend, OR"), not the conjunction ("White or Caucasian").
+const titleCaseChip = s => s.toLowerCase().replace(/\b\w+/g, (word, offset, str) => {
+  if (word === 'or') return str.slice(0, offset).trimEnd().endsWith(',') ? 'OR' : 'or';
+  return word.charAt(0).toUpperCase() + word.slice(1);
+});
+
+// experimental: represent each poll statement in the lane as a person
+// matching who submitted it — gender + age bucket picks the base emoji,
+// race picks a Fitzpatrick skin-tone modifier. Non-participant (seeded)
+// statements aren't tied to any one person, so they get a seed emoji.
+const EMOJI_OLD_AGE = new Set(['55-64', '65+']);
+const EMOJI_SKIN_TONE = { 'WHITE OR CAUCASIAN': '🏻', 'NATIVE AMERICAN': '🏽' };
+const emojiFor = r => {
+  if (r.origin !== 'participant') return '🌱';
+  const old = r.chips.some(c => EMOJI_OLD_AGE.has(c));
+  const gender = r.chips.find(c => c === 'FEMALE' || c === 'MALE' || c === 'OTHER');
+  const tone = EMOJI_SKIN_TONE[r.chips.find(c => EMOJI_SKIN_TONE[c])] || '';
+  const base = gender === 'FEMALE' ? (old ? '👵' : '👩')
+    : gender === 'MALE' ? (old ? '👴' : '👨')
+    : (old ? '🧓' : '🧑');
+  return base + tone;
+};
+
+const byKey = {};
+DATA.themes.forEach(t => byKey[t.key] = t);
+const recsOf = t => DATA.records.filter(r => r.theme === t.n);
+
+// The Map tab's one axis over the poll statements. List mode reuses this
+// same score to sort its cards, just renders them differently. Session
+// quotes carry no vote, so they only ever appear under the Quotes tab.
+const MODES = {
+  map: { score: r => r.vote.minAgree, max: () => 100, tick: v => v + '% AGREE' }
+};
+// short readout for the scrub pill — the axis row already spells the unit out in full
+const SCRUB_TICK = { map: v => v + '%' };
+const SCRUB_INSET = 70;   // px reserved on the left of the lane so squares clear the scrub pill
+
+// thresholds for the statement-card indicator pill (consensus/difference/neutral)
+const DIFFERENCE_MIN_GAP = 35;    // group-to-group gap (points) counted as a real split
+const CONSENSUS_MIN_AGREE = 65;   // minAgree (%) counted as both groups genuinely on board
+
+// shared by the statement modal's pill and the List card's bar-top pill
+const pillInfoFor = v => {
+  if (v.gap >= DIFFERENCE_MIN_GAP)
+    return { cls: 'difference', icon: 'static/difference.svg', label: 'DIFFERENCE (' + v.gap + ' PTS)' };
+  if (v.minAgree >= CONSENSUS_MIN_AGREE)
+    return { cls: 'consensus', icon: 'static/consensus.svg', label: 'CONSENSUS (' + v.minAgree + '% PRO)' };
+  return { cls: 'neutral', icon: null, label: v.minAgree + '% AGREE' };
+};
+
+const state = { theme: null, mode: 'list', sel: -1, layout: [] };
+let bubbleTimer = null, scrollRaf = null, l1Scroll = 0, kivTimer = null, scrubRaf = null;
+let listAsc = false;   // List tab sort direction — toggled by the "Switch order" button
+// square placement is randomized (jittered scatter, collision avoidance), so it's
+// computed once per theme/mode and cached — revisiting, switching modes back and
+// forth, or a resize (e.g. mobile browser chrome collapsing) must not reshuffle it
+const layoutCache = {};
+
+/* ─── LEVEL 1 ─────────────────────────────────────────── */
+function buildL1() {
+  const wrap = $('#blocks');
+  DATA.themes.forEach((t, ti) => {
+    const b = el('button', 'theme-block');
+    b.style.setProperty('--c', t.color);
+    b.setAttribute('aria-label', `${t.short}: ${t.poll + t.quotes} perspectives`);
+    b.append(el('span', 'arrow', '→'));
+    b.append(el('h2', null, t.short));
+    const n = t.poll + t.quotes;
+    b.append(el('div', 'count label',
+      `${t.poll} statement${t.poll === 1 ? '' : 's'} · ${t.quotes} quote${t.quotes === 1 ? '' : 's'}`));
+    const tal = el('div', 'tally');
+    tal.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < n; i++) {
+      const c = el('i', i >= t.poll ? 'q' : null);
+      c.style.animationDelay = (ti * 70 + i * 16) + 'ms';
+      tal.append(c);
+    }
+    b.append(tal);
+    b.onclick = () => { l1Scroll = scrollY; location.hash = '#/' + t.key; };
+    wrap.append(b);
+  });
+}
+
+/* ─── LAYOUT ──────────────────────────────────────────── */
+function computeLayout(theme, mode) {
+  // session quotes live in their own Quotes tab now — only poll statements
+  // ever get plotted on the lane's axis
+  const M = MODES[mode];
+  const polls = recsOf(theme).filter(r => r.vote).sort((a, b) => M.score(b) - M.score(a) || b.vote.total - a.vote.total);
+
+  const smax = M.max(polls);
+  const W = $('#lane').clientWidth || 360;
+  const TOP = 40, BOT = 54;
+  const axisH = Math.max(300, polls.length * 62);
+  const height = TOP + axisH + BOT;
+
+  const MAXSQ = Math.max(46, Math.min(68, innerHeight * 0.09));
+  const placed = [];
+
+  const put = (r, y, size) => {
+    let x = 0, ok = false;
+    for (let k = 0; k < 18 && !ok; k++) {
+      x = SCRUB_INSET + 6 + Math.random() * Math.max(1, W - size - 12 - SCRUB_INSET);
+      ok = !placed.some(p =>
+        Math.abs(p.y + p.size / 2 - (y + size / 2)) < (p.size + size) / 2 + 7 &&
+        Math.abs(p.x + p.size / 2 - (x + size / 2)) < (p.size + size) / 2 + 7);
+    }
+    const item = { rec: r, x, y, size };
+    placed.push(item);
+    return item;
+  };
+
+  polls.forEach(r => {
+    const sc = Math.max(0, Math.min(100, M.score(r) / smax * 100));
+    const size = Math.round(32 + (MAXSQ - 32) * Math.sqrt(Math.min(r.vote.total, 250) / 250));
+    put(r, TOP + (1 - sc / 100) * axisH - size / 2, size);
+  });
+
+  placed.sort((a, b) => a.y - b.y);   // paging follows the lane, top to bottom
+  return { items: placed, height, TOP, axisH, W, smax };
+}
+
+/* ─── LEVEL 2 ─────────────────────────────────────────── */
+function renderL2() {
+  const t = state.theme;
+  document.documentElement.style.setProperty('--c', t.color);
+  $('#l2').style.setProperty('--c', t.color);
+  $('#l3').style.setProperty('--c', t.color);
+  document.querySelector('meta[name="theme-color"]')?.remove();
+  const mc = el('meta'); mc.name = 'theme-color'; mc.content = t.color; document.head.append(mc);
+
+  $('#t-title').textContent = t.short;
+  $('#t-count').textContent =
+    `${t.poll} statement${t.poll === 1 ? '' : 's'} · ${t.quotes} quote${t.quotes === 1 ? '' : 's'}`;
+  const d = (DESC.themes && DESC.themes[t.key]) || {};
+  $('#t-desc').textContent = d.description || '';
+
+  const i = DATA.themes.indexOf(t);
+  const nx = DATA.themes[(i + 1) % DATA.themes.length];
+  $('#nextT').innerHTML = 'Go to <b>' + esc(nx.short) + '</b> →';
+  $('#nextT').onclick = () => { location.hash = '#/' + nx.key; };
+
+  document.querySelectorAll('.pills button').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.mode === state.mode)));
+
+  if (state.mode === 'quotes') drawQuotes();
+  else if (state.mode === 'list') drawList();
+  else drawLane();
+}
+
+// how far down the nav + pills bar together push everything below them —
+// shared by anything that sticks just underneath both (minimap, order bar)
+const chromeH = () => $('.l2nav').offsetHeight + $('.pills').offsetHeight;
+
+// ~3 lines of the card's quote font, word-truncated with our own ellipsis
+// (a line-clamp is also set in CSS as a safety net for narrower screens)
+const QUOTE_CLIP = 185;
+function clip(text, max) {
+  const words = text.split(/\s+/);
+  let s = '', i = 0;
+  while (i < words.length && (s + (s ? ' ' : '') + words[i]).length <= max) s += (s ? ' ' : '') + words[i++];
+  return i < words.length ? s + '…' : s;
+}
+
+function drawQuotes() {
+  clearInterval(bubbleTimer);
+  updatePreview([]);   // no scrub/axis in quotes mode, so nothing can be "hit"
+  const lane = $('#lane');
+  lane.innerHTML = '';
+  lane.classList.remove('listView');
+  lane.classList.add('quotesList');
+  lane.style.height = '';
+  const quotes = recsOf(state.theme).filter(r => !r.vote);
+  state.layout = { items: quotes.map(r => ({ rec: r })) };
+
+  quotes.forEach((r, idx) => {
+    const card = el('button', 'qcard');
+    card.dataset.i = idx;
+    card.append(el('div', 'qeyebrow label', r.source));
+    card.append(el('p', 'qtext', '“' + clip(r.text, QUOTE_CLIP) + '”'));
+    card.onclick = () => open(idx);
+    lane.append(card);
+  });
+
+  $('#laneEnd').textContent = quotes.length
+    ? quotes.length + ' quote' + (quotes.length === 1 ? '' : 's') + ' in this theme'
+    : 'No session quotes recorded for this theme';
+}
+
+// LIST mode — same poll statements and ordering as the Map tab, just
+// laid out as a plain card stack (à la Quotes) instead of scattered on
+// an axis: full untruncated text, an emoji icon, and a tiered score pill.
+function drawList() {
+  clearInterval(bubbleTimer);
+  updatePreview([]);   // no scrub/axis in list mode, so nothing can be "hit"
+  const lane = $('#lane');
+  lane.innerHTML = '';
+  lane.classList.remove('quotesList');
+  lane.classList.add('listView');
+  lane.style.height = '';
+  const M = MODES.map;
+  const dir = listAsc ? -1 : 1;
+  const polls = recsOf(state.theme).filter(r => r.vote)
+    .sort((a, b) => dir * (M.score(b) - M.score(a)) || b.vote.total - a.vote.total);
+  state.layout = { items: polls.map(r => ({ rec: r })) };
+
+  const topRow = el('div', 'listTop');
+  const orderBtn = el('button', 'orderSwitch', 'Switch order');
+  orderBtn.onclick = () => { listAsc = !listAsc; drawList(); };
+  const key = el('div', 'listKey');
+  key.append(
+    el('span', 'lKeySq', 'A'), document.createTextNode('= Skeptics;'),
+    el('span', 'lKeySq', 'B'), document.createTextNode('= Optimists'));
+  topRow.append(orderBtn, key);
+  lane.append(topRow);
+  const setTopRowTop = () => { topRow.style.top = chromeH() + 'px'; };
+  setTopRowTop();
+  document.fonts.ready.then(setTopRowTop);   // web-font swap can nudge pills' height by a px after first paint
+
+  polls.forEach((r, idx) => {
+    const card = el('button', 'lcard');
+    card.dataset.i = idx;
+
+    // eyebrow: who said it — emoji plus their demographic chips (or
+    // "Host statement" for COCAP-seeded statements with no participant)
+    const who = el('div', 'lWho');
+    who.append(el('span', 'lEmoji', emojiFor(r)));
+    const demoWrap = el('div', 'lDemoWrap');
+    // "Not Provided" is a placeholder for a field the participant skipped,
+    // not a real demographic — drop it rather than display it verbatim
+    const demoChips = r.chips.filter(c => c.toLowerCase() !== 'not provided');
+    const demoText = r.origin === 'cocap_seed'
+      ? 'Host statement'
+      : (demoChips.length ? demoChips.map(titleCaseChip).join(', ') : 'Anonymous');
+    const demoTrack = el('span', 'lDemoTrack');
+    demoTrack.append(el('span', null, demoText));
+    demoWrap.append(demoTrack);
+    who.append(demoWrap);
+    card.append(who);
+
+    card.append(el('p', 'lText', '“' + r.text + '”'));
+
+    // bottom viz: each group's agree% mapped onto a disagree→agree track.
+    // Labels live in the card's normal flow, uncolored; only the track
+    // itself (line, squares, midpoint) sits inside the tinted bar.
+    const labels = el('div', 'lBarLabels');
+    const { cls, icon, label } = pillInfoFor(r.vote);
+    const pill = el('div', 'who ' + cls);
+    const pillAv = el('span', 'av');
+    if (icon) pillAv.innerHTML = `<img src="${icon}" alt="">`;
+    pill.append(pillAv, el('span', 'txt', label));
+    labels.append(el('span', null, '<- Disagree (0%)'), pill, el('span', null, 'Agree (100%) ->'));
+    card.append(labels);
+    const barWrap = el('div', 'lBar');
+    const track = el('div', 'lBarTrack');
+    const edgeLo = el('span', 'lBarEdge lo', '0%');
+    const edgeHi = el('span', 'lBarEdge hi', '100%');
+    const mid = el('div', 'lBarMid');
+    const line = el('div', 'lBarLine');
+    const sqA = el('div', 'lBarSq', 'A');
+    const sqB = el('div', 'lBarSq', 'B');
+    track.append(edgeLo, edgeHi, mid, line, sqA, sqB);
+    barWrap.append(track);
+    card.append(barWrap);
+
+    card.onclick = () => open(idx);
+    lane.append(card);
+
+    // the two squares + connecting line need the track's real rendered
+    // width, so this only makes sense once the card is actually in the DOM
+    const HALF_SQ = 13;
+    const w = track.clientWidth;
+    const xFor = pct => HALF_SQ + (w - HALF_SQ * 2) * Math.max(0, Math.min(100, pct)) / 100;
+    const xA = xFor(r.vote.A.pct), xB = xFor(r.vote.B.pct);
+    sqA.style.left = xA + 'px';
+    sqB.style.left = xB + 'px';
+    line.style.left = Math.min(xA, xB) + 'px';
+    line.style.width = Math.abs(xA - xB) + 'px';
+
+    // marquee the demographic line only if it's actually too long to fit,
+    // and only if the user hasn't asked for reduced motion
+    if (!REDUCED && demoTrack.scrollWidth > demoWrap.clientWidth) {
+      const singleW = demoTrack.firstChild.getBoundingClientRect().width;
+      const dupe = el('span', null, demoText);
+      dupe.setAttribute('aria-hidden', 'true');
+      demoTrack.append(dupe);
+      const gapPx = parseFloat(getComputedStyle(demoTrack).columnGap) || 0;
+      const dist = singleW + gapPx;
+      demoTrack.style.setProperty('--marquee-dist', `-${dist}px`);
+      demoTrack.style.setProperty('--marquee-dur', Math.max(4, dist / 34) + 's');
+      demoTrack.classList.add('marquee');
+    }
+  });
+
+  $('#laneEnd').textContent = polls.length + ' perspectives in this theme';
+}
+
+function drawLane() {
+  const lane = $('#lane');
+  lane.innerHTML = '';
+  lane.classList.remove('quotesList', 'listView');
+  const key = state.theme.key + '/' + state.mode;
+  const L = layoutCache[key] || (layoutCache[key] = computeLayout(state.theme, state.mode));
+  state.layout = L;
+  lane.style.height = L.height + 'px';
+
+  // scrub and minimap both anchor at the top score line and stick
+  // independently at their own offsets — each needs the whole (very
+  // tall) .lane as its containing block for that to hold for the full
+  // scroll, so both stay direct children of .lane rather than sharing
+  // a short wrapper. minimap is pulled back up to the same y via a
+  // negative margin sized to scrub's own fixed height (--scrub-h) —
+  // not a measured one, since scrub's pill text isn't set until
+  // updateScrub() runs further down, which would measure it empty.
+  const scrub = el('div', 'scrub');
+  scrub.style.marginTop = L.TOP + 'px';
+  scrub.setAttribute('aria-hidden', 'true');
+  const pill = el('span', 'pill'); pill.id = 'scrubVal';
+  scrub.append(pill, el('span', 'line'));
+  lane.append(scrub);
+
+  const mini = el('div', 'minimap');
+  mini.style.marginTop = 'calc(-1 * var(--scrub-h))';
+  mini.setAttribute('aria-hidden', 'true');
+  // sticks below both headers (nav + pills); fills the rest of the
+  // viewport, but never taller than the axis it's condensing. Set once
+  // now and again on the next frame — on a cold first paint the nav/
+  // pills heights can read a px short before layout fully settles.
+  const sizeMini = () => {
+    const topOffset = chromeH();
+    const available = innerHeight - topOffset - 24;
+    mini.style.top = topOffset + 'px';
+    mini.style.height = Math.max(120, Math.min(available, L.axisH)) + 'px';
+  };
+  sizeMini();
+  document.fonts.ready.then(sizeMini);   // web-font swap can nudge pills' height by a px after first paint
+  L.items.forEach(it => {
+    const frac = Math.max(0, Math.min(1, (it.y - L.TOP) / L.axisH));
+    const tick = el('i');
+    tick.style.top = (frac * 100) + '%';
+    mini.append(tick);
+  });
+  const marker = el('div', 'now'); marker.id = 'miniNow';
+  mini.append(marker);
+  lane.append(mini);
+
+  // axis
+  const tick = MODES[state.mode].tick;
+  [100, 75, 50, 25, 0].forEach(v => {
+    const row = el('div', 'axisrow');
+    row.style.top = (L.TOP + (1 - v / 100) * L.axisH) + 'px';
+    row.append(el('span', null, tick(Math.round(L.smax * v / 100))));
+    lane.append(row);
+  });
+  // squares
+  L.items.forEach((it, idx) => {
+    const b = el('button', 'sq');
+    b.style.cssText = `left:${it.x}px;top:${it.y}px;width:${it.size}px;height:${it.size}px`;
+    b.dataset.i = idx;
+    b.setAttribute('aria-label', 'Poll statement: ' + it.rec.text.slice(0, 70) + '…');
+    const f = el('span', 'face', emojiFor(it.rec));
+    f.style.fontSize = Math.round(it.size * 0.56) + 'px';
+    if (!REDUCED) {
+      f.style.setProperty('--dur', (2.2 + Math.random() * 1.7).toFixed(2) + 's');
+      f.style.setProperty('--del', (-Math.random() * 5).toFixed(2) + 's');
+    } else { f.style.animation = 'none'; }
+    b.append(f);
+    b.onclick = () => open(idx);
+    // hovering (mouse/trackpad users) also surfaces the preview, same as
+    // the scrub crossing it — pause the auto-cycle while hovered, then
+    // hand control back to whatever the indicator actually reflects
+    b.addEventListener('mouseenter', () => previewHover(idx));
+    b.addEventListener('mouseleave', previewHoverEnd);
+    lane.append(b);
+  });
+
+  $('#laneEnd').textContent = L.items.length + ' perspectives in this theme';
+
+  // startBubbles();   // ambient preview bubbles — suppressed for now, not removed
+  updateScrub();
+}
+
+/* ─── SCRUB ───────────────────────────────────────────── */
+// The scrub's own position is native CSS sticky — it just lives at the
+// max line until the scroll would carry it above mid-screen, then holds
+// there. All this does is read back wherever the browser actually put
+// it and label it with the axis value at that point.
+function updateScrub() {
+  if (!$('#l2').classList.contains('on') || !state.layout) return;
+  const L = state.layout;
+  const scrub = $('#lane .scrub');
+  const line = $('#lane .scrub .line');
+  if (!scrub || !line) return;
+  const laneTop = $('#lane').getBoundingClientRect().top;
+  const localY = scrub.getBoundingClientRect().top - laneTop;
+  const frac = Math.max(0, Math.min(1, 1 - (localY - L.TOP) / L.axisH));
+  const val = Math.round(L.smax * frac);
+  $('#scrubVal').textContent = SCRUB_TICK[state.mode](val);
+
+  // highlight whichever square(s) the line is actually crossing
+  const lineRect = line.getBoundingClientRect();
+  const lineY = lineRect.top + lineRect.height / 2 - laneTop;
+  const hitIdxs = [];
+  document.querySelectorAll('#lane .sq').forEach(n => {
+    const idx = +n.dataset.i;
+    const it = L.items[idx];
+    const hit = lineY >= it.y && lineY <= it.y + it.size;
+    n.classList.toggle('hit', hit);
+    if (hit) hitIdxs.push(idx);
+  });
+  updatePreview(hitIdxs);
+
+  // mirror the same position onto the minimap's "you are here" marker
+  const marker = $('#miniNow');
+  if (marker) marker.style.top = ((1 - frac) * 100) + '%';
+}
+addEventListener('scroll', () => {
+  if (scrubRaf) return;
+  scrubRaf = requestAnimationFrame(() => { scrubRaf = null; updateScrub(); });
+}, { passive: true });
+
+/* ─── STATEMENT PREVIEW (bottom sheet) ───────────────────
+   Previews whichever statement(s) the scrub line is crossing. Slides
+   up from the bottom the first time it has something to show, then —
+   per design — never slides away again: it just fades to transparent
+   when nothing's currently highlighted, and back in when something is.
+   With more than one hit at once, it cycles between them. */
+let previewShown = false, previewTimer = null, previewCycle = 0, previewHovering = false;
+const PREVIEW_CLIP = 120;   // ~2 lines at the card's text size
+
+function revealPreview() {
+  const wrap = $('#statPreview');
+  wrap.classList.remove('empty');
+  if (!previewShown) {
+    previewShown = true;
+    wrap.hidden = false;
+    requestAnimationFrame(() => wrap.classList.add('shown'));
+  }
+}
+
+function updatePreview(hitIdxs) {
+  if (previewHovering) return;   // hover has taken the wheel — leave it alone
+  const wrap = $('#statPreview');
+  if (!hitIdxs.length) {
+    clearInterval(previewTimer);
+    if (previewShown) wrap.classList.add('empty');
+    return;
+  }
+  revealPreview();
+
+  previewCycle %= hitIdxs.length;
+  renderPreviewItem(hitIdxs[previewCycle]);
+
+  clearInterval(previewTimer);
+  if (hitIdxs.length > 1) {
+    previewTimer = setInterval(() => {
+      previewCycle = (previewCycle + 1) % hitIdxs.length;
+      renderPreviewItem(hitIdxs[previewCycle]);
+    }, 5000);
+  }
+}
+
+function renderPreviewItem(idx) {
+  const r = state.layout.items[idx].rec;
+  const v = r.vote;
+  $('#spAv').textContent = emojiFor(r);
+  $('#spEyebrow').textContent = v.minAgree + '% AGREEMENT';
+  $('#spText').textContent = clip(r.text, PREVIEW_CLIP);
+  $('#spCard').onclick = () => open(idx);
+}
+
+// hovering a circle previews it directly, overriding the scrub-driven
+// cycling until the mouse leaves, at which point updateScrub() takes
+// the wheel back and restores whatever the indicator actually reflects
+function previewHover(idx) {
+  previewHovering = true;
+  clearInterval(previewTimer);
+  revealPreview();
+  renderPreviewItem(idx);
+}
+function previewHoverEnd() {
+  previewHovering = false;
+  updateScrub();
+}
+
+/* ─── AMBIENT PREVIEW BUBBLES ─────────────────────────── */
+const bubbles = [];
+function startBubbles() {
+  clearInterval(bubbleTimer);
+  bubbles.splice(0).forEach(b => b.remove());
+  $('#lane').classList.remove('bubbling');
+  if (REDUCED) return;
+  bubbleTimer = setInterval(tick, 5000);
+  setTimeout(tick, 1400);
+
+  function tick() {
+    if (!$('#l2').classList.contains('on') || $('#l3').classList.contains('on')) return;
+    const nodes = [...document.querySelectorAll('.sq')].filter(n => {
+      const r = n.getBoundingClientRect();
+      return r.top > 40 && r.bottom < innerHeight - 20;
+    });
+    if (!nodes.length) return;
+
+    // two or three at once, in and out together
+    const pool = nodes.slice().sort(() => Math.random() - .5);
+    const count = Math.min(pool.length, 2 + (Math.random() < .5 ? 1 : 0));
+    const made = [];
+    for (const n of pool) {
+      if (made.length >= count) break;
+      const it = state.layout.items[+n.dataset.i];
+      if (made.some(m => Math.abs(m.it.y - it.y) < 46)) continue;   // no crowding
+      const words = it.rec.text.split(/\s+/);
+      let s = '', i = 0;
+      while (i < words.length && (s + words[i]).length < 40) s += (s ? ' ' : '') + words[i++];
+      const bub = el('div', 'bubble', '“' + s + (i < words.length ? '…' : '') + '”');
+      bub.style.top = (it.y + it.size * .34) + 'px';           // sits over the square
+      // clamp against the bubble's own CSS max-width (210px) — not a
+      // guess at its rendered width — so it can never push past either
+      // edge of the lane and force mobile browsers to zoom the page out
+      const left = Math.max(4, Math.min(it.x + it.size * .3, state.layout.W - 214));
+      bub.style.left = left + 'px';
+      $('#lane').append(bub);
+      made.push({ it, n });
+      bubbles.push(bub);
+    }
+    if (!made.length) return;
+    const lane = $('#lane');
+    lane.classList.add('bubbling');
+    made.forEach(m => m.n.classList.add('hl'));
+    requestAnimationFrame(() => bubbles.forEach(b => b.classList.add('in')));
+    setTimeout(() => {
+      const batch = bubbles.splice(0);
+      batch.forEach(b => b.classList.remove('in'));
+      lane.classList.remove('bubbling');
+      made.forEach(m => m.n.classList.remove('hl'));
+      setTimeout(() => batch.forEach(b => b.remove()), 340);
+    }, 3200);
+  }
+}
+
+/* ─── LEVEL 3 ─────────────────────────────────────────── */
+function open(idx) {
+  state.sel = idx;
+  const it = state.layout.items[idx];
+  const r = it.rec;
+  const t = state.theme;
+
+  const itemSel = state.mode === 'quotes' ? '.qcard' : state.mode === 'list' ? '.lcard' : '.sq';
+  document.querySelectorAll(itemSel + '.sel').forEach(n => n.classList.remove('sel'));
+  document.querySelector(`${itemSel}[data-i="${idx}"]`)?.classList.add('sel');
+
+  // consensus / difference / plain-agreement indicator — polls only,
+  // quotes carry no vote data so the pill is hidden for those
+  const who = $('#who');
+  who.hidden = !r.vote;
+  if (r.vote) {
+    const { cls, icon, label } = pillInfoFor(r.vote);
+    who.className = 'who ' + cls;
+    $('#whoAv').innerHTML = icon ? `<img src="${icon}" alt="">` : '';
+    $('#whoTxt').textContent = label;
+  }
+
+  const q = $('#s-text');
+  q.textContent = '“' + r.text + '”';
+  q.style.setProperty('--qs', '30px');
+
+  // meta panel
+  const m = $('#s-meta');
+  m.innerHTML = '';
+  const src = el('section');
+  src.append(el('h4', null, 'Source'));
+  const sv = el('p', 'src', r.source);
+  const info = r.origin === 'cocap_seed'
+    ? 'Host statement'
+    : (r.chips.length ? r.chips : ['Anonymous']).map(titleCaseChip).join(', ');
+  sv.append(el('small', null, 'Participant: ' + info));
+  src.append(sv);
+  m.append(src);
+
+  if (r.vote) {
+    const p = el('section');
+    p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
+    [['A', 'Group A (skeptic-leaning)'], ['B', 'Group B (optimist-leaning)']].forEach(([k, lab]) => {
+      const g = r.vote[k], row = el('div', 'grow');
+      const top = el('div', 'top');
+      top.append(el('span', null, lab));
+      const bb = el('b', null, g.pct + '% agree'); top.append(bb);
+      row.append(top);
+      const bar = el('div', 'bar');
+      const tot = Math.max(1, g.n);
+      [['d', g.d], ['p', g.p], ['a', g.a]].forEach(([cls, v]) => {
+        const i2 = el('i', cls);
+        i2.style.flex = (v / tot) + ' 0 0';
+        if (!v) i2.style.display = 'none';
+        bar.append(i2);
+      });
+      row.append(bar);
+      p.append(row);
+    });
+    const key = el('div', 'barkey');
+    [['d', 'Disagree'], ['p', 'Pass'], ['a', 'Agree']].forEach(([c, l]) => {
+      const s = el('span'); s.append(el('i', c)); s.append(document.createTextNode(l)); key.append(s);
+    });
+    p.append(key);
+    m.append(p);
+  }
+
+  if (r.tags.length) {
+    const s = el('section');
+    s.append(el('h4', null, 'Tags'));
+    const w = el('div', 'tags');
+    r.tags.forEach(tg => w.append(el('i', null, tg)));
+    s.append(w);
+    m.append(s);
+  }
+
+  const n = state.layout.items.length;
+  $('#pos').innerHTML = (idx + 1) + ' <em>|</em> ' + n;
+  $('#prev').disabled = idx === 0;
+  $('#next').disabled = idx === n - 1;
+
+  document.body.classList.add('reading');
+  $('#l3').classList.add('on');
+  $('#l3').setAttribute('aria-hidden', 'false');
+  $('#cardbody').scrollTop = 0;
+  autoScroll();
+  if (state.mode === 'map') keepInView(it);
+  $('#closeb').focus({ preventScroll: true });
+}
+
+// Slide the lane so the chosen square sits in the strip of colour left
+// visible above the centred card.
+function keepInView(it) {
+  const laneTop = $('#lane').offsetTop;
+  const strip = Math.max(40, document.querySelector('.card').getBoundingClientRect().top);
+  const want = Math.max(9, (strip - it.size) / 2);
+  const top = Math.max(0, laneTop + it.y - want);
+  scrollTo({ top, behavior: REDUCED ? 'auto' : 'smooth' });
+  // smooth scrolling doesn't always land exactly — nudge once it settles
+  const settle = () => {
+    const n = document.querySelector('.sq.sel');
+    if (n && Math.abs(n.getBoundingClientRect().top - want) > 3)
+      scrollTo({ top, behavior: 'auto' });
+  };
+  clearTimeout(kivTimer);
+  if ('onscrollend' in window) addEventListener('scrollend', settle, { once: true });
+  else kivTimer = setTimeout(settle, 620);
+}
+
+function autoScroll() {
+  cancelAnimationFrame(scrollRaf);
+  const w = $('#cardbody');
+  if (REDUCED) return;
+  // only creep through a long statement — never scroll on into the metadata
+  const limit = () => Math.max(0, Math.min(
+    w.scrollHeight - w.clientHeight,
+    $('.quotewrap').offsetHeight - w.clientHeight + 20));
+  let stopped = false;
+  const stop = () => { stopped = true; cancelAnimationFrame(scrollRaf); off(); };
+  const off = () => ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(e => w.removeEventListener(e, stop));
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(e => w.addEventListener(e, stop, { passive: true }));
+
+  const t0 = performance.now();
+  const step = now => {
+    if (stopped || !$('#l3').classList.contains('on')) return off();
+    const over = limit();
+    if (over < 6) return off();
+    if (now - t0 > 1800) w.scrollTop = Math.min(over, (now - t0 - 1800) * 0.016);
+    if (w.scrollTop >= over - 1) return off();
+    scrollRaf = requestAnimationFrame(step);
+  };
+  scrollRaf = requestAnimationFrame(step);
+}
+
+function close() {
+  clearTimeout(kivTimer);
+  cancelAnimationFrame(scrollRaf);
+  document.body.classList.remove('reading');
+  $('#l3').classList.remove('on');
+  $('#l3').setAttribute('aria-hidden', 'true');
+  const s = document.querySelector('.sq.sel, .qcard.sel, .lcard.sel');
+  s?.classList.remove('sel');
+  s?.focus({ preventScroll: true });
+  state.sel = -1;
+}
+const page = d => {
+  const i = state.sel + d;
+  if (i >= 0 && i < state.layout.items.length) open(i);
+};
+
+/* ─── ROUTING ─────────────────────────────────────────── */
+function route() {
+  const parts = location.hash.replace(/^#\/?/, '').split('/');
+  const key = parts[0], mode = parts[1];
+  const t = byKey[key];
+  if (!t) {
+    clearInterval(bubbleTimer); close();
+    const back = state.theme !== null;
+    $('#l2').classList.remove('on');
+    $('#l2').setAttribute('aria-hidden', 'true');
+    $('#l1').style.display = '';
+    document.title = 'Bloom — A Conversation on AI in Central Oregon';
+    document.documentElement.style.setProperty('--c', 'var(--home)');
+    state.theme = null;
+    if (back) scrollTo({ top: l1Scroll, behavior: 'auto' });
+    return;
+  }
+  const themeChanged = state.theme !== t;
+  const changed = themeChanged || (mode && mode !== state.mode);
+  state.theme = t;
+  if (mode && (MODES[mode] || mode === 'quotes' || mode === 'list')) state.mode = mode;
+  else if (themeChanged) state.mode = 'list';   // every theme starts on List unless the link says otherwise
+  $('#l1').style.display = 'none';
+  $('#l2').classList.add('on');
+  $('#l2').setAttribute('aria-hidden', 'false');
+  document.title = t.short + ' — Bloom';
+  if (state.sel > -1) close();
+  renderL2();
+  if (changed) scrollTo({ top: 0, behavior: 'auto' });
+}
+
+/* ─── WIRE UP ─────────────────────────────────────────── */
+buildL1();
+$('#back').onclick = () => { location.hash = '#/'; };
+$('#closeb').onclick = close;
+$('#scrim').onclick = close;
+$('#prev').onclick = () => page(-1);
+$('#next').onclick = () => page(1);
+document.querySelectorAll('.pills button').forEach(b => b.onclick = () => {
+  state.mode = b.dataset.mode;
+  location.hash = '#/' + state.theme.key + '/' + state.mode;
+  renderL2();
+});
+addEventListener('keydown', e => {
+  if (!$('#l3').classList.contains('on')) return;
+  if (e.key === 'Escape') { close(); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { page(1); e.preventDefault(); }
+  if (e.key === 'ArrowLeft') { page(-1); e.preventDefault(); }
+});
+addEventListener('hashchange', route);
+
+let rw;
+addEventListener('resize', () => {
+  clearTimeout(rw);
+  rw = setTimeout(() => {
+    if (!$('#l2').classList.contains('on')) return;
+    const s = state.sel;
+    if (state.mode === 'quotes') drawQuotes();
+    else if (state.mode === 'list') drawList();
+    else drawLane();
+    if (s > -1) open(s);
+  }, 220);
+});
+
+route();
+})();
+</script>
+</body>
+</html>
