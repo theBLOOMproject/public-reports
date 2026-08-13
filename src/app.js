@@ -36,7 +36,13 @@ const emojiFor = r => {
 
 const byKey = {};
 DATA.themes.forEach(t => byKey[t.key] = t);
-const recsOf = t => DATA.records.filter(r => r.theme === t.n);
+// A theme *is* the records carrying any of its tags — membership is derived, not
+// stored, so a statement that spans two subjects belongs to both themes.
+const recsOf = t => DATA.records.filter(r => r.tags.some(g => t.tags.includes(g)));
+const pollsOf = t => recsOf(t).filter(r => r.vote);
+const quotesOf = t => recsOf(t).filter(r => !r.vote);
+const countLabel = (np, nq) =>
+  `${np} statement${np === 1 ? '' : 's'} · ${nq} quote${nq === 1 ? '' : 's'}`;
 
 // The Map tab's one axis over the poll statements. List mode reuses this
 // same score to sort its cards, just renders them differently. Session
@@ -74,17 +80,16 @@ function buildL1() {
   const wrap = $('#blocks');
   DATA.themes.forEach((t, ti) => {
     const b = el('button', 'theme-block');
+    const np = pollsOf(t).length, nq = quotesOf(t).length, n = np + nq;
     b.style.setProperty('--c', t.color);
-    b.setAttribute('aria-label', `${t.short}: ${t.poll + t.quotes} perspectives`);
+    b.setAttribute('aria-label', `${t.short}: ${n} perspectives`);
     b.append(el('span', 'arrow', '→'));
     b.append(el('h2', null, t.short));
-    const n = t.poll + t.quotes;
-    b.append(el('div', 'count label',
-      `${t.poll} statement${t.poll === 1 ? '' : 's'} · ${t.quotes} quote${t.quotes === 1 ? '' : 's'}`));
+    b.append(el('div', 'count label', countLabel(np, nq)));
     const tal = el('div', 'tally');
     tal.setAttribute('aria-hidden', 'true');
     for (let i = 0; i < n; i++) {
-      const c = el('i', i >= t.poll ? 'q' : null);
+      const c = el('i', i >= np ? 'q' : null);
       c.style.animationDelay = (ti * 70 + i * 16) + 'ms';
       tal.append(c);
     }
@@ -99,7 +104,7 @@ function computeLayout(theme, mode) {
   // session quotes live in their own Quotes tab now — only poll statements
   // ever get plotted on the lane's axis
   const M = MODES[mode];
-  const polls = recsOf(theme).filter(r => r.vote).sort((a, b) => M.score(b) - M.score(a) || b.vote.total - a.vote.total);
+  const polls = pollsOf(theme).sort((a, b) => M.score(b) - M.score(a) || b.vote.total - a.vote.total);
 
   const smax = M.max(polls);
   const W = $('#lane').clientWidth || 360;
@@ -143,8 +148,7 @@ function renderL2() {
   const mc = el('meta'); mc.name = 'theme-color'; mc.content = t.color; document.head.append(mc);
 
   $('#t-title').textContent = t.short;
-  $('#t-count').textContent =
-    `${t.poll} statement${t.poll === 1 ? '' : 's'} · ${t.quotes} quote${t.quotes === 1 ? '' : 's'}`;
+  $('#t-count').textContent = countLabel(pollsOf(t).length, quotesOf(t).length);
   const d = (DESC.themes && DESC.themes[t.key]) || {};
   $('#t-desc').textContent = d.description || '';
 
@@ -183,7 +187,7 @@ function drawQuotes() {
   lane.classList.remove('listView');
   lane.classList.add('quotesList');
   lane.style.height = '';
-  const quotes = recsOf(state.theme).filter(r => !r.vote);
+  const quotes = quotesOf(state.theme);
   state.layout = { items: quotes.map(r => ({ rec: r })) };
 
   quotes.forEach((r, idx) => {
@@ -213,7 +217,7 @@ function drawList() {
   lane.style.height = '';
   const M = MODES.map;
   const dir = listAsc ? -1 : 1;
-  const polls = recsOf(state.theme).filter(r => r.vote)
+  const polls = pollsOf(state.theme)
     .sort((a, b) => dir * (M.score(b) - M.score(a)) || b.vote.total - a.vote.total);
   state.layout = { items: polls.map(r => ({ rec: r })) };
 

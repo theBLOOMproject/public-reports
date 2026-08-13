@@ -15,16 +15,31 @@ const TEMPLATE = path.join(ROOT, 'index.template.html');
 const DIST = path.join(ROOT, 'dist');
 const OUTPUT = path.join(DIST, 'index.html');
 
+// Theme membership is derived: a record belongs to every theme that lists one of its
+// tags. A record carrying no tag any theme claims does not land somewhere wrong — it
+// drops out of the report altogether, silently. That is the one way this data can be
+// well-formed JSON and still be broken, so it fails the build.
+function checkEveryRecordReachable(data, file) {
+  const claimed = new Set(data.themes.flatMap(t => t.tags));
+  const orphans = data.records.filter(r => !r.tags.some(tag => claimed.has(tag)));
+  if (orphans.length) {
+    throw new Error(`${file}: ${orphans.length} record(s) carry no tag claimed by any `
+      + `theme and would appear under no theme at all: ${orphans.map(r => r.id).join(', ')}`);
+  }
+}
+
 // Placeholder id -> { file, kind }. Every id needs a matching <!--INJECT:{id}-->
 // in index.template.html; for 'json' blocks the id is also the <script> element id
 // the app reads the data back out of.
 //
 //   json — parsed (so a syntax error fails the build), then re-serialized minified
 //   raw  — inlined verbatim into the <style> / <script> tag that wraps it
+//
+// An optional 'check' runs against the parsed JSON for invariants the parse can't see.
 const BLOCKS = {
   'app-css': { file: 'src/app.css', kind: 'raw' },
   'theme-descriptions': { file: 'data/theme-descriptions.json', kind: 'json' },
-  'bloom-data': { file: 'data/bloom-data.json', kind: 'json' },
+  'bloom-data': { file: 'data/bloom-data.json', kind: 'json', check: checkEveryRecordReachable },
   'app-js': { file: 'src/app.js', kind: 'raw' },
 };
 
@@ -50,17 +65,20 @@ function readSource(relPath) {
   }
 }
 
-function renderBlock({ file, kind }) {
+function renderBlock({ file, kind, check }) {
   const raw = readSource(file);
   // The placeholder sits on its own line between the open and close tags, so the
   // source file's own trailing newline would double up. Drop it; the files keep it.
   if (kind === 'raw') return escapeSourceForTag(raw.replace(/\n$/, ''));
+  let data;
   try {
-    // No indent argument to stringify — that is the minification.
-    return escapeJsonForScriptTag(JSON.stringify(JSON.parse(raw)));
+    data = JSON.parse(raw);
   } catch (err) {
     throw new Error(`${file} is not valid JSON: ${err.message}`);
   }
+  if (check) check(data, file);
+  // No indent argument to stringify — that is the minification.
+  return escapeJsonForScriptTag(JSON.stringify(data));
 }
 
 function build() {

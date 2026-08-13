@@ -33,12 +33,13 @@ The `BLOCKS` map in `build.js` binds each placeholder id to a source file and a 
 - `raw` (`src/app.css`, `src/app.js`) — inlined verbatim into the wrapping `<style>` /
   `<script>` tag, minus the file’s own trailing newline.
 - `json` (`data/*.json`) — parsed, then re-serialized without indentation; that parse *is*
-  both the minification and the validity check.
+  both the minification and the validity check. An optional `check` on the `BLOCKS` entry
+  runs against the parsed data for invariants the parse cannot see.
 
 Adding a data file means adding a `BLOCKS` entry *and* a matching
 `<script type="application/json" id="...">` element in the template. The build fails
-loudly on a missing source file, a missing placeholder, an unreplaced placeholder, or
-invalid JSON.
+loudly on a missing source file, a missing placeholder, an unreplaced placeholder,
+invalid JSON, or a failed `check`.
 
 Two different escapes stop injected content from closing its own tag, and they are not
 interchangeable. JSON gets every `<` rewritten as `\u003c` — safe because it is all
@@ -91,21 +92,43 @@ consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`, and the clip lengt
 
 `data/bloom-data.json` — `{ themes, records, groups }`.
 
-- `themes[]`: `n` (1-based id used by `record.theme`), `key` (URL slug and lookup key in
-  `byKey`), `short`/`full`, `color` (drives the `--c` CSS custom property and the
-  `theme-color` meta), and precomputed `poll`/`quotes` counts shown in the header.
+- `themes[]`: `key` (URL slug and lookup key in `byKey`), `short`/`full`, `color` (drives
+  the `--c` CSS custom property and the `theme-color` meta), and `tags[]` — the tags whose
+  presence puts a record in this theme.
 - `records[]`: `kind` is `poll` or `quote`. Poll records have `vote` with per-group `A`/`B`
   tallies plus derived `gap`, `minAgree`, `consensus`; quote records have `vote: null` and
   are therefore only ever reachable via the Quotes tab. `origin` is
   `participant` | `cocap_seed` | `listening_session` and selects the avatar emoji
   (`emojiFor()`); `chips[]` is raw ALL-CAPS metadata (demographics, session, date)
-  title-cased at render time by `titleCaseChip()`.
+  title-cased at render time by `titleCaseChip()`. `tags[]` is described below.
 - `groups`: labels for Polis groups A (skeptic-leaning) and B (optimist-leaning).
+
+### Themes are derived from tags
+
+A record has no `theme` field. It belongs to **every** theme listing one of its tags, so
+membership is derived (`recsOf()` in app.js) and **overlapping** — 10 records currently
+sit in two themes, so the per-theme counts sum to 133 across 122 distinct records.
+
+`themes[].tags` is the whole specification; nothing labels a tag as one kind or another.
+22 of the 30 tags are listed by some theme. The other 8 — `Youth`, `AI Companies`,
+`Government / Public Sector`, `Economic Benefit`, `Distribution of Public Benefits`,
+`Positive Effects`, `Indigenous`, `Medicine` — are listed by none. They still render as
+chips in the L3 modal, they just don't place a record. They went unlisted because they
+name the actor, population or valence rather than the subject: `Youth` sits on statements
+about therapy, chat-log privacy and the incoming workforce, none of which is schooling.
+
+**Adding a record means giving it at least one tag some theme lists.** A record whose
+tags no theme claims doesn't land in the wrong place, it vanishes from the report — so
+`build.js` fails the build on it (`checkEveryRecordReachable`). Adding a *new* tag that
+should place records means adding it to a theme's `tags` too, or it stays decorative.
+
+Per-theme counts are derived at render time (`pollsOf()` / `quotesOf()`); there is
+nothing to keep in sync when records are added or removed.
 
 `data/theme-descriptions.json` — editorial prose keyed by theme `key`, rendered under the L2
 header. Its `_readme` field documents provenance. Percentages in these descriptions are
 hand-written and **not** recomputed by the app; verify any number you change against the
 underlying statement.
 
-Counts in `themes[].poll`/`.quotes` are likewise stored, not derived — keep them in sync
-when adding or removing records.
+Three fields are currently read by nothing: `themes[].full` (the long name — readers only
+ever see `short`), `records[].source` and `records[].inReport`.
