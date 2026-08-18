@@ -4,6 +4,7 @@
 const J = id => JSON.parse(document.getElementById(id).textContent);
 const DATA = J('bloom-data');
 const DESC = J('theme-descriptions');
+const INSIGHTS = J('bloom-insights');
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
@@ -44,21 +45,28 @@ const quotesOf = t => recsOf(t).filter(r => !r.vote);
 const countLabel = (np, nq) =>
   `${np} statement${np === 1 ? '' : 's'} · ${nq} quote${nq === 1 ? '' : 's'}`;
 
-// The Map tab's one axis over the poll statements. List mode reuses this
-// same score to sort its cards, just renders them differently. Session
-// quotes carry no vote, so they only ever appear under the Quotes tab.
-const MODES = {
-  map: { score: r => r.vote.minAgree, max: () => 100, tick: v => v + '% AGREE' }
+const byId = {};
+DATA.records.forEach(r => byId[r.id] = r);
+
+// a short, human phrase for who said it — gender + place, drawn straight
+// from the real chip data (no fabricated demographics). Falls back
+// gracefully for host-seeded statements or participants missing a chip.
+const demoLineFor = r => {
+  if (r.origin === 'cocap_seed') return 'Host statement';
+  const gender = r.chips.find(c => c === 'FEMALE' || c === 'MALE' || c === 'OTHER');
+  const who = gender === 'FEMALE' ? 'Woman' : gender === 'MALE' ? 'Man' : 'Person';
+  return r.place ? `${who} from ${r.place}` : (gender ? who : 'Community member');
 };
-// short readout for the scrub pill — the axis row already spells the unit out in full
-const SCRUB_TICK = { map: v => v + '%' };
-const SCRUB_INSET = 70;   // px reserved on the left of the lane so squares clear the scrub pill
 
 // thresholds for the statement-card indicator pill (consensus/difference/neutral)
 const DIFFERENCE_MIN_GAP = 35;    // group-to-group gap (points) counted as a real split
 const CONSENSUS_MIN_AGREE = 65;   // minAgree (%) counted as both groups genuinely on board
 
-// shared by the statement modal's pill and the List card's bar-top pill
+// the card's per-group %-agree readout is colored by how high it is,
+// not by which group it belongs to: 0-33 red, 33-67 amber, 67-100 green
+const tierColorFor = pct => pct >= 67 ? 'var(--agree)' : pct >= 33 ? 'var(--amber)' : 'var(--disagree)';
+
+// shared by the statement modal's pill and the new statement card's pill
 const pillInfoFor = v => {
   if (v.gap >= DIFFERENCE_MIN_GAP)
     return { cls: 'difference', icon: 'static/difference.svg', label: 'DIFFERENCE (' + v.gap + ' PTS)' };
@@ -67,13 +75,36 @@ const pillInfoFor = v => {
   return { cls: 'neutral', icon: null, label: v.minAgree + '% AGREE' };
 };
 
-const state = { theme: null, mode: 'list', sel: -1, layout: [] };
-let bubbleTimer = null, scrollRaf = null, l1Scroll = 0, kivTimer = null, scrubRaf = null;
-let listAsc = false;   // List tab sort direction — toggled by the "Switch order" button
-// square placement is randomized (jittered scatter, collision avoidance), so it's
-// computed once per theme/mode and cached — revisiting, switching modes back and
-// forth, or a resize (e.g. mobile browser chrome collapsing) must not reshuffle it
-const layoutCache = {};
+// turns a claim + hand-assigned direction into TOC/headline copy. Some
+// claims are already written as "People disagree about whether X" —
+// those are used verbatim (with the verb emphasized) rather than
+// double-wrapped in another "People X that…" template.
+const CLAIM_VERB_RE = /^People (agree|disagree)\b/i;
+const claimPhrase = (claim, direction) => {
+  const m = claim.match(CLAIM_VERB_RE);
+  if (m) {
+    const verb = m[1].toLowerCase(), rest = claim.slice(m[0].length);
+    return {
+      toc: 'People ' + verb.toUpperCase() + rest,
+      head: 'People <em class="ic-' + verb + '">' + verb + '</em>' + rest + '.',
+    };
+  }
+  const firstWord = claim.match(/^\S+/)[0];
+  const lead = /^[A-Z]{2,}$/.test(firstWord.replace(/[^A-Za-z]/g, ''))
+    ? claim : claim.charAt(0).toLowerCase() + claim.slice(1);
+  const TOC_LEAD = { agree: 'AGREE that', disagree: 'DISAGREE that', divided: 'are DIVIDED on whether', mixed: 'are MIXED on whether' };
+  const HEAD = {
+    agree: 'People generally <em class="ic-agree">agree</em> that ' + lead + '.',
+    disagree: 'People generally <em class="ic-disagree">disagree</em> that ' + lead + '.',
+    divided: 'People are <em>divided</em> over whether ' + lead + '.',
+    mixed: 'People have <em>mixed</em> views on whether ' + lead + '.',
+  };
+  return { toc: 'People ' + (TOC_LEAD[direction] || TOC_LEAD.mixed) + ' ' + lead, head: HEAD[direction] || HEAD.mixed };
+};
+
+const state = { theme: null, sel: -1, layout: [] };
+let scrollRaf = null, l1Scroll = 0;
+let carouselTimers = [];
 
 /* ─── LEVEL 1 ─────────────────────────────────────────── */
 function buildL1() {
@@ -99,45 +130,6 @@ function buildL1() {
   });
 }
 
-/* ─── LAYOUT ──────────────────────────────────────────── */
-function computeLayout(theme, mode) {
-  // session quotes live in their own Quotes tab now — only poll statements
-  // ever get plotted on the lane's axis
-  const M = MODES[mode];
-  const polls = pollsOf(theme).sort((a, b) => M.score(b) - M.score(a) || b.vote.total - a.vote.total);
-
-  const smax = M.max(polls);
-  const W = $('#lane').clientWidth || 360;
-  const TOP = 40, BOT = 54;
-  const axisH = Math.max(300, polls.length * 62);
-  const height = TOP + axisH + BOT;
-
-  const MAXSQ = Math.max(46, Math.min(68, innerHeight * 0.09));
-  const placed = [];
-
-  const put = (r, y, size) => {
-    let x = 0, ok = false;
-    for (let k = 0; k < 18 && !ok; k++) {
-      x = SCRUB_INSET + 6 + Math.random() * Math.max(1, W - size - 12 - SCRUB_INSET);
-      ok = !placed.some(p =>
-        Math.abs(p.y + p.size / 2 - (y + size / 2)) < (p.size + size) / 2 + 7 &&
-        Math.abs(p.x + p.size / 2 - (x + size / 2)) < (p.size + size) / 2 + 7);
-    }
-    const item = { rec: r, x, y, size };
-    placed.push(item);
-    return item;
-  };
-
-  polls.forEach(r => {
-    const sc = Math.max(0, Math.min(100, M.score(r) / smax * 100));
-    const size = Math.round(32 + (MAXSQ - 32) * Math.sqrt(Math.min(r.vote.total, 250) / 250));
-    put(r, TOP + (1 - sc / 100) * axisH - size / 2, size);
-  });
-
-  placed.sort((a, b) => a.y - b.y);   // paging follows the lane, top to bottom
-  return { items: placed, height, TOP, axisH, W, smax };
-}
-
 /* ─── LEVEL 2 ─────────────────────────────────────────── */
 function renderL2() {
   const t = state.theme;
@@ -148,7 +140,8 @@ function renderL2() {
   const mc = el('meta'); mc.name = 'theme-color'; mc.content = t.color; document.head.append(mc);
 
   $('#t-title').textContent = t.short;
-  $('#t-count').textContent = countLabel(pollsOf(t).length, quotesOf(t).length);
+  const polls = pollsOf(t).sort((a, b) => b.vote.minAgree - a.vote.minAgree || b.vote.total - a.vote.total);
+  $('#t-count').textContent = polls.length + ' statement' + (polls.length === 1 ? '' : 's');
   const d = (DESC.themes && DESC.themes[t.key]) || {};
   $('#t-desc').textContent = d.description || '';
 
@@ -157,402 +150,152 @@ function renderL2() {
   $('#nextT').innerHTML = 'Go to <b>' + esc(nx.short) + '</b> →';
   $('#nextT').onclick = () => { location.hash = '#/' + nx.key; };
 
-  document.querySelectorAll('.pills button').forEach(b =>
-    b.setAttribute('aria-pressed', String(b.dataset.mode === state.mode)));
+  // paging order for L3 = this theme's own polls, plus any insight-cited
+  // record that isn't (e.g. a statement cross-tagged elsewhere under the
+  // current tag model) — appended so its carousel card still opens/pages,
+  // without counting toward "All Statements"
+  const pollIdSet = new Set(polls.map(r => r.id));
+  const insights = INSIGHTS[t.key] || [];
+  const layoutRecs = polls.slice();
+  const seen = new Set(pollIdSet);
+  insights.forEach(ins => ins.ids.forEach(id => {
+    const r = byId[id];
+    if (r && !seen.has(r.id)) { seen.add(r.id); layoutRecs.push(r); }
+  }));
+  state.layout = { items: layoutRecs.map(r => ({ rec: r })) };
 
-  if (state.mode === 'quotes') drawQuotes();
-  else if (state.mode === 'list') drawList();
-  else drawLane();
+  buildToc(t, insights, polls.length);
+  buildInsights(t, insights);
+  buildAllStatements(t, pollIdSet);
 }
 
-// how far down the nav + pills bar together push everything below them —
-// shared by anything that sticks just underneath both (minimap, order bar)
-const chromeH = () => $('.l2nav').offsetHeight + $('.pills').offsetHeight;
-
-// ~3 lines of the card's quote font, word-truncated with our own ellipsis
-// (a line-clamp is also set in CSS as a safety net for narrower screens)
-const QUOTE_CLIP = 185;
-function clip(text, max) {
-  const words = text.split(/\s+/);
-  let s = '', i = 0;
-  while (i < words.length && (s + (s ? ' ' : '') + words[i]).length <= max) s += (s ? ' ' : '') + words[i++];
-  return i < words.length ? s + '…' : s;
+function openRecord(r) {
+  const idx = state.layout.items.findIndex(it => it.rec.id === r.id);
+  if (idx > -1) open(idx);
 }
 
-function drawQuotes() {
-  clearInterval(bubbleTimer);
-  updatePreview([]);   // no scrub/axis in quotes mode, so nothing can be "hit"
-  const lane = $('#lane');
-  lane.innerHTML = '';
-  lane.classList.remove('listView');
-  lane.classList.add('quotesList');
-  lane.style.height = '';
-  const quotes = quotesOf(state.theme);
-  state.layout = { items: quotes.map(r => ({ rec: r })) };
+/* the statement card — used by both the insight carousels and the
+   full All Statements stack */
+function buildCard(r) {
+  const card = el('button', 'icard');
+  card.dataset.rid = r.id;
 
-  quotes.forEach((r, idx) => {
-    const card = el('button', 'qcard');
-    card.dataset.i = idx;
-    card.append(el('div', 'qeyebrow label', r.source));
-    card.append(el('p', 'qtext', '“' + clip(r.text, QUOTE_CLIP) + '”'));
-    card.onclick = () => open(idx);
-    lane.append(card);
+  const { cls, icon, label } = pillInfoFor(r.vote);
+  const pill = el('div', 'who ' + cls);
+  const av = el('span', 'av');
+  if (icon) av.innerHTML = `<img src="${icon}" alt="">`;
+  pill.append(av, el('span', 'txt', label));
+  card.append(pill);
+
+  card.append(el('p', 'icText', '“' + r.text + '”'));
+
+  const who = el('div', 'icWho');
+  who.append(el('span', 'icAv', emojiFor(r)));
+  who.append(el('span', 'icDemo', demoLineFor(r)));
+  card.append(who);
+
+  const stats = el('div', 'icStats');
+  [['A', 'Skeptics'], ['B', 'Optimists']].forEach(([key, groupLabel]) => {
+    const v = r.vote[key];
+    const pct = Math.max(0, Math.min(100, v.pct));
+    const color = tierColorFor(pct);
+    const stat = el('div', 'icStat');
+    const val = el('div', 'icVal', v.pct + '%');
+    val.style.color = color;
+    stat.append(val);
+    stat.append(el('div', 'icLabel', groupLabel));
+    const track = el('div', 'icBarTrack');
+    const fill = el('div', 'icBarFill');
+    fill.style.width = pct + '%';
+    fill.style.background = color;
+    track.append(fill);
+    stat.append(track);
+    stats.append(stat);
   });
+  card.append(stats);
 
-  $('#laneEnd').textContent = quotes.length
-    ? quotes.length + ' quote' + (quotes.length === 1 ? '' : 's') + ' in this theme'
-    : 'No session quotes recorded for this theme';
+  card.onclick = () => openRecord(r);
+  return card;
 }
 
-// LIST mode — same poll statements and ordering as the Map tab, just
-// laid out as a plain card stack (à la Quotes) instead of scattered on
-// an axis: full untruncated text, an emoji icon, and a tiered score pill.
-function drawList() {
-  clearInterval(bubbleTimer);
-  updatePreview([]);   // no scrub/axis in list mode, so nothing can be "hit"
-  const lane = $('#lane');
-  lane.innerHTML = '';
-  lane.classList.remove('quotesList');
-  lane.classList.add('listView');
-  lane.style.height = '';
-  const M = MODES.map;
-  const dir = listAsc ? -1 : 1;
-  const polls = pollsOf(state.theme)
-    .sort((a, b) => dir * (M.score(b) - M.score(a)) || b.vote.total - a.vote.total);
-  state.layout = { items: polls.map(r => ({ rec: r })) };
+function buildToc(t, insights, npolls) {
+  const toc = $('#toc');
+  const list = $('#tocList');
+  list.innerHTML = '';
+  toc.hidden = !insights.length;
+  if (!insights.length) return;
 
-  const topRow = el('div', 'listTop');
-  const orderBtn = el('button', 'orderSwitch', 'Switch order');
-  orderBtn.onclick = () => { listAsc = !listAsc; drawList(); };
-  const key = el('div', 'listKey');
-  key.append(
-    el('span', 'lKeySq', 'A'), document.createTextNode('= Skeptics;'),
-    el('span', 'lKeySq', 'B'), document.createTextNode('= Optimists'));
-  topRow.append(orderBtn, key);
-  lane.append(topRow);
-  const setTopRowTop = () => { topRow.style.top = chromeH() + 'px'; };
-  setTopRowTop();
-  document.fonts.ready.then(setTopRowTop);   // web-font swap can nudge pills' height by a px after first paint
-
-  polls.forEach((r, idx) => {
-    const card = el('button', 'lcard');
-    card.dataset.i = idx;
-
-    // eyebrow: who said it — emoji plus their demographic chips (or
-    // "Host statement" for COCAP-seeded statements with no participant)
-    const who = el('div', 'lWho');
-    who.append(el('span', 'lEmoji', emojiFor(r)));
-    const demoWrap = el('div', 'lDemoWrap');
-    // "Not Provided" is a placeholder for a field the participant skipped,
-    // not a real demographic — drop it rather than display it verbatim
-    const demoChips = r.chips.filter(c => c.toLowerCase() !== 'not provided');
-    const demoText = r.origin === 'cocap_seed'
-      ? 'Host statement'
-      : (demoChips.length ? demoChips.map(titleCaseChip).join(', ') : 'Anonymous');
-    const demoTrack = el('span', 'lDemoTrack');
-    demoTrack.append(el('span', null, demoText));
-    demoWrap.append(demoTrack);
-    who.append(demoWrap);
-    card.append(who);
-
-    card.append(el('p', 'lText', '“' + r.text + '”'));
-
-    // bottom viz: each group's agree% mapped onto a disagree→agree track.
-    // Labels live in the card's normal flow, uncolored; only the track
-    // itself (line, squares, midpoint) sits inside the tinted bar.
-    const labels = el('div', 'lBarLabels');
-    const { cls, icon, label } = pillInfoFor(r.vote);
-    const pill = el('div', 'who ' + cls);
-    const pillAv = el('span', 'av');
-    if (icon) pillAv.innerHTML = `<img src="${icon}" alt="">`;
-    pill.append(pillAv, el('span', 'txt', label));
-    labels.append(el('span', null, '<- Disagree (0%)'), pill, el('span', null, 'Agree (100%) ->'));
-    card.append(labels);
-    const barWrap = el('div', 'lBar');
-    const track = el('div', 'lBarTrack');
-    const edgeLo = el('span', 'lBarEdge lo', '0%');
-    const edgeHi = el('span', 'lBarEdge hi', '100%');
-    const mid = el('div', 'lBarMid');
-    const line = el('div', 'lBarLine');
-    const sqA = el('div', 'lBarSq', 'A');
-    const sqB = el('div', 'lBarSq', 'B');
-    track.append(edgeLo, edgeHi, mid, line, sqA, sqB);
-    barWrap.append(track);
-    card.append(barWrap);
-
-    card.onclick = () => open(idx);
-    lane.append(card);
-
-    // the two squares + connecting line need the track's real rendered
-    // width, so this only makes sense once the card is actually in the DOM
-    const HALF_SQ = 13;
-    const w = track.clientWidth;
-    const xFor = pct => HALF_SQ + (w - HALF_SQ * 2) * Math.max(0, Math.min(100, pct)) / 100;
-    const xA = xFor(r.vote.A.pct), xB = xFor(r.vote.B.pct);
-    sqA.style.left = xA + 'px';
-    sqB.style.left = xB + 'px';
-    line.style.left = Math.min(xA, xB) + 'px';
-    line.style.width = Math.abs(xA - xB) + 'px';
-
-    // marquee the demographic line only if it's actually too long to fit,
-    // and only if the user hasn't asked for reduced motion
-    if (!REDUCED && demoTrack.scrollWidth > demoWrap.clientWidth) {
-      const singleW = demoTrack.firstChild.getBoundingClientRect().width;
-      const dupe = el('span', null, demoText);
-      dupe.setAttribute('aria-hidden', 'true');
-      demoTrack.append(dupe);
-      const gapPx = parseFloat(getComputedStyle(demoTrack).columnGap) || 0;
-      const dist = singleW + gapPx;
-      demoTrack.style.setProperty('--marquee-dist', `-${dist}px`);
-      demoTrack.style.setProperty('--marquee-dur', Math.max(4, dist / 34) + 's');
-      demoTrack.classList.add('marquee');
-    }
+  insights.forEach((ins, i) => {
+    const { toc: line } = claimPhrase(ins.claim, ins.direction);
+    const item = el('button', 'tocItem');
+    item.append(el('span', null, line));
+    item.append(el('span', 'arrow', '→'));
+    item.onclick = () => document.getElementById('insight-' + t.key + '-' + i)
+      ?.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+    list.append(item);
   });
-
-  $('#laneEnd').textContent = polls.length + ' perspectives in this theme';
+  const seeAll = el('button', 'tocSeeAll', `See all ${npolls} statement${npolls === 1 ? '' : 's'} →`);
+  seeAll.onclick = () => $('#allStatements')
+    ?.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+  list.append(seeAll);
 }
 
-function drawLane() {
-  const lane = $('#lane');
-  lane.innerHTML = '';
-  lane.classList.remove('quotesList', 'listView');
-  const key = state.theme.key + '/' + state.mode;
-  const L = layoutCache[key] || (layoutCache[key] = computeLayout(state.theme, state.mode));
-  state.layout = L;
-  lane.style.height = L.height + 'px';
-
-  // scrub and minimap both anchor at the top score line and stick
-  // independently at their own offsets — each needs the whole (very
-  // tall) .lane as its containing block for that to hold for the full
-  // scroll, so both stay direct children of .lane rather than sharing
-  // a short wrapper. minimap is pulled back up to the same y via a
-  // negative margin sized to scrub's own fixed height (--scrub-h) —
-  // not a measured one, since scrub's pill text isn't set until
-  // updateScrub() runs further down, which would measure it empty.
-  const scrub = el('div', 'scrub');
-  scrub.style.marginTop = L.TOP + 'px';
-  scrub.setAttribute('aria-hidden', 'true');
-  const pill = el('span', 'pill'); pill.id = 'scrubVal';
-  scrub.append(pill, el('span', 'line'));
-  lane.append(scrub);
-
-  const mini = el('div', 'minimap');
-  mini.style.marginTop = 'calc(-1 * var(--scrub-h))';
-  mini.setAttribute('aria-hidden', 'true');
-  // sticks below both headers (nav + pills); fills the rest of the
-  // viewport, but never taller than the axis it's condensing. Set once
-  // now and again on the next frame — on a cold first paint the nav/
-  // pills heights can read a px short before layout fully settles.
-  const sizeMini = () => {
-    const topOffset = chromeH();
-    const available = innerHeight - topOffset - 24;
-    mini.style.top = topOffset + 'px';
-    mini.style.height = Math.max(120, Math.min(available, L.axisH)) + 'px';
+// carousels auto-advance to the next card every 5-10s (staggered per
+// carousel so several on the page don't all shift in lockstep), and stop
+// for good the moment someone actually touches/scrolls/wheels one —
+// re-rendering the page (theme switch) clears every outstanding timer
+function stopCarouselAutoplay() {
+  carouselTimers.forEach(clearInterval);
+  carouselTimers = [];
+}
+function attachCarouselAutoplay(carousel) {
+  const cards = [...carousel.children];
+  if (REDUCED || cards.length < 2) return;
+  let idx = 0;
+  const timer = setInterval(() => {
+    idx = (idx + 1) % cards.length;
+    // scroll only the carousel's own horizontal axis — scrollIntoView (even
+    // with block:'nearest') can still nudge the page's vertical scroll,
+    // which reads as the whole viewport jumping around on its own
+    const card = cards[idx];
+    const left = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
+    carousel.scrollTo({ left, behavior: 'smooth' });
+  }, 5000 + Math.random() * 5000);
+  carouselTimers.push(timer);
+  const stop = () => {
+    clearInterval(timer);
+    ['pointerdown', 'wheel', 'touchstart'].forEach(e => carousel.removeEventListener(e, stop));
   };
-  sizeMini();
-  document.fonts.ready.then(sizeMini);   // web-font swap can nudge pills' height by a px after first paint
-  L.items.forEach(it => {
-    const frac = Math.max(0, Math.min(1, (it.y - L.TOP) / L.axisH));
-    const tick = el('i');
-    tick.style.top = (frac * 100) + '%';
-    mini.append(tick);
+  ['pointerdown', 'wheel', 'touchstart'].forEach(e => carousel.addEventListener(e, stop, { passive: true }));
+}
+
+function buildInsights(t, insights) {
+  const wrap = $('#insightsWrap');
+  stopCarouselAutoplay();
+  wrap.innerHTML = '';
+  insights.forEach((ins, i) => {
+    const records = ins.ids.map(id => byId[id]).filter(Boolean);
+    if (!records.length) return;
+    const section = el('section', 'insight');
+    section.id = 'insight-' + t.key + '-' + i;
+    const { head } = claimPhrase(ins.claim, ins.direction);
+    const h2 = el('h2', 'insightHead');
+    h2.innerHTML = head;
+    section.append(h2);
+    const carousel = el('div', 'carousel');
+    records.forEach(r => carousel.append(buildCard(r)));
+    section.append(carousel);
+    wrap.append(section);
+    attachCarouselAutoplay(carousel);
   });
-  const marker = el('div', 'now'); marker.id = 'miniNow';
-  mini.append(marker);
-  lane.append(mini);
-
-  // axis
-  const tick = MODES[state.mode].tick;
-  [100, 75, 50, 25, 0].forEach(v => {
-    const row = el('div', 'axisrow');
-    row.style.top = (L.TOP + (1 - v / 100) * L.axisH) + 'px';
-    row.append(el('span', null, tick(Math.round(L.smax * v / 100))));
-    lane.append(row);
-  });
-  // squares
-  L.items.forEach((it, idx) => {
-    const b = el('button', 'sq');
-    b.style.cssText = `left:${it.x}px;top:${it.y}px;width:${it.size}px;height:${it.size}px`;
-    b.dataset.i = idx;
-    b.setAttribute('aria-label', 'Poll statement: ' + it.rec.text.slice(0, 70) + '…');
-    const f = el('span', 'face', emojiFor(it.rec));
-    f.style.fontSize = Math.round(it.size * 0.56) + 'px';
-    if (!REDUCED) {
-      f.style.setProperty('--dur', (2.2 + Math.random() * 1.7).toFixed(2) + 's');
-      f.style.setProperty('--del', (-Math.random() * 5).toFixed(2) + 's');
-    } else { f.style.animation = 'none'; }
-    b.append(f);
-    b.onclick = () => open(idx);
-    // hovering (mouse/trackpad users) also surfaces the preview, same as
-    // the scrub crossing it — pause the auto-cycle while hovered, then
-    // hand control back to whatever the indicator actually reflects
-    b.addEventListener('mouseenter', () => previewHover(idx));
-    b.addEventListener('mouseleave', previewHoverEnd);
-    lane.append(b);
-  });
-
-  $('#laneEnd').textContent = L.items.length + ' perspectives in this theme';
-
-  // startBubbles();   // ambient preview bubbles — suppressed for now, not removed
-  updateScrub();
 }
 
-/* ─── SCRUB ───────────────────────────────────────────── */
-// The scrub's own position is native CSS sticky — it just lives at the
-// max line until the scroll would carry it above mid-screen, then holds
-// there. All this does is read back wherever the browser actually put
-// it and label it with the axis value at that point.
-function updateScrub() {
-  if (!$('#l2').classList.contains('on') || !state.layout) return;
-  const L = state.layout;
-  const scrub = $('#lane .scrub');
-  const line = $('#lane .scrub .line');
-  if (!scrub || !line) return;
-  const laneTop = $('#lane').getBoundingClientRect().top;
-  const localY = scrub.getBoundingClientRect().top - laneTop;
-  const frac = Math.max(0, Math.min(1, 1 - (localY - L.TOP) / L.axisH));
-  const val = Math.round(L.smax * frac);
-  $('#scrubVal').textContent = SCRUB_TICK[state.mode](val);
-
-  // highlight whichever square(s) the line is actually crossing
-  const lineRect = line.getBoundingClientRect();
-  const lineY = lineRect.top + lineRect.height / 2 - laneTop;
-  const hitIdxs = [];
-  document.querySelectorAll('#lane .sq').forEach(n => {
-    const idx = +n.dataset.i;
-    const it = L.items[idx];
-    const hit = lineY >= it.y && lineY <= it.y + it.size;
-    n.classList.toggle('hit', hit);
-    if (hit) hitIdxs.push(idx);
-  });
-  updatePreview(hitIdxs);
-
-  // mirror the same position onto the minimap's "you are here" marker
-  const marker = $('#miniNow');
-  if (marker) marker.style.top = ((1 - frac) * 100) + '%';
-}
-addEventListener('scroll', () => {
-  if (scrubRaf) return;
-  scrubRaf = requestAnimationFrame(() => { scrubRaf = null; updateScrub(); });
-}, { passive: true });
-
-/* ─── STATEMENT PREVIEW (bottom sheet) ───────────────────
-   Previews whichever statement(s) the scrub line is crossing. Slides
-   up from the bottom the first time it has something to show, then —
-   per design — never slides away again: it just fades to transparent
-   when nothing's currently highlighted, and back in when something is.
-   With more than one hit at once, it cycles between them. */
-let previewShown = false, previewTimer = null, previewCycle = 0, previewHovering = false;
-const PREVIEW_CLIP = 120;   // ~2 lines at the card's text size
-
-function revealPreview() {
-  const wrap = $('#statPreview');
-  wrap.classList.remove('empty');
-  if (!previewShown) {
-    previewShown = true;
-    wrap.hidden = false;
-    requestAnimationFrame(() => wrap.classList.add('shown'));
-  }
-}
-
-function updatePreview(hitIdxs) {
-  if (previewHovering) return;   // hover has taken the wheel — leave it alone
-  const wrap = $('#statPreview');
-  if (!hitIdxs.length) {
-    clearInterval(previewTimer);
-    if (previewShown) wrap.classList.add('empty');
-    return;
-  }
-  revealPreview();
-
-  previewCycle %= hitIdxs.length;
-  renderPreviewItem(hitIdxs[previewCycle]);
-
-  clearInterval(previewTimer);
-  if (hitIdxs.length > 1) {
-    previewTimer = setInterval(() => {
-      previewCycle = (previewCycle + 1) % hitIdxs.length;
-      renderPreviewItem(hitIdxs[previewCycle]);
-    }, 5000);
-  }
-}
-
-function renderPreviewItem(idx) {
-  const r = state.layout.items[idx].rec;
-  const v = r.vote;
-  $('#spAv').textContent = emojiFor(r);
-  $('#spEyebrow').textContent = v.minAgree + '% AGREEMENT';
-  $('#spText').textContent = clip(r.text, PREVIEW_CLIP);
-  $('#spCard').onclick = () => open(idx);
-}
-
-// hovering a circle previews it directly, overriding the scrub-driven
-// cycling until the mouse leaves, at which point updateScrub() takes
-// the wheel back and restores whatever the indicator actually reflects
-function previewHover(idx) {
-  previewHovering = true;
-  clearInterval(previewTimer);
-  revealPreview();
-  renderPreviewItem(idx);
-}
-function previewHoverEnd() {
-  previewHovering = false;
-  updateScrub();
-}
-
-/* ─── AMBIENT PREVIEW BUBBLES ─────────────────────────── */
-const bubbles = [];
-function startBubbles() {
-  clearInterval(bubbleTimer);
-  bubbles.splice(0).forEach(b => b.remove());
-  $('#lane').classList.remove('bubbling');
-  if (REDUCED) return;
-  bubbleTimer = setInterval(tick, 5000);
-  setTimeout(tick, 1400);
-
-  function tick() {
-    if (!$('#l2').classList.contains('on') || $('#l3').classList.contains('on')) return;
-    const nodes = [...document.querySelectorAll('.sq')].filter(n => {
-      const r = n.getBoundingClientRect();
-      return r.top > 40 && r.bottom < innerHeight - 20;
-    });
-    if (!nodes.length) return;
-
-    // two or three at once, in and out together
-    const pool = nodes.slice().sort(() => Math.random() - .5);
-    const count = Math.min(pool.length, 2 + (Math.random() < .5 ? 1 : 0));
-    const made = [];
-    for (const n of pool) {
-      if (made.length >= count) break;
-      const it = state.layout.items[+n.dataset.i];
-      if (made.some(m => Math.abs(m.it.y - it.y) < 46)) continue;   // no crowding
-      const words = it.rec.text.split(/\s+/);
-      let s = '', i = 0;
-      while (i < words.length && (s + words[i]).length < 40) s += (s ? ' ' : '') + words[i++];
-      const bub = el('div', 'bubble', '“' + s + (i < words.length ? '…' : '') + '”');
-      bub.style.top = (it.y + it.size * .34) + 'px';           // sits over the square
-      // clamp against the bubble's own CSS max-width (210px) — not a
-      // guess at its rendered width — so it can never push past either
-      // edge of the lane and force mobile browsers to zoom the page out
-      const left = Math.max(4, Math.min(it.x + it.size * .3, state.layout.W - 214));
-      bub.style.left = left + 'px';
-      $('#lane').append(bub);
-      made.push({ it, n });
-      bubbles.push(bub);
-    }
-    if (!made.length) return;
-    const lane = $('#lane');
-    lane.classList.add('bubbling');
-    made.forEach(m => m.n.classList.add('hl'));
-    requestAnimationFrame(() => bubbles.forEach(b => b.classList.add('in')));
-    setTimeout(() => {
-      const batch = bubbles.splice(0);
-      batch.forEach(b => b.classList.remove('in'));
-      lane.classList.remove('bubbling');
-      made.forEach(m => m.n.classList.remove('hl'));
-      setTimeout(() => batch.forEach(b => b.remove()), 340);
-    }, 3200);
-  }
+function buildAllStatements(t, pollIdSet) {
+  const list = $('#allList');
+  list.innerHTML = '';
+  const polls = state.layout.items.map(it => it.rec).filter(r => pollIdSet.has(r.id));
+  polls.forEach(r => list.append(buildCard(r)));
+  $('#laneEnd').textContent = polls.length + ' statement' + (polls.length === 1 ? '' : 's') + ' in this theme';
 }
 
 /* ─── LEVEL 3 ─────────────────────────────────────────── */
@@ -560,11 +303,11 @@ function open(idx) {
   state.sel = idx;
   const it = state.layout.items[idx];
   const r = it.rec;
-  const t = state.theme;
 
-  const itemSel = state.mode === 'quotes' ? '.qcard' : state.mode === 'list' ? '.lcard' : '.sq';
-  document.querySelectorAll(itemSel + '.sel').forEach(n => n.classList.remove('sel'));
-  document.querySelector(`${itemSel}[data-i="${idx}"]`)?.classList.add('sel');
+  // a statement's card can appear twice on the page (once in its
+  // insight's carousel, once in All Statements) — mark every instance
+  document.querySelectorAll('.icard.sel').forEach(n => n.classList.remove('sel'));
+  document.querySelectorAll(`.icard[data-rid="${r.id}"]`).forEach(n => n.classList.add('sel'));
 
   // consensus / difference / plain-agreement indicator — polls only,
   // quotes carry no vote data so the pill is hidden for those
@@ -641,27 +384,7 @@ function open(idx) {
   $('#l3').setAttribute('aria-hidden', 'false');
   $('#cardbody').scrollTop = 0;
   autoScroll();
-  if (state.mode === 'map') keepInView(it);
   $('#closeb').focus({ preventScroll: true });
-}
-
-// Slide the lane so the chosen square sits in the strip of colour left
-// visible above the centred card.
-function keepInView(it) {
-  const laneTop = $('#lane').offsetTop;
-  const strip = Math.max(40, document.querySelector('.card').getBoundingClientRect().top);
-  const want = Math.max(9, (strip - it.size) / 2);
-  const top = Math.max(0, laneTop + it.y - want);
-  scrollTo({ top, behavior: REDUCED ? 'auto' : 'smooth' });
-  // smooth scrolling doesn't always land exactly — nudge once it settles
-  const settle = () => {
-    const n = document.querySelector('.sq.sel');
-    if (n && Math.abs(n.getBoundingClientRect().top - want) > 3)
-      scrollTo({ top, behavior: 'auto' });
-  };
-  clearTimeout(kivTimer);
-  if ('onscrollend' in window) addEventListener('scrollend', settle, { once: true });
-  else kivTimer = setTimeout(settle, 620);
 }
 
 function autoScroll() {
@@ -690,12 +413,11 @@ function autoScroll() {
 }
 
 function close() {
-  clearTimeout(kivTimer);
   cancelAnimationFrame(scrollRaf);
   document.body.classList.remove('reading');
   $('#l3').classList.remove('on');
   $('#l3').setAttribute('aria-hidden', 'true');
-  const s = document.querySelector('.sq.sel, .qcard.sel, .lcard.sel');
+  const s = document.querySelector('.icard.sel');
   s?.classList.remove('sel');
   s?.focus({ preventScroll: true });
   state.sel = -1;
@@ -707,11 +429,13 @@ const page = d => {
 
 /* ─── ROUTING ─────────────────────────────────────────── */
 function route() {
-  const parts = location.hash.replace(/^#\/?/, '').split('/');
-  const key = parts[0], mode = parts[1];
+  // no mode segment anymore — split()[0] also means an old bookmarked
+  // #/{themeKey}/map (or /list, /quotes) link still lands on the right
+  // theme; the trailing segment is simply ignored.
+  const key = location.hash.replace(/^#\/?/, '').split('/')[0];
   const t = byKey[key];
   if (!t) {
-    clearInterval(bubbleTimer); close();
+    close();
     const back = state.theme !== null;
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
@@ -723,17 +447,14 @@ function route() {
     return;
   }
   const themeChanged = state.theme !== t;
-  const changed = themeChanged || (mode && mode !== state.mode);
   state.theme = t;
-  if (mode && (MODES[mode] || mode === 'quotes' || mode === 'list')) state.mode = mode;
-  else if (themeChanged) state.mode = 'list';   // every theme starts on List unless the link says otherwise
   $('#l1').style.display = 'none';
   $('#l2').classList.add('on');
   $('#l2').setAttribute('aria-hidden', 'false');
   document.title = t.short + ' — Bloom';
   if (state.sel > -1) close();
   renderL2();
-  if (changed) scrollTo({ top: 0, behavior: 'auto' });
+  if (themeChanged) scrollTo({ top: 0, behavior: 'auto' });
 }
 
 /* ─── WIRE UP ─────────────────────────────────────────── */
@@ -743,11 +464,6 @@ $('#closeb').onclick = close;
 $('#scrim').onclick = close;
 $('#prev').onclick = () => page(-1);
 $('#next').onclick = () => page(1);
-document.querySelectorAll('.pills button').forEach(b => b.onclick = () => {
-  state.mode = b.dataset.mode;
-  location.hash = '#/' + state.theme.key + '/' + state.mode;
-  renderL2();
-});
 addEventListener('keydown', e => {
   if (!$('#l3').classList.contains('on')) return;
   if (e.key === 'Escape') { close(); e.preventDefault(); }
@@ -755,19 +471,6 @@ addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') { page(-1); e.preventDefault(); }
 });
 addEventListener('hashchange', route);
-
-let rw;
-addEventListener('resize', () => {
-  clearTimeout(rw);
-  rw = setTimeout(() => {
-    if (!$('#l2').classList.contains('on')) return;
-    const s = state.sel;
-    if (state.mode === 'quotes') drawQuotes();
-    else if (state.mode === 'list') drawList();
-    else drawLane();
-    if (s > -1) open(s);
-  }, 220);
-});
 
 route();
 })();

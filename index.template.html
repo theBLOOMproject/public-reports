@@ -42,27 +42,20 @@
       <button id="back">← Back</button>
       <button class="nextT" id="nextT"></button>
     </div>
-    <div class="statPreview" id="statPreview" hidden aria-hidden="true">
-      <button class="spCard" id="spCard" type="button">
-        <span class="spAv" id="spAv"></span>
-        <span class="spBody">
-          <span class="spEyebrow" id="spEyebrow"></span>
-          <span class="spText" id="spText"></span>
-        </span>
-      </button>
-    </div>
     <div class="hero">
       <h1 id="t-title"></h1>
       <div class="count label" id="t-count"></div>
       <p class="desc" id="t-desc"></p>
-      <div class="cta">Click on any perspectives below:</div>
     </div>
-    <div class="pills" role="group" aria-label="Sort perspectives">
-      <button data-mode="map" aria-pressed="false">Map</button>
-      <button data-mode="list" aria-pressed="true">List</button>
-      <button data-mode="quotes" aria-pressed="false">Quotes</button>
-    </div>
-    <div class="lane" id="lane"></div>
+    <nav class="toc" id="toc" aria-label="What we learned">
+      <h2>What we learned</h2>
+      <div class="tocList" id="tocList"></div>
+    </nav>
+    <div class="insightsWrap" id="insightsWrap"></div>
+    <section class="allStatements" id="allStatements">
+      <h2>All Statements</h2>
+      <div class="allList" id="allList"></div>
+    </section>
     <div class="lane-end" id="laneEnd"></div>
   </section>
 
@@ -96,6 +89,7 @@
 <!-- ═══ DATA — from data/*.json, minified. Read back by id, in src/app.js. ═══ -->
 <script type="application/json" id="theme-descriptions"><!--INJECT:theme-descriptions--></script>
 <script type="application/json" id="bloom-data"><!--INJECT:bloom-data--></script>
+<script type="application/json" id="bloom-insights"><!--INJECT:bloom-insights--></script>
 
 <!-- ═══ APP — from src/app.js. ═══ -->
 <script>
