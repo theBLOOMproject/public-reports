@@ -4100,8 +4100,16 @@
       "inReport": true
     }
   ],
-  "groups": {
-    "A": "Group A · skeptic-leaning",
-    "B": "Group B · optimist-leaning"
-  }
+  "groups": [
+    {
+      "key": "A",
+      "label": "Group A · skeptic-leaning",
+      "members": 131
+    },
+    {
+      "key": "B",
+      "label": "Group B · optimist-leaning",
+      "members": 201
+    }
+  ]
 }

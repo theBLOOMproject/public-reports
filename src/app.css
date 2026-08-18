@@ -336,17 +336,22 @@ body.reading .listTop{opacity:0;pointer-events:none}
   padding:10px 18px 14px;
   background:color-mix(in srgb,var(--c) 13%,transparent);
 }
-.lBarTrack{position:relative;height:26px}
-/* 0%/100% end labels — centered on the same 13px inset the A/B squares
-   use at their own extremes (HALF_SQ in the JS), so a square sitting
+/* --sq is the group square's size, and the JS reads it back to compute the
+   track's usable width — change it here, not there. Polis can return more
+   clusters than the two this started with, so past three the squares shrink
+   to keep them all on the track. */
+.lBarTrack{position:relative;--sq:26px;height:var(--sq)}
+.lBarTrack.tight{--sq:20px}
+/* 0%/100% end labels — centered on the same half-square inset the group
+   squares use at their own extremes (HALF_SQ in the JS), so a square sitting
    right on 0% or 100% lands directly on top of its label */
 .lBarEdge{
   position:absolute;top:50%;
   font-family:var(--geom);font-weight:700;font-size:14px;
   color:var(--c);opacity:.65;
 }
-.lBarEdge.lo{left:13px;transform:translate(-50%,-50%)}
-.lBarEdge.hi{right:13px;transform:translate(50%,-50%)}
+.lBarEdge.lo{left:calc(var(--sq) / 2);transform:translate(-50%,-50%)}
+.lBarEdge.hi{right:calc(var(--sq) / 2);transform:translate(50%,-50%)}
 .lBarMid{
   position:absolute;left:50%;top:0;bottom:0;width:1px;
   background:rgba(0,0,0,.18);
@@ -357,7 +362,7 @@ body.reading .listTop{opacity:0;pointer-events:none}
   background:var(--c);transform:translateY(-50%);
 }
 .lBarSq{
-  position:absolute;top:50%;width:26px;height:26px;
+  position:absolute;top:50%;width:var(--sq);height:var(--sq);
   transform:translate(-50%,-50%);
   background:var(--c);border-radius:6px;
   display:grid;place-items:center;

@@ -41,6 +41,28 @@ DATA.themes.forEach(t => byKey[t.key] = t);
 const recsOf = t => DATA.records.filter(r => r.tags.some(g => t.tags.includes(g)));
 const pollsOf = t => recsOf(t).filter(r => r.vote);
 const quotesOf = t => recsOf(t).filter(r => !r.vote);
+// Opinion groups come from Polis's clustering, which re-runs as votes arrive: both
+// how many there are and which is which can change between refreshes. Nothing here
+// may assume two, or assume that "A" means what it meant last time — the labels are
+// data, reapplied editorially after each refresh. Order is DATA.groups' order.
+const groupsOf = v => DATA.groups.map(g => ({ ...g, ...v[g.key] }));
+// The List tab's key row expands each square's letter into what that group means.
+// Labels read "Group A · skeptic-leaning" and the letter is already on the square,
+// so show only the part that carries meaning. A refresh resets labels to a bare
+// "Group A", which falls through unchanged — the missing editorial pass stays visible
+// rather than being papered over with an empty string.
+const groupTag = g => {
+  const label = g.label.trim();
+  const prefix = 'Group ' + g.key;
+  if (!label.toLowerCase().startsWith(prefix.toLowerCase())) return label;
+  // Separator is whatever the editor typed — "Group A · skeptics", "Group A: skeptics",
+  // "Group A (skeptics)" all reduce to the same thing.
+  const rest = label.slice(prefix.length)
+    .replace(/^[\s·:—–-]+/, '')
+    .replace(/^\((.*)\)$/, '$1')
+    .trim();
+  return rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : label;
+};
 const countLabel = (np, nq) =>
   `${np} statement${np === 1 ? '' : 's'} · ${nq} quote${nq === 1 ? '' : 's'}`;
 
@@ -204,6 +226,26 @@ function drawQuotes() {
     : 'No session quotes recorded for this theme';
 }
 
+// Two groups landing within a point or two of each other put their squares on top
+// of one another and the letters become unreadable, so spread them to a minimum
+// spacing — the same accommodation computeLayout() makes for the Map tab's circles.
+// Forward pass pushes right off the leftmost square; that can run the rightmost one
+// past the end of the track, so a second pass walks back pushing left. With more
+// squares than the track can physically hold, the clamp wins and they overlap again.
+function nudgeApart(xs, minGap, lo, hi) {
+  const order = xs.map((x, i) => i).sort((a, b) => xs[a] - xs[b]);
+  const out = xs.slice();
+  order.forEach((i, n) => {
+    out[i] = n === 0 ? Math.max(lo, xs[i]) : Math.max(xs[i], out[order[n - 1]] + minGap);
+  });
+  for (let n = order.length - 1; n >= 0; n--) {
+    const i = order[n];
+    const limit = n === order.length - 1 ? hi : out[order[n + 1]] - minGap;
+    out[i] = Math.max(lo, Math.min(out[i], limit));
+  }
+  return out;
+}
+
 // LIST mode — same poll statements and ordering as the Map tab, just
 // laid out as a plain card stack (à la Quotes) instead of scattered on
 // an axis: full untruncated text, an emoji icon, and a tiered score pill.
@@ -225,9 +267,11 @@ function drawList() {
   const orderBtn = el('button', 'orderSwitch', 'Switch order');
   orderBtn.onclick = () => { listAsc = !listAsc; drawList(); };
   const key = el('div', 'listKey');
-  key.append(
-    el('span', 'lKeySq', 'A'), document.createTextNode('= Skeptics;'),
-    el('span', 'lKeySq', 'B'), document.createTextNode('= Optimists'));
+  DATA.groups.forEach((g, i) => {
+    const last = i === DATA.groups.length - 1;
+    key.append(el('span', 'lKeySq', g.key),
+      document.createTextNode('= ' + groupTag(g) + (last ? '' : ';')));
+  });
   topRow.append(orderBtn, key);
   lane.append(topRow);
   const setTopRowTop = () => { topRow.style.top = chromeH() + 'px'; };
@@ -270,29 +314,33 @@ function drawList() {
     card.append(labels);
     const barWrap = el('div', 'lBar');
     const track = el('div', 'lBarTrack');
+    // beyond three groups full-size squares cannot all fit on the track
+    if (DATA.groups.length > 3) track.classList.add('tight');
     const edgeLo = el('span', 'lBarEdge lo', '0%');
     const edgeHi = el('span', 'lBarEdge hi', '100%');
     const mid = el('div', 'lBarMid');
     const line = el('div', 'lBarLine');
-    const sqA = el('div', 'lBarSq', 'A');
-    const sqB = el('div', 'lBarSq', 'B');
-    track.append(edgeLo, edgeHi, mid, line, sqA, sqB);
+    const groups = groupsOf(r.vote);
+    const squares = groups.map(g => el('div', 'lBarSq', g.key));
+    track.append(edgeLo, edgeHi, mid, line, ...squares);
     barWrap.append(track);
     card.append(barWrap);
 
     card.onclick = () => open(idx);
     lane.append(card);
 
-    // the two squares + connecting line need the track's real rendered
-    // width, so this only makes sense once the card is actually in the DOM
-    const HALF_SQ = 13;
+    // the squares + connecting line need the track's real rendered width,
+    // so this only makes sense once the card is actually in the DOM
+    const SQ = parseFloat(getComputedStyle(track).getPropertyValue('--sq')) || 26;
+    const HALF_SQ = SQ / 2;
     const w = track.clientWidth;
     const xFor = pct => HALF_SQ + (w - HALF_SQ * 2) * Math.max(0, Math.min(100, pct)) / 100;
-    const xA = xFor(r.vote.A.pct), xB = xFor(r.vote.B.pct);
-    sqA.style.left = xA + 'px';
-    sqB.style.left = xB + 'px';
-    line.style.left = Math.min(xA, xB) + 'px';
-    line.style.width = Math.abs(xA - xB) + 'px';
+    // the line spans the true positions; only the squares are allowed to drift
+    const xs = groups.map(g => xFor(g.pct));
+    const placed = nudgeApart(xs, SQ + 2, HALF_SQ, w - HALF_SQ);
+    squares.forEach((sq, i) => sq.style.left = placed[i] + 'px');
+    line.style.left = Math.min(...xs) + 'px';
+    line.style.width = (Math.max(...xs) - Math.min(...xs)) + 'px';
 
     // marquee the demographic line only if it's actually too long to fit,
     // and only if the user hasn't asked for reduced motion
@@ -597,10 +645,10 @@ function open(idx) {
   if (r.vote) {
     const p = el('section');
     p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
-    [['A', 'Group A (skeptic-leaning)'], ['B', 'Group B (optimist-leaning)']].forEach(([k, lab]) => {
-      const g = r.vote[k], row = el('div', 'grow');
+    groupsOf(r.vote).forEach(g => {
+      const row = el('div', 'grow');
       const top = el('div', 'top');
-      top.append(el('span', null, lab));
+      top.append(el('span', null, g.label));
       const bb = el('b', null, g.pct + '% agree'); top.append(bb);
       row.append(top);
       const bar = el('div', 'bar');

@@ -17,10 +17,15 @@ is unrelated to them — the parent `CLAUDE.md` does not apply here.
 ```sh
 node build.js                                  # build dist/
 node build.js && (cd dist && python3 -m http.server 8000)   # local preview at :8000
+
+node scripts/refresh-poll.js --help                   # options, and what it will/won't touch
+node scripts/refresh-poll.js --step <uuid>            # pull fresh votes from Polis
+node scripts/refresh-poll.js --step <uuid> --dry-run  # report what would change; snapshot it
+node scripts/refresh-poll.js --from <snapshot.json>   # apply a saved payload, no network
 ```
 
 No package.json, no dependencies, no test suite, no linter. Node is used only for
-`build.js` (stdlib `fs`/`path`).
+`build.js` and `scripts/refresh-poll.js` (stdlib `fs`/`path`, plus the global `fetch`).
 
 ## Build model
 
@@ -34,7 +39,8 @@ The `BLOCKS` map in `build.js` binds each placeholder id to a source file and a 
   `<script>` tag, minus the file’s own trailing newline.
 - `json` (`data/*.json`) — parsed, then re-serialized without indentation; that parse *is*
   both the minification and the validity check. An optional `check` on the `BLOCKS` entry
-  runs against the parsed data for invariants the parse cannot see.
+  runs against the parsed data for invariants the parse cannot see; a check may warn and
+  let the build through (`checkEveryRecordReachable`) or throw (`checkVoteIntegrity`).
 
 Adding a data file means adding a `BLOCKS` entry *and* a matching
 `<script type="application/json" id="...">` element in the template. The build fails
@@ -52,8 +58,8 @@ it. Only what lands in `dist/` is public, which is why repo sources can stay in 
 
 ## Architecture
 
-`index.template.html` is markup only (~105 lines). All app code is **`src/app.js`** (~770
-lines, one function) and all styling is **`src/app.css`** (~675 lines). There is no bundler,
+`index.template.html` is markup only (~105 lines). All app code is **`src/app.js`** (~815
+lines, one function) and all styling is **`src/app.css`** (~680 lines). There is no bundler,
 framework, or module system — plain DOM APIs and a few helpers (the `$` / `el` / `esc`
 trio at the top of app.js). Keep it that way; new UI goes in these same files.
 
@@ -95,13 +101,18 @@ consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`, and the clip lengt
 - `themes[]`: `key` (URL slug and lookup key in `byKey`), `short`/`full`, `color` (drives
   the `--c` CSS custom property and the `theme-color` meta), and `tags[]` — the tags whose
   presence puts a record in this theme.
-- `records[]`: `kind` is `poll` or `quote`. Poll records have `vote` with per-group `A`/`B`
-  tallies plus derived `gap`, `minAgree`, `consensus`; quote records have `vote: null` and
-  are therefore only ever reachable via the Quotes tab. `origin` is
+- `records[]`: `kind` is `poll` or `quote`. Poll records have `vote` with one tally block
+  per group key (`vote.A`, `vote.B`, …) plus derived `total`, `gap`, `minAgree` and
+  `consensus`; quote records have `vote: null` and are therefore only ever reachable via
+  the Quotes tab. `origin` is
   `participant` | `cocap_seed` | `listening_session` and selects the avatar emoji
   (`emojiFor()`); `chips[]` is raw ALL-CAPS metadata (demographics, session, date)
   title-cased at render time by `titleCaseChip()`. `tags[]` is described below.
-- `groups`: labels for Polis groups A (skeptic-leaning) and B (optimist-leaning).
+- `groups[]`: the poll's opinion clusters, in render order — `key` (the `vote` key and the
+  letter on the square), `label` (editorial, shown in the L3 modal and expanded into the
+  List tab's key row by `groupTag()`), `members`. **However many Polis returns**: it
+  re-clusters as votes arrive, so neither the count nor the meaning of any one letter is
+  stable across refreshes. Nothing in `app.js` may assume two. See "Refreshing the poll".
 
 ### Themes are derived from tags
 
@@ -119,8 +130,16 @@ about therapy, chat-log privacy and the incoming workforce, none of which is sch
 
 **Adding a record means giving it at least one tag some theme lists.** A record whose
 tags no theme claims doesn't land in the wrong place, it vanishes from the report — so
-`build.js` fails the build on it (`checkEveryRecordReachable`). Adding a *new* tag that
-should place records means adding it to a theme's `tags` too, or it stays decorative.
+`build.js` names it in a warning (`checkEveryRecordReachable`) and builds anyway. Adding a
+*new* tag that should place records means adding it to a theme's `tags` too, or it stays
+decorative.
+
+That check used to fail the build. It doesn't, because the invariant was never a property
+of the data: the source spreadsheet had untagged rows, and every record satisfies it today
+only because the tags were hand-backfilled in b410daf when themes moved from a fixed
+`theme` field to derived membership. Statements arriving from a refresh have no tags at
+all — tags are editorial and exist nowhere upstream, least of all in comhairle's
+`polis_statement_aux.themes`, which is **not** canonical for this report.
 
 Per-theme counts are derived at render time (`pollsOf()` / `quotesOf()`); there is
 nothing to keep in sync when records are added or removed.
@@ -131,4 +150,52 @@ hand-written and **not** recomputed by the app; verify any number you change aga
 underlying statement.
 
 Three fields are currently read by nothing: `themes[].full` (the long name — readers only
-ever see `short`), `records[].source` and `records[].inReport`.
+ever see `short`), `records[].source` and `records[].inReport`. (`groups` used to be a
+fourth; the group labels were hardcoded in `app.js` until the N-cluster work, which meant
+editing them changed nothing on screen.)
+
+### Refreshing the poll
+
+`node scripts/refresh-poll.js --step <workflow-step-uuid>` rewrites every poll record's
+`vote` and the `groups` array from Polis, via comhairle's
+`GET /tools/polis/report_data` (that route has no auth check, so no credentials are
+involved). `--help` documents every flag.
+
+Every live fetch saves the raw payload to `data/polis-snapshots/` — kept in the repo as the
+provenance record, never published (only `dist/` ships), and applied with `--from`. **Dry
+runs snapshot too, which is the point:** review with `--dry-run`, then apply that exact
+file with `--from`. Fetching a second time for the real run would merge a poll that has
+moved on since you read the report, so "apply what I reviewed" has to mean `--from`.
+
+    node scripts/refresh-poll.js --step <uuid> --dry-run     # reports, and names the snapshot
+    node scripts/refresh-poll.js --from data/polis-snapshots/report-data-<stamp>.json
+
+The two writes are `data/bloom-data.json` and that snapshot; there are no other side
+effects. Snapshots are not gitignored and accumulate.
+
+It touches **only** `vote` and `groups`. Tags, chips, place, text, the quote records and
+the themes are editorial, and where upstream disagrees the script reports and moves on:
+
+- **New statements** are appended in tid order with `tags: []` and no chips. They build,
+  with a warning, and show under no theme until tagged.
+- **Statements gone from Polis** are left in place — their tags exist nowhere else, so
+  removal is a person's call. If the cluster count also changed, their votes were counted
+  over the old groups and can't be recomputed; `checkVoteIntegrity` then fails the build
+  naming them, which is the intended forcing function.
+- **Changed statement text** is reported in full, never applied.
+- **Group labels are reset** to plain "Group A", because an inherited label is a claim
+  about a cluster that may no longer be the same one. The script prints each cluster's size
+  and representative statements to make re-labelling possible.
+
+Records are matched by `id === "p" + tid`, so ids are stable across refreshes.
+
+Two things a refresh silently invalidates, both editorial follow-ups: the hand-written
+percentages in `theme-descriptions.json`, and `DIFFERENCE_MIN_GAP` — it was calibrated on
+two groups, and `max − min` widens mechanically as clusters are added.
+
+The derived fields are recomputed identically by the script and by `checkVoteIntegrity`,
+and reproduce the original import exactly. The rounding is deliberately not uniform:
+`pct` is rounded for display and `gap`/`minAgree` are computed from those rounded values,
+but `consensus` is decided on the **unrounded** fractions — `p4`'s group B is 19.81%, which
+displays as 20 yet is genuinely below the 20% threshold. A group that cast no votes counts
+as 0% rather than undefined (`p144`, `p149`).
