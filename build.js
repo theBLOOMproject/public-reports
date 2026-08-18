@@ -75,6 +75,22 @@ function checkVoteIntegrity(data, file) {
   }
 }
 
+// bloom-insights' ids reference bloom-data records by id; a typo or a record
+// getting renumbered/removed would otherwise fail silently at runtime (a
+// dead carousel card, or — if it's the *only* id in an entry — a whole
+// insight vanishing). Cross-check against bloom-data.json directly since a
+// BLOCKS 'check' only sees its own file's parsed data.
+function checkInsightIdsResolve(insights, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const knownIds = new Set(bloomData.records.map(r => r.id));
+  const bad = [];
+  for (const [theme, entries] of Object.entries(insights)) {
+    if (theme.startsWith('_')) continue;
+    entries.forEach(e => e.ids.forEach(id => { if (!knownIds.has(id)) bad.push(`${theme}: ${id}`); }));
+  }
+  if (bad.length) throw new Error(`${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
+}
+
 // Placeholder id -> { file, kind }. Every id needs a matching <!--INJECT:{id}-->
 // in index.template.html; for 'json' blocks the id is also the <script> element id
 // the app reads the data back out of.
@@ -92,6 +108,7 @@ const BLOCKS = {
     kind: 'json',
     check: (data, file) => { checkEveryRecordReachable(data, file); checkVoteIntegrity(data, file); },
   },
+  'bloom-insights': { file: 'data/bloom-insights.json', kind: 'json', check: checkInsightIdsResolve },
   'app-js': { file: 'src/app.js', kind: 'raw' },
 };
 

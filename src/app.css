@@ -8,14 +8,13 @@
   --disagree:#D8362F;
   --pass:#C4C4C4;
   --home:#0D1B3E;
+  --amber:#DE8A2E;  /* mid tier for the card's %-agree readout (0-33 red · 33-67 amber · 67-100 green) */
 
   --geom:'Geom','Futura',system-ui,sans-serif;
   --body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
   --mono:'DM Mono',ui-monospace,'SF Mono',monospace;
 
   --nav-h:46px;
-  --pill-h:58px;
-  --scrub-h:34px;
 }
 
 *{box-sizing:border-box}
@@ -46,8 +45,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 }
 @media (min-width:660px){
   /* on the roomier desktop layout, the gutter around the column tints to
-     match whatever's active — the open theme's color, or --home on L1 */
+     match whatever's active — the open theme's color, or --home on L1.
+     Theme pages (L2) are white throughout, so their gutter stays white too. */
   body{background:var(--c,var(--home))}
+  body:has(#l2.on){background:var(--paper)}
   .shell{max-width:800px}
 }
 
@@ -118,421 +119,191 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 /* ─────────────────────────────────────────────
    LEVEL 2 — THEME VIEWER
+   White throughout — the theme color is used only as an accent (headings,
+   pills, borders, bars), never as a page background. Keeps contrast high
+   and lets every theme's palette read as tinted paper rather than a
+   full-bleed color block.
    ───────────────────────────────────────────── */
 #l2{
-  display:none;background:var(--c);min-height:100vh;min-height:100dvh;
+  display:none;background:var(--paper);color:var(--ink);
+  min-height:100vh;min-height:100dvh;
   position:relative;
 }
 #l2.on{display:block}
 
 .l2nav{
   position:sticky;top:0;z-index:30;
-  transition:opacity .28s ease;
   height:var(--nav-h);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 18px;
-  background:var(--c);
-  box-shadow:inset 0 -1px 0 rgba(255,255,255,.2);
+  background:var(--paper);
+  border-top:4px solid var(--c);
+  box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--c) 16%,#fff);
 }
 .l2nav button{
   font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
-  color:rgba(255,255,255,.82);padding:6px 0;
-  transition:color .2s ease;
+  color:var(--c);padding:6px 0;
+  transition:opacity .2s ease;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.l2nav button:hover{color:#fff}
+.l2nav button:hover{opacity:.7}
 .l2nav .nextT{max-width:62%;text-align:right}
-.l2nav .nextT b{font-weight:400;color:#fff}
+.l2nav .nextT b{font-weight:600}
 
-.hero{padding:26px 22px 0;position:relative}
-.hero::before{
-  content:'';position:absolute;inset:calc(-1 * var(--nav-h)) 0 auto 0;height:340px;
-  background:linear-gradient(180deg,rgba(0,0,0,.26),rgba(0,0,0,0));
-  pointer-events:none;
-}
-.hero > *{position:relative}
+.hero{padding:28px 22px 8px}
 .hero h1{
   font-family:var(--geom);font-weight:700;
   font-size:clamp(30px,9vw,40px);line-height:1.02;letter-spacing:-.024em;
-  margin:0 0 9px;
+  margin:0 0 9px;color:var(--c);
 }
-.hero .count{color:rgba(255,255,255,.72);margin-bottom:20px}
+.hero .count{color:color-mix(in srgb,var(--c) 60%,#000);margin-bottom:18px}
 .hero .desc{
-  font-size:16.5px;line-height:1.5;margin:0 0 26px;
-  color:#fff;letter-spacing:-.003em;
+  font-size:16.5px;line-height:1.5;margin:0;
+  color:var(--ink);letter-spacing:-.003em;
 }
-.hero .cta{font-size:15px;font-weight:600;margin-bottom:28px}
 @media (min-width:660px){
-  /* placed after the base rules above so it actually wins the cascade —
-     an earlier attempt put this override before them and silently lost */
   .masthead p{font-size:16px}
   .hero .desc{font-size:18.5px}
-  .hero .cta{font-size:17px}
 }
 
-/* mode pills — stay reachable while you scroll the lane. A sibling of
-   .hero and .lane (not nested in .hero) so its sticky containing block
-   is the whole scrollable section, not just the short intro block —
-   otherwise it un-sticks the moment .hero itself scrolls out of view. */
-.pills{
-  position:sticky;top:var(--nav-h);z-index:25;
-  display:flex;justify-content:center;gap:8px;
-  padding:18px 22px;
-  background:var(--c);
-  border-top:1px solid rgba(255,255,255,.17);
-  border-bottom:1px solid rgba(255,255,255,.17);
+/* ─── "What we learned" — table of contents ──────────────────────── */
+.toc{
+  margin:30px 22px 0;
+  padding:22px 0 26px;
+  border-top:1px solid color-mix(in srgb,var(--c) 20%,#fff);
 }
-.pills::before{
-  content:'';position:absolute;left:0;right:0;top:-14px;height:14px;
-  background:var(--c);
+.toc h2{
+  font-family:var(--geom);font-weight:700;color:var(--c);
+  font-size:22px;letter-spacing:-.014em;margin:0 0 14px;
 }
-/* while a statement is open, fade the chrome so the selected square
-   stays visible in the strip above the card */
-body.reading .l2nav,body.reading .pills{opacity:0;pointer-events:none}
-/* extra runway so even the last square in the lane can be lifted into
-   the strip above the card. Collapses again when the card closes. */
-body.reading #l2{padding-bottom:82vh}
-.pills{transition:opacity .28s ease}
+.tocList{display:flex;flex-direction:column;gap:2px}
+.tocItem{
+  display:flex;align-items:baseline;gap:8px;
+  width:100%;text-align:left;
+  padding:10px 2px;
+  border-bottom:1px solid color-mix(in srgb,var(--c) 12%,#fff);
+  font-size:14.5px;line-height:1.4;color:var(--ink);
+  transition:opacity .15s ease;
+}
+.tocItem:hover{opacity:.65}
+.tocItem b{font-weight:700}
+.tocItem .arrow{flex:none;color:var(--c);margin-left:auto;padding-left:8px}
+.tocSeeAll{
+  display:flex;align-items:center;gap:6px;
+  width:100%;text-align:left;
+  margin-top:12px;padding:4px 2px;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;
+  font-weight:600;color:var(--c);
+}
+.tocSeeAll:hover{opacity:.7}
 
-.pills button{
-  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  padding:9px 15px;border-radius:999px;
-  background:rgba(255,255,255,.17);color:#fff;
-  transition:background .2s ease,color .2s ease;
+/* ─── insights — claim header + carousel of statement cards ──────── */
+.insightsWrap{padding:6px 0 8px}
+.insight{
+  padding:34px 22px 6px;
+  scroll-margin-top:calc(var(--nav-h) + 18px);
 }
-.pills button:hover{background:rgba(255,255,255,.28)}
-.pills button[aria-pressed="true"]{background:#fff;color:var(--c);font-weight:500}
+.insightHead{
+  font-family:var(--geom);font-weight:700;color:var(--c);
+  font-size:clamp(21px,5.6vw,26px);line-height:1.24;letter-spacing:-.014em;
+  margin:0 auto 18px;max-width:22em;
+  text-align:center;
+}
+.insightHead em{font-style:italic;font-weight:700}
+.insightHead em.ic-agree{color:var(--agree)}
+.insightHead em.ic-disagree{color:var(--disagree)}
 
-/* the lane */
-.lane{
-  position:relative;
-  overflow:visible;
-  display:flow-root;   /* stop scrub/minimap's margin-top from collapsing into .lane's own position */
+.carousel{
+  display:flex;align-items:flex-start;gap:14px;overflow-x:auto;
+  padding:2px 7% 14px;margin:0 -22px;
+  scroll-snap-type:x mandatory;
+  scroll-padding-inline:7%;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
 }
-.axisrow{
-  position:absolute;left:0;right:0;height:0;
-  border-top:1px solid rgba(255,255,255,.17);
-  pointer-events:none;
-}
-.axisrow span{
-  position:absolute;right:9px;top:5px;
-  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.78);
+.carousel::-webkit-scrollbar{display:none}
+/* each card takes most of the row and centers when snapped, with a
+   sliver of its neighbor peeking on either side */
+.carousel .icard{flex:0 0 86%;scroll-snap-align:center}
+@media (min-width:660px){
+  /* on desktop, cards should read as barely narrower than the full-width
+     All Statements cards below them — just a thin peek of the next one */
+  .carousel{padding-inline:3%;scroll-padding-inline:3%}
+  .carousel .icard{flex-basis:94%}
 }
 
-/* QUOTES mode — a plain stack of cards instead of the scattered lane */
-.lane.quotesList{
-  display:flex;flex-direction:column;gap:12px;
-  padding:6px 22px 46px;
-}
-.qcard{
+/* ─── the new statement card — shared by carousels and the full list */
+.icard{
   display:block;width:100%;text-align:left;
-  background:#fff;border-radius:20px;
-  padding:18px 20px 20px;
+  background:var(--paper);
+  border:1px solid color-mix(in srgb,var(--c) 22%,#fff);
+  border-radius:20px;
+  padding:16px 18px 18px;
   -webkit-tap-highlight-color:transparent;
   transition:transform .2s ease,box-shadow .2s ease;
-  box-shadow:0 1px 3px rgba(0,0,0,.12);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
 }
-.qeyebrow{color:var(--c);margin-bottom:9px}
-.qtext{
-  margin:0;color:var(--ink);
+@media (hover:hover){
+  .icard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.14)}
+}
+.icard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.22)}
+
+.icText{
+  margin:14px 0 16px;color:var(--ink);
   font-family:var(--geom);font-weight:600;
-  font-size:16.5px;line-height:1.4;letter-spacing:-.006em;
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:19px;line-height:1.32;letter-spacing:-.01em;
 }
-@media (hover:hover){
-  .qcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
-}
-.qcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
 
-/* LIST mode — same records/order as Map, but a plain card stack like
-   Quotes: full statement text, an emoji icon, and a tiered score pill */
-.lane.listView{
-  display:flex;flex-direction:column;gap:12px;
-  padding:6px 22px 46px;
-}
-/* sticks directly below the nav + pills (same measured offset the
-   minimap uses in Map mode), bleeding edge-to-edge like .pills despite
-   the lane's own side padding */
-.listTop{
-  position:sticky;z-index:24;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  margin:0 -22px;
-  padding:14px 22px;
-  background:var(--c);
-  border-bottom:1px solid rgba(255,255,255,.17);
-  transition:opacity .28s ease;
-}
-body.reading .listTop{opacity:0;pointer-events:none}
-.orderSwitch{
-  font-family:var(--body);font-size:13px;font-weight:600;
-  color:#fff;
-  background:rgba(255,255,255,.1);
-  padding:9px 16px;border-radius:999px;
-  transition:background .2s ease;
-}
-.orderSwitch:hover{background:rgba(255,255,255,.18)}
-.orderSwitch:active{background:rgba(255,255,255,.08)}
-.listKey{
-  display:flex;align-items:center;gap:5px;
-  font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.04em;
-  color:rgba(255,255,255,.85);
-}
-.lKeySq{
-  flex:none;display:grid;place-items:center;
-  width:17px;height:17px;
-  background:#fff;border-radius:4px;
-  font-family:var(--geom);font-weight:700;font-size:10px;color:var(--c);
-}
-.lcard{
-  display:block;width:100%;text-align:left;
-  background:#fff;border-radius:20px;
-  padding:16px 18px 0;
-  overflow:hidden;   /* so the bottom viz's bleed can meet the card's own rounded corners */
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .2s ease,box-shadow .2s ease;
-  box-shadow:0 1px 3px rgba(0,0,0,.12);
-}
-@media (hover:hover){
-  .lcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
-}
-.lcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
-
-/* eyebrow — the participant's emoji plus their demographic chips,
-   marqueeing sideways when the text is too long for the card */
-.lWho{
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:9px;
+.icWho{
+  display:flex;align-items:center;gap:9px;
+  margin-bottom:2px;
   color:color-mix(in srgb,var(--c) 62%,#000);
 }
-.lWho .lEmoji{flex:none;font-size:15px;line-height:1}
-.lWho .lDemoWrap{flex:1;min-width:0;overflow:hidden}
-.lWho .lDemoTrack{
-  display:inline-flex;gap:2.4em;white-space:nowrap;
+.icWho .icAv{
+  flex:none;width:24px;height:24px;border-radius:50%;
+  background:color-mix(in srgb,var(--c) 10%,#fff);
+  display:grid;place-items:center;font-size:13px;line-height:1;
+}
+.icWho .icDemo{
   font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-}
-.lWho .lDemoTrack.marquee{animation:lDemoScroll var(--marquee-dur,10s) linear infinite}
-@keyframes lDemoScroll{from{transform:translateX(0)}to{transform:translateX(var(--marquee-dist,-50%))}}
-
-.lText{
-  margin:0 0 16px;color:var(--ink);
-  font-family:var(--geom);font-weight:600;
-  font-size:23px;line-height:1.32;letter-spacing:-.012em;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
 }
 
-/* bottom viz — where each group's agreement % lands on a disagree-to-
-   agree track. Labels sit in the card's normal (uncolored) flow; only
-   the track itself is tinted and bled flush to the card's edges (and
-   its bottom corners). */
-.lBarLabels{
-  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
-  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(0,0,0,.8);
-  margin-bottom:8px;
+.icStats{
+  display:flex;gap:16px;
+  margin:16px -18px -18px;
+  padding:12px 18px 14px;
+  background:color-mix(in srgb,var(--c) 6%,#fff);
+  border-radius:0 0 19px 19px;
 }
-.lBarLabels .who{flex:none}
-.lBar{
-  margin:0 -18px;
-  padding:10px 18px 14px;
-  background:color-mix(in srgb,var(--c) 13%,transparent);
+.icStat{flex:1;min-width:0}
+/* color is set inline per stat — it encodes the %-agree value itself
+   (0-33 red · 33-67 amber · 67-100 green), not which group it is */
+.icStat .icVal{
+  font-family:var(--geom);font-weight:700;font-size:19px;
+  margin-bottom:1px;
 }
-/* --sq is the group square's size, and the JS reads it back to compute the
-   track's usable width — change it here, not there. Polis can return more
-   clusters than the two this started with, so past three the squares shrink
-   to keep them all on the track. */
-.lBarTrack{position:relative;--sq:26px;height:var(--sq)}
-.lBarTrack.tight{--sq:20px}
-/* 0%/100% end labels — centered on the same half-square inset the group
-   squares use at their own extremes (HALF_SQ in the JS), so a square sitting
-   right on 0% or 100% lands directly on top of its label */
-.lBarEdge{
-  position:absolute;top:50%;
-  font-family:var(--geom);font-weight:700;font-size:14px;
-  color:var(--c);opacity:.65;
+.icStat .icLabel{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  margin-bottom:6px;
 }
-.lBarEdge.lo{left:calc(var(--sq) / 2);transform:translate(-50%,-50%)}
-.lBarEdge.hi{right:calc(var(--sq) / 2);transform:translate(50%,-50%)}
-.lBarMid{
-  position:absolute;left:50%;top:0;bottom:0;width:1px;
-  background:rgba(0,0,0,.18);
-  transform:translateX(-50%);
-}
-.lBarLine{
-  position:absolute;top:50%;height:2.5px;
-  background:var(--c);transform:translateY(-50%);
-}
-.lBarSq{
-  position:absolute;top:50%;width:var(--sq);height:var(--sq);
-  transform:translate(-50%,-50%);
-  background:var(--c);border-radius:6px;
-  display:grid;place-items:center;
-  font-family:var(--geom);font-weight:700;font-size:11px;color:#fff;
-  box-shadow:0 2px 6px rgba(0,0,0,.25);
-}
+.icStat .icBarTrack{height:3px;border-radius:2px;background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.icStat .icBarFill{height:100%;border-radius:2px}
 
-.sq{
-  position:absolute;padding:0;
-  background:none;border:0;
-  -webkit-tap-highlight-color:transparent;
-  transition:opacity .35s ease;
-  z-index:20;   /* above the scrub line (18) so it never draws over a statement circle */
+/* ─── All Statements ──────────────────────────────────────────────── */
+.allStatements{padding:38px 22px 4px}
+.allStatements h2{
+  font-family:var(--geom);font-weight:700;color:var(--c);
+  font-size:24px;letter-spacing:-.014em;margin:0 0 20px;
+  text-align:center;
 }
-/* while a bubble is surfacing a couple of statements, dim the rest so
-   the callouts read clearly — everything stays clickable underneath.
-   Whatever the scrub indicator is crossing stays fully visible too. */
-.lane.bubbling .sq:not(.hl):not(.hit){opacity:.3}
-/* same idea for the scrub indicator (and hovering a circle directly) —
-   dim everything but whatever's hit/hovered so it reads clearly */
-.lane:has(.sq.hit, .sq:hover) .sq:not(.hit):not(:hover){opacity:.3}
-.sq .face{
-  display:flex;align-items:center;justify-content:center;
-  width:100%;height:100%;
-  background:#fff;border-radius:50%;
-  line-height:1;
-  animation:breathe var(--dur,4s) ease-in-out var(--del,0s) infinite;
-  transition:box-shadow .25s ease;
-  will-change:transform;
-}
-@keyframes breathe{
-  0%,100%{transform:scale(.955)}
-  50%{transform:scale(1.075)}
-}
-@media (hover:hover){
-  .sq:hover .face{
-    animation-play-state:paused;transform:scale(1.09);
-    box-shadow:0 0 0 5px #fff,0 8px 26px rgba(0,0,0,.3);
-  }
-}
-.sq.sel .face{
-  animation-play-state:paused;transform:scale(1.06);
-  box-shadow:0 0 0 4px rgba(255,255,255,.4),0 8px 26px rgba(0,0,0,.3);
-}
-/* the square currently crossed by the scrub line */
-.sq.hit .face{box-shadow:0 0 0 5px #ffd400,0 8px 26px rgba(0,0,0,.3)}
-
-/* the little text bubbles that surface every few seconds */
-.bubble{
-  position:absolute;z-index:12;
-  max-width:min(210px,calc(100vw - 24px));
-  font-size:11.5px;line-height:1.35;
-  font-weight:500;
-  padding:6px 11px;border-radius:999px;
-  background:#fff;color:var(--c);
-  box-shadow:0 4px 16px rgba(0,0,0,.22);
-  pointer-events:none;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  opacity:0;transform:scale(.8);
-  transition:opacity .3s cubic-bezier(.3,.7,.3,1),transform .3s cubic-bezier(.3,.7,.3,1);
-}
-.bubble.in{opacity:1;transform:scale(1)}
-
-/* the scrub — a readout that lives at the max line of the lane (where it
-   sits in normal flow, via margin-top) until scrolling would carry it
-   above the screen's midpoint, at which point it sticks there. */
-.scrub{
-  position:sticky;top:50vh;
-  height:var(--scrub-h);
-  z-index:18;   /* below .sq (20) so statement circles draw over the line, above .minimap (15) */
-  display:flex;align-items:center;
-  pointer-events:none;
-  transition:opacity .28s ease;
-}
-.scrub .pill{
-  flex:none;
-  font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;
-  background:#fff;color:var(--c);
-  padding:9px 14px 9px 13px;
-  border-radius:0 999px 999px 0;
-  white-space:nowrap;
-}
-.scrub .line{
-  flex:1 1 auto;height:2px;
-  background:#fff;
-}
-body.reading .scrub{opacity:0;pointer-events:none}
-
-/* the minimap — a condensed sparkline of every statement's position on
-   the current axis, living only inside the lane. Scrolls up with the
-   lane until fully below the nav + pills, then sticks there — top and
-   height are set in JS since they depend on the pills bar's rendered
-   height and the viewport size. z-index sits below .scrub so the
-   indicator line draws over it where the two cross. */
-.minimap{
-  position:sticky;left:0;
-  width:40px;
-  z-index:15;
-  background:rgba(255,255,255,.12);
-  border-radius:4px;
-  pointer-events:none;
-  transition:opacity .28s ease;
-}
-.minimap[hidden]{display:none}
-.minimap i{
-  position:absolute;left:0;right:0;height:2px;
-  background:rgba(255,255,255,.55);
-  border-radius:1px;
-  transform:translateY(-50%);
-}
-.minimap .now{
-  position:absolute;left:0;right:0;height:3px;
-  background:#ffd400;
-  border-radius:2px;
-  box-shadow:0 0 8px rgba(255,212,0,.75);
-  transform:translateY(-50%);
-}
-body.reading .minimap{opacity:0;pointer-events:none}
-
-/* statement preview — a bottom sheet previewing whatever the scrub is
-   currently crossing. Slides up once, the first time it has something
-   to show; after that it only ever fades between shown/empty, never
-   slides away again. */
-.statPreview{
-  position:fixed;left:0;right:0;bottom:0;
-  z-index:26;
-  display:flex;justify-content:center;
-  pointer-events:none;
-  transform:translateY(115%);
-  transition:transform .4s cubic-bezier(.2,.85,.3,1),opacity .3s ease;
-}
-.statPreview[hidden]{display:none}
-.statPreview.shown{transform:translateY(0)}
-.statPreview.empty{opacity:0}
-body.reading .statPreview{opacity:0;pointer-events:none}
-
-.spCard{
-  pointer-events:auto;
-  display:flex;align-items:center;gap:12px;
-  width:calc(100% - 28px);max-width:572px;   /* matches .card (the statement modal) */
-  background:#fff;
-  border-radius:24px 24px 0 0;
-  padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)) 10px;
-  text-align:left;
-  box-shadow:0 10px 30px rgba(0,0,0,.32);
-  transition:transform .15s ease;
-}
-.spCard:active{transform:scale(.97)}
-.spAv{
-  flex:none;width:44px;height:44px;border-radius:50%;
-  background:#fff;
-  display:grid;place-items:center;
-  font-size:23px;
-  box-shadow:0 0 0 3px var(--c);
-}
-.spBody{min-width:0}
-.spEyebrow{
-  display:block;
-  font-family:var(--mono);font-size:0.8rem;letter-spacing:.09em;text-transform:uppercase;font-weight: 500;
-  color:var(--c);margin-bottom:3px;
-}
-.spText{
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  color:#333;font-size:1.1rem;line-height:1.35;font-weight:500;
-}
+.allList{display:flex;flex-direction:column;gap:14px}
 
 .lane-end{
   padding:34px 22px 60px;
   font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.4);text-align:center;
+  color:color-mix(in srgb,var(--c) 55%,#000);text-align:center;
 }
 
 /* ─────────────────────────────────────────────

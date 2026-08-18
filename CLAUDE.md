@@ -65,36 +65,28 @@ framework, or module system — plain DOM APIs and a few helpers (the `$` / `el`
 trio at the top of app.js). Keep it that way; new UI goes in these same files.
 
 `src/app.js` is sectioned by banner comments following the level structure below. If it is
-ever split into real ES modules, note that the top-level reassigned `let`s (`bubbleTimer`,
-`scrollRaf`, `scrubRaf`, `kivTimer`, `l1Scroll`, `listAsc`, the `preview*` flags) are shared
-across those section boundaries, and an imported binding cannot be reassigned — each would
-need an owning module or a shared state object.
+ever split into real ES modules, note that the top-level reassigned `let`s (`scrollRaf`,
+`l1Scroll`, `carouselTimers`) are shared across those section boundaries, and an imported
+binding cannot be reassigned — each would need an owning module or a shared state object.
 
 Three nested levels, all in the one page:
 
 - **L1 (`#l1`)** — theme grid, one block per theme, built by `buildL1()`.
-- **L2 (`#l2`)** — one theme, with three tabs ("modes"): `map` (statements scattered on a
-  vertical %-agreement axis), `list` (same statements and ordering as a card stack), and
-  `quotes` (session quotes, which carry no vote). `renderL2()` dispatches to `drawLane()` /
-  `drawList()` / `drawQuotes()`.
+- **L2 (`#l2`)** — one theme: a "What we learned" table of contents (`buildToc()`), a
+  per-insight carousel of statement cards (`buildInsights()`, data from
+  `bloom-insights.json`), and a flat "All Statements" list (`buildAllStatements()`) — all
+  poll statements, sorted by %-agreement. Session quotes have no UI path here (see Data
+  below). `renderL2()` computes the theme's polls and builds all three sections.
 - **L3 (`#l3`)** — statement detail modal, `open()` / `close()` / `page(±1)`, keyboard
-  Esc/←/→.
+  Esc/←/→. A statement's card can appear twice on the page (its insight carousel and All
+  Statements); `open()` marks every `.icard[data-rid]` instance selected.
 
-**Routing** is the URL hash: `#/{themeKey}/{mode}`, handled by `route()` on `hashchange`.
-Navigation is done by assigning `location.hash`, not by calling render functions directly.
+**Routing** is the URL hash: `#/{themeKey}`, handled by `route()` on `hashchange` (a
+trailing segment, e.g. from an old bookmarked link, is parsed but ignored). Navigation is
+done by assigning `location.hash`, not by calling render functions directly.
 
-**Map-mode layout** is computed in `computeLayout()` — y from the score, size from vote
-total, x randomly jittered with collision avoidance. Because x is random, layouts are
-cached in `layoutCache` keyed by `theme/mode`; resizes and revisits must reuse the cache so
-squares never reshuffle. The scroll-linked **scrub** line reads out the score at the current
-scroll position, highlights the squares it crosses, and feeds the bottom-sheet **preview**
-and the minimap marker (`updateScrub()`, rAF-throttled).
-
-Tunable constants sit near the top of the script with comments: `MODES` (the map axis
-scoring), `DIFFERENCE_OVER_GAP` / `CONSENSUS_OVER_AGREE` / `CONSENSUS_UNDER_AGREE`
-(thresholds behind the consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`,
-and the clip lengths
-`QUOTE_CLIP` / `PREVIEW_CLIP`.
+Tunable constants sit near the top of the script with comments: `DIFFERENCE_MIN_GAP` /
+`CONSENSUS_MIN_AGREE` (thresholds behind the consensus/difference pill in `pillInfoFor()`).
 
 ## Data
 
@@ -103,10 +95,11 @@ and the clip lengths
 - `themes[]`: `key` (URL slug and lookup key in `byKey`), `short`/`full`, `color` (drives
   the `--c` CSS custom property and the `theme-color` meta), and `tags[]` — the tags whose
   presence puts a record in this theme.
-- `records[]`: `kind` is `poll` or `quote`. Poll records have `vote` with one tally block
-  per group key (`vote.A`, `vote.B`, …) plus derived `total`, `gap` and `minAgree`;
-  quote records have `vote: null` and are therefore only ever reachable via
-  the Quotes tab. `origin` is
+- `records[]`: `kind` is `poll` or `quote`. Poll records have `vote` with per-group `A`/`B`
+  tallies plus derived `gap`, `minAgree`, `consensus`; quote records have `vote: null`.
+  **Quote records currently have no UI path at all** — `quotesOf()` is still defined and the
+  L1 tally/legend still counts them, but L2 only ever builds poll statements. They stay in
+  the data (not dropped) for a future feature. `origin` is
   `participant` | `cocap_seed` | `listening_session` and selects the avatar emoji
   (`emojiFor()`); `chips[]` is raw ALL-CAPS metadata (demographics, session, date)
   title-cased at render time by `titleCaseChip()`. `tags[]` is described below.
@@ -117,6 +110,16 @@ and the clip lengths
   worse than none. **However many Polis returns**: it
   re-clusters as votes arrive, so neither the count nor the meaning of any one letter is
   stable across refreshes. Nothing in `app.js` may assume two. See "Refreshing the poll".
+
+`data/bloom-insights.json` — keyed by theme `key`, an ordered list of `{ claim, direction,
+ids }` per theme (6 of 8 themes have entries; `access`/`privacy` don't, and render the L2
+shell without a TOC/insights section). `ids` are full `bloom-data.json` record ids.
+`direction` (`agree`/`disagree`/`divided`/`mixed`) plus `claim` feed `claimPhrase()`, which
+generates both the TOC line and the carousel headline. `ids` can reference a record outside
+the insight's own theme under the tag model (documented in the file's own `_readme`);
+`renderL2()` appends any such record to the theme's paging order so it still opens and pages
+in L3, without counting toward "All Statements". `build.js`'s `checkInsightIdsResolve`
+fails the build if an id doesn't resolve against `bloom-data.json`.
 
 ### Themes are derived from tags
 
