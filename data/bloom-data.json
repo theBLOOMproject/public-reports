@@ -98,23 +98,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 218,
+        "total": 235,
         "A": {
-          "a": 92,
-          "d": 1,
-          "p": 0,
-          "n": 93,
-          "pct": 99
+          "a": 37,
+          "d": 3,
+          "p": 4,
+          "n": 44,
+          "pct": 84
         },
         "B": {
-          "a": 115,
-          "d": 4,
-          "p": 6,
-          "n": 125,
-          "pct": 92
+          "a": 103,
+          "d": 1,
+          "p": 2,
+          "n": 106,
+          "pct": 97
         },
-        "gap": 7,
-        "minAgree": 92,
+        "C": {
+          "a": 83,
+          "d": 2,
+          "p": 0,
+          "n": 85,
+          "pct": 98
+        },
+        "gap": 14,
+        "minAgree": 84,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -133,24 +140,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 204,
+        "total": 218,
         "A": {
-          "a": 80,
-          "d": 3,
-          "p": 11,
-          "n": 94,
-          "pct": 85
+          "a": 32,
+          "d": 5,
+          "p": 5,
+          "n": 42,
+          "pct": 76
         },
         "B": {
-          "a": 91,
-          "d": 7,
-          "p": 12,
-          "n": 110,
-          "pct": 83
+          "a": 76,
+          "d": 3,
+          "p": 10,
+          "n": 89,
+          "pct": 85
         },
-        "gap": 2,
-        "minAgree": 83,
-        "consensus": 1
+        "C": {
+          "a": 74,
+          "d": 2,
+          "p": 11,
+          "n": 87,
+          "pct": 85
+        },
+        "gap": 9,
+        "minAgree": 76,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -169,24 +183,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 199,
+        "total": 210,
         "A": {
-          "a": 6,
-          "d": 73,
+          "a": 13,
+          "d": 17,
           "p": 14,
-          "n": 93,
-          "pct": 6
+          "n": 44,
+          "pct": 30
         },
         "B": {
-          "a": 21,
-          "d": 50,
-          "p": 35,
-          "n": 106,
-          "pct": 20
+          "a": 9,
+          "d": 46,
+          "p": 26,
+          "n": 81,
+          "pct": 11
         },
-        "gap": 14,
+        "C": {
+          "a": 5,
+          "d": 69,
+          "p": 11,
+          "n": 85,
+          "pct": 6
+        },
+        "gap": 24,
         "minAgree": 6,
-        "consensus": -1
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -205,23 +226,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 239,
+        "total": 252,
         "A": {
-          "a": 79,
-          "d": 8,
-          "p": 14,
-          "n": 101,
-          "pct": 78
+          "a": 30,
+          "d": 9,
+          "p": 6,
+          "n": 45,
+          "pct": 67
         },
         "B": {
-          "a": 106,
-          "d": 15,
-          "p": 17,
-          "n": 138,
-          "pct": 77
+          "a": 93,
+          "d": 9,
+          "p": 16,
+          "n": 118,
+          "pct": 79
         },
-        "gap": 1,
-        "minAgree": 77,
+        "C": {
+          "a": 73,
+          "d": 5,
+          "p": 11,
+          "n": 89,
+          "pct": 82
+        },
+        "gap": 15,
+        "minAgree": 67,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -241,23 +269,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 224,
+        "total": 243,
         "A": {
-          "a": 91,
+          "a": 38,
           "d": 2,
-          "p": 4,
-          "n": 97,
-          "pct": 94
+          "p": 2,
+          "n": 42,
+          "pct": 90
         },
         "B": {
-          "a": 117,
-          "d": 4,
-          "p": 6,
-          "n": 127,
-          "pct": 92
+          "a": 104,
+          "d": 2,
+          "p": 5,
+          "n": 111,
+          "pct": 94
         },
-        "gap": 2,
-        "minAgree": 92,
+        "C": {
+          "a": 85,
+          "d": 2,
+          "p": 3,
+          "n": 90,
+          "pct": 94
+        },
+        "gap": 4,
+        "minAgree": 90,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -276,23 +311,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 215,
+        "total": 233,
         "A": {
-          "a": 62,
-          "d": 20,
-          "p": 16,
-          "n": 98,
-          "pct": 63
+          "a": 42,
+          "d": 0,
+          "p": 3,
+          "n": 45,
+          "pct": 93
         },
         "B": {
-          "a": 106,
+          "a": 86,
           "d": 1,
-          "p": 10,
-          "n": 117,
-          "pct": 91
+          "p": 11,
+          "n": 98,
+          "pct": 88
         },
-        "gap": 28,
-        "minAgree": 63,
+        "C": {
+          "a": 51,
+          "d": 23,
+          "p": 16,
+          "n": 90,
+          "pct": 57
+        },
+        "gap": 36,
+        "minAgree": 57,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -311,19 +353,26 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 213,
+        "total": 228,
         "A": {
-          "a": 80,
-          "d": 9,
-          "p": 9,
-          "n": 98,
-          "pct": 82
+          "a": 34,
+          "d": 4,
+          "p": 4,
+          "n": 42,
+          "pct": 81
         },
         "B": {
-          "a": 93,
+          "a": 80,
+          "d": 7,
+          "p": 10,
+          "n": 97,
+          "pct": 82
+        },
+        "C": {
+          "a": 72,
           "d": 10,
-          "p": 12,
-          "n": 115,
+          "p": 7,
+          "n": 89,
           "pct": 81
         },
         "gap": 1,
@@ -346,23 +395,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 242,
+        "total": 267,
         "A": {
-          "a": 95,
-          "d": 3,
-          "p": 9,
-          "n": 107,
-          "pct": 89
+          "a": 21,
+          "d": 17,
+          "p": 7,
+          "n": 45,
+          "pct": 47
         },
         "B": {
-          "a": 92,
-          "d": 29,
-          "p": 14,
-          "n": 135,
-          "pct": 68
+          "a": 104,
+          "d": 12,
+          "p": 12,
+          "n": 128,
+          "pct": 81
         },
-        "gap": 21,
-        "minAgree": 68,
+        "C": {
+          "a": 80,
+          "d": 4,
+          "p": 10,
+          "n": 94,
+          "pct": 85
+        },
+        "gap": 38,
+        "minAgree": 47,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -381,24 +437,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 218,
+        "total": 234,
         "A": {
-          "a": 99,
-          "d": 0,
-          "p": 1,
-          "n": 100,
-          "pct": 99
+          "a": 35,
+          "d": 7,
+          "p": 4,
+          "n": 46,
+          "pct": 76
         },
         "B": {
-          "a": 103,
-          "d": 7,
-          "p": 8,
-          "n": 118,
-          "pct": 87
+          "a": 95,
+          "d": 0,
+          "p": 5,
+          "n": 100,
+          "pct": 95
         },
-        "gap": 12,
-        "minAgree": 87,
-        "consensus": 1
+        "C": {
+          "a": 88,
+          "d": 0,
+          "p": 0,
+          "n": 88,
+          "pct": 100
+        },
+        "gap": 24,
+        "minAgree": 76,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -416,24 +479,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 227,
+        "total": 242,
         "A": {
-          "a": 99,
-          "d": 1,
+          "a": 32,
+          "d": 7,
           "p": 5,
-          "n": 105,
-          "pct": 94
+          "n": 44,
+          "pct": 73
         },
         "B": {
-          "a": 107,
-          "d": 9,
-          "p": 6,
-          "n": 122,
-          "pct": 88
+          "a": 101,
+          "d": 2,
+          "p": 2,
+          "n": 105,
+          "pct": 96
         },
-        "gap": 6,
-        "minAgree": 88,
-        "consensus": 1
+        "C": {
+          "a": 86,
+          "d": 1,
+          "p": 6,
+          "n": 93,
+          "pct": 92
+        },
+        "gap": 23,
+        "minAgree": 73,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -451,24 +521,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 234,
+        "total": 254,
         "A": {
-          "a": 104,
-          "d": 0,
-          "p": 1,
-          "n": 105,
-          "pct": 99
+          "a": 32,
+          "d": 6,
+          "p": 6,
+          "n": 44,
+          "pct": 73
         },
         "B": {
-          "a": 108,
-          "d": 8,
-          "p": 13,
-          "n": 129,
-          "pct": 84
+          "a": 106,
+          "d": 2,
+          "p": 7,
+          "n": 115,
+          "pct": 92
         },
-        "gap": 15,
-        "minAgree": 84,
-        "consensus": 1
+        "C": {
+          "a": 94,
+          "d": 0,
+          "p": 1,
+          "n": 95,
+          "pct": 99
+        },
+        "gap": 26,
+        "minAgree": 73,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -487,23 +564,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 229,
+        "total": 242,
         "A": {
-          "a": 75,
-          "d": 8,
-          "p": 14,
-          "n": 97,
-          "pct": 77
+          "a": 35,
+          "d": 4,
+          "p": 5,
+          "n": 44,
+          "pct": 80
         },
         "B": {
-          "a": 111,
-          "d": 8,
-          "p": 13,
-          "n": 132,
-          "pct": 84
+          "a": 98,
+          "d": 4,
+          "p": 9,
+          "n": 111,
+          "pct": 88
         },
-        "gap": 7,
-        "minAgree": 77,
+        "C": {
+          "a": 64,
+          "d": 8,
+          "p": 15,
+          "n": 87,
+          "pct": 74
+        },
+        "gap": 14,
+        "minAgree": 74,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -522,22 +606,29 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 216,
+        "total": 231,
         "A": {
-          "a": 90,
-          "d": 3,
-          "p": 6,
-          "n": 99,
+          "a": 39,
+          "d": 2,
+          "p": 2,
+          "n": 43,
           "pct": 91
         },
         "B": {
-          "a": 110,
-          "d": 2,
-          "p": 5,
-          "n": 117,
-          "pct": 94
+          "a": 98,
+          "d": 1,
+          "p": 4,
+          "n": 103,
+          "pct": 95
         },
-        "gap": 3,
+        "C": {
+          "a": 77,
+          "d": 2,
+          "p": 6,
+          "n": 85,
+          "pct": 91
+        },
+        "gap": 4,
         "minAgree": 91,
         "consensus": 1
       },
@@ -557,23 +648,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 230,
+        "total": 245,
         "A": {
-          "a": 1,
-          "d": 94,
-          "p": 7,
-          "n": 102,
-          "pct": 1
+          "a": 26,
+          "d": 7,
+          "p": 11,
+          "n": 44,
+          "pct": 59
         },
         "B": {
-          "a": 54,
-          "d": 39,
-          "p": 35,
-          "n": 128,
-          "pct": 42
+          "a": 29,
+          "d": 53,
+          "p": 28,
+          "n": 110,
+          "pct": 26
         },
-        "gap": 41,
-        "minAgree": 1,
+        "C": {
+          "a": 0,
+          "d": 87,
+          "p": 4,
+          "n": 91,
+          "pct": 0
+        },
+        "gap": 59,
+        "minAgree": 0,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -592,23 +690,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 243,
+        "total": 272,
         "A": {
-          "a": 43,
-          "d": 41,
-          "p": 24,
-          "n": 108,
-          "pct": 40
+          "a": 25,
+          "d": 13,
+          "p": 8,
+          "n": 46,
+          "pct": 54
         },
         "B": {
-          "a": 82,
-          "d": 28,
-          "p": 25,
-          "n": 135,
-          "pct": 61
+          "a": 76,
+          "d": 24,
+          "p": 26,
+          "n": 126,
+          "pct": 60
         },
-        "gap": 21,
-        "minAgree": 40,
+        "C": {
+          "a": 31,
+          "d": 42,
+          "p": 27,
+          "n": 100,
+          "pct": 31
+        },
+        "gap": 29,
+        "minAgree": 31,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -628,23 +733,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 222,
+        "total": 238,
         "A": {
-          "a": 98,
-          "d": 1,
-          "p": 2,
-          "n": 101,
-          "pct": 97
+          "a": 25,
+          "d": 11,
+          "p": 10,
+          "n": 46,
+          "pct": 54
         },
         "B": {
-          "a": 92,
-          "d": 13,
-          "p": 16,
-          "n": 121,
-          "pct": 76
+          "a": 94,
+          "d": 2,
+          "p": 7,
+          "n": 103,
+          "pct": 91
         },
-        "gap": 21,
-        "minAgree": 76,
+        "C": {
+          "a": 85,
+          "d": 1,
+          "p": 3,
+          "n": 89,
+          "pct": 96
+        },
+        "gap": 42,
+        "minAgree": 54,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -664,23 +776,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 210,
+        "total": 221,
         "A": {
-          "a": 89,
-          "d": 4,
-          "p": 5,
-          "n": 98,
-          "pct": 91
+          "a": 37,
+          "d": 2,
+          "p": 3,
+          "n": 42,
+          "pct": 88
         },
         "B": {
-          "a": 101,
-          "d": 3,
-          "p": 8,
-          "n": 112,
-          "pct": 90
+          "a": 82,
+          "d": 2,
+          "p": 6,
+          "n": 90,
+          "pct": 91
         },
-        "gap": 1,
-        "minAgree": 90,
+        "C": {
+          "a": 81,
+          "d": 3,
+          "p": 5,
+          "n": 89,
+          "pct": 91
+        },
+        "gap": 3,
+        "minAgree": 88,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -699,23 +818,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 243,
+        "total": 269,
         "A": {
-          "a": 43,
-          "d": 54,
-          "p": 16,
-          "n": 113,
-          "pct": 38
+          "a": 40,
+          "d": 3,
+          "p": 4,
+          "n": 47,
+          "pct": 85
         },
         "B": {
-          "a": 106,
-          "d": 8,
-          "p": 16,
-          "n": 130,
-          "pct": 82
+          "a": 88,
+          "d": 10,
+          "p": 19,
+          "n": 117,
+          "pct": 75
         },
-        "gap": 44,
-        "minAgree": 38,
+        "C": {
+          "a": 28,
+          "d": 63,
+          "p": 14,
+          "n": 105,
+          "pct": 27
+        },
+        "gap": 58,
+        "minAgree": 27,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -734,23 +860,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 231,
+        "total": 251,
         "A": {
-          "a": 89,
-          "d": 11,
-          "p": 5,
-          "n": 105,
-          "pct": 85
+          "a": 15,
+          "d": 20,
+          "p": 11,
+          "n": 46,
+          "pct": 33
         },
         "B": {
-          "a": 62,
-          "d": 33,
-          "p": 31,
-          "n": 126,
-          "pct": 49
+          "a": 76,
+          "d": 17,
+          "p": 20,
+          "n": 113,
+          "pct": 67
         },
-        "gap": 36,
-        "minAgree": 49,
+        "C": {
+          "a": 79,
+          "d": 8,
+          "p": 5,
+          "n": 92,
+          "pct": 86
+        },
+        "gap": 53,
+        "minAgree": 33,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -770,23 +903,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 216,
+        "total": 236,
         "A": {
-          "a": 66,
-          "d": 21,
-          "p": 13,
-          "n": 100,
-          "pct": 66
+          "a": 40,
+          "d": 0,
+          "p": 4,
+          "n": 44,
+          "pct": 91
         },
         "B": {
-          "a": 101,
-          "d": 4,
-          "p": 11,
-          "n": 116,
-          "pct": 87
+          "a": 83,
+          "d": 6,
+          "p": 10,
+          "n": 99,
+          "pct": 84
         },
-        "gap": 21,
-        "minAgree": 66,
+        "C": {
+          "a": 56,
+          "d": 22,
+          "p": 15,
+          "n": 93,
+          "pct": 60
+        },
+        "gap": 31,
+        "minAgree": 60,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -805,23 +945,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 219,
+        "total": 234,
         "A": {
-          "a": 3,
-          "d": 67,
-          "p": 31,
-          "n": 101,
-          "pct": 3
+          "a": 30,
+          "d": 3,
+          "p": 12,
+          "n": 45,
+          "pct": 67
         },
         "B": {
-          "a": 66,
-          "d": 6,
-          "p": 46,
-          "n": 118,
-          "pct": 56
+          "a": 38,
+          "d": 9,
+          "p": 49,
+          "n": 96,
+          "pct": 40
         },
-        "gap": 53,
-        "minAgree": 3,
+        "C": {
+          "a": 2,
+          "d": 70,
+          "p": 21,
+          "n": 93,
+          "pct": 2
+        },
+        "gap": 65,
+        "minAgree": 2,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -841,22 +988,29 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 221,
+        "total": 236,
         "A": {
-          "a": 3,
-          "d": 92,
-          "p": 10,
-          "n": 105,
-          "pct": 3
+          "a": 22,
+          "d": 11,
+          "p": 12,
+          "n": 45,
+          "pct": 49
         },
         "B": {
-          "a": 42,
-          "d": 49,
-          "p": 25,
-          "n": 116,
-          "pct": 36
+          "a": 21,
+          "d": 54,
+          "p": 21,
+          "n": 96,
+          "pct": 22
         },
-        "gap": 33,
+        "C": {
+          "a": 3,
+          "d": 86,
+          "p": 6,
+          "n": 95,
+          "pct": 3
+        },
+        "gap": 46,
         "minAgree": 3,
         "consensus": 0
       },
@@ -877,22 +1031,29 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 201,
+        "total": 211,
         "A": {
-          "a": 0,
-          "d": 87,
-          "p": 6,
-          "n": 93,
-          "pct": 0
+          "a": 21,
+          "d": 12,
+          "p": 11,
+          "n": 44,
+          "pct": 48
         },
         "B": {
-          "a": 31,
-          "d": 49,
-          "p": 28,
-          "n": 108,
-          "pct": 29
+          "a": 10,
+          "d": 52,
+          "p": 21,
+          "n": 83,
+          "pct": 12
         },
-        "gap": 29,
+        "C": {
+          "a": 0,
+          "d": 81,
+          "p": 3,
+          "n": 84,
+          "pct": 0
+        },
+        "gap": 48,
         "minAgree": 0,
         "consensus": 0
       },
@@ -913,24 +1074,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 189,
+        "total": 199,
         "A": {
-          "a": 2,
-          "d": 88,
-          "p": 4,
-          "n": 94,
-          "pct": 2
+          "a": 8,
+          "d": 24,
+          "p": 7,
+          "n": 39,
+          "pct": 21
         },
         "B": {
-          "a": 15,
-          "d": 61,
-          "p": 19,
-          "n": 95,
-          "pct": 16
+          "a": 8,
+          "d": 54,
+          "p": 16,
+          "n": 78,
+          "pct": 10
         },
-        "gap": 14,
-        "minAgree": 2,
-        "consensus": -1
+        "C": {
+          "a": 1,
+          "d": 80,
+          "p": 1,
+          "n": 82,
+          "pct": 1
+        },
+        "gap": 20,
+        "minAgree": 1,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -949,23 +1117,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 239,
+        "total": 260,
         "A": {
-          "a": 12,
-          "d": 86,
-          "p": 12,
-          "n": 110,
-          "pct": 11
+          "a": 44,
+          "d": 0,
+          "p": 2,
+          "n": 46,
+          "pct": 96
         },
         "B": {
-          "a": 94,
-          "d": 16,
-          "p": 19,
-          "n": 129,
-          "pct": 73
+          "a": 60,
+          "d": 28,
+          "p": 22,
+          "n": 110,
+          "pct": 55
         },
-        "gap": 62,
-        "minAgree": 11,
+        "C": {
+          "a": 6,
+          "d": 89,
+          "p": 9,
+          "n": 104,
+          "pct": 6
+        },
+        "gap": 90,
+        "minAgree": 6,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -984,23 +1159,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 196,
+        "total": 208,
         "A": {
-          "a": 9,
-          "d": 65,
-          "p": 21,
-          "n": 95,
-          "pct": 9
+          "a": 15,
+          "d": 15,
+          "p": 11,
+          "n": 41,
+          "pct": 37
         },
         "B": {
-          "a": 34,
+          "a": 22,
           "d": 34,
-          "p": 33,
-          "n": 101,
-          "pct": 34
+          "p": 28,
+          "n": 84,
+          "pct": 26
         },
-        "gap": 25,
-        "minAgree": 9,
+        "C": {
+          "a": 7,
+          "d": 56,
+          "p": 20,
+          "n": 83,
+          "pct": 8
+        },
+        "gap": 29,
+        "minAgree": 8,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1019,23 +1201,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 184,
+        "total": 198,
         "A": {
-          "a": 5,
-          "d": 77,
-          "p": 7,
-          "n": 89,
-          "pct": 6
+          "a": 14,
+          "d": 12,
+          "p": 15,
+          "n": 41,
+          "pct": 34
         },
         "B": {
-          "a": 20,
-          "d": 49,
-          "p": 26,
-          "n": 95,
-          "pct": 21
+          "a": 7,
+          "d": 54,
+          "p": 15,
+          "n": 76,
+          "pct": 9
         },
-        "gap": 15,
-        "minAgree": 6,
+        "C": {
+          "a": 6,
+          "d": 67,
+          "p": 8,
+          "n": 81,
+          "pct": 7
+        },
+        "gap": 27,
+        "minAgree": 7,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1054,23 +1243,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 230,
+        "total": 249,
         "A": {
-          "a": 87,
-          "d": 5,
-          "p": 11,
-          "n": 103,
-          "pct": 84
+          "a": 15,
+          "d": 20,
+          "p": 12,
+          "n": 47,
+          "pct": 32
         },
         "B": {
-          "a": 72,
-          "d": 29,
-          "p": 26,
-          "n": 127,
-          "pct": 57
+          "a": 83,
+          "d": 9,
+          "p": 20,
+          "n": 112,
+          "pct": 74
         },
-        "gap": 27,
-        "minAgree": 57,
+        "C": {
+          "a": 77,
+          "d": 5,
+          "p": 8,
+          "n": 90,
+          "pct": 86
+        },
+        "gap": 54,
+        "minAgree": 32,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1089,23 +1285,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 217,
+        "total": 236,
         "A": {
-          "a": 4,
-          "d": 79,
-          "p": 19,
-          "n": 102,
-          "pct": 4
+          "a": 35,
+          "d": 4,
+          "p": 6,
+          "n": 45,
+          "pct": 78
         },
         "B": {
-          "a": 59,
-          "d": 27,
-          "p": 29,
-          "n": 115,
-          "pct": 51
+          "a": 28,
+          "d": 41,
+          "p": 30,
+          "n": 99,
+          "pct": 28
         },
-        "gap": 47,
-        "minAgree": 4,
+        "C": {
+          "a": 2,
+          "d": 75,
+          "p": 15,
+          "n": 92,
+          "pct": 2
+        },
+        "gap": 76,
+        "minAgree": 2,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1124,23 +1327,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 183,
+        "total": 193,
         "A": {
-          "a": 6,
-          "d": 70,
-          "p": 12,
-          "n": 88,
-          "pct": 7
+          "a": 5,
+          "d": 29,
+          "p": 6,
+          "n": 40,
+          "pct": 13
         },
         "B": {
-          "a": 7,
-          "d": 72,
-          "p": 16,
-          "n": 95,
-          "pct": 7
+          "a": 4,
+          "d": 58,
+          "p": 13,
+          "n": 75,
+          "pct": 5
         },
-        "gap": 0,
-        "minAgree": 7,
+        "C": {
+          "a": 4,
+          "d": 65,
+          "p": 9,
+          "n": 78,
+          "pct": 5
+        },
+        "gap": 8,
+        "minAgree": 5,
         "consensus": -1
       },
       "source": "Open Poll",
@@ -1160,23 +1370,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 231,
+        "total": 251,
         "A": {
-          "a": 97,
-          "d": 1,
-          "p": 5,
-          "n": 103,
-          "pct": 94
+          "a": 14,
+          "d": 22,
+          "p": 10,
+          "n": 46,
+          "pct": 30
         },
         "B": {
-          "a": 77,
-          "d": 29,
-          "p": 22,
-          "n": 128,
-          "pct": 60
+          "a": 89,
+          "d": 9,
+          "p": 14,
+          "n": 112,
+          "pct": 79
         },
-        "gap": 34,
-        "minAgree": 60,
+        "C": {
+          "a": 87,
+          "d": 1,
+          "p": 5,
+          "n": 93,
+          "pct": 94
+        },
+        "gap": 64,
+        "minAgree": 30,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1200,23 +1417,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 174,
+        "total": 184,
         "A": {
-          "a": 2,
-          "d": 82,
+          "a": 5,
+          "d": 29,
           "p": 3,
-          "n": 87,
-          "pct": 2
+          "n": 37,
+          "pct": 14
         },
         "B": {
-          "a": 5,
-          "d": 79,
-          "p": 3,
-          "n": 87,
-          "pct": 6
+          "a": 0,
+          "d": 69,
+          "p": 0,
+          "n": 69,
+          "pct": 0
         },
-        "gap": 4,
-        "minAgree": 2,
+        "C": {
+          "a": 2,
+          "d": 73,
+          "p": 3,
+          "n": 78,
+          "pct": 3
+        },
+        "gap": 14,
+        "minAgree": 0,
         "consensus": -1
       },
       "source": "Open Poll",
@@ -1237,23 +1461,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 240,
+        "total": 260,
         "A": {
-          "a": 97,
-          "d": 4,
-          "p": 6,
-          "n": 107,
-          "pct": 91
+          "a": 13,
+          "d": 26,
+          "p": 4,
+          "n": 43,
+          "pct": 30
         },
         "B": {
-          "a": 80,
-          "d": 33,
-          "p": 20,
-          "n": 133,
-          "pct": 60
+          "a": 96,
+          "d": 8,
+          "p": 19,
+          "n": 123,
+          "pct": 78
         },
-        "gap": 31,
-        "minAgree": 60,
+        "C": {
+          "a": 84,
+          "d": 3,
+          "p": 7,
+          "n": 94,
+          "pct": 89
+        },
+        "gap": 59,
+        "minAgree": 30,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1273,23 +1504,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 235,
+        "total": 255,
         "A": {
-          "a": 10,
-          "d": 85,
-          "p": 17,
-          "n": 112,
-          "pct": 9
+          "a": 38,
+          "d": 2,
+          "p": 5,
+          "n": 45,
+          "pct": 84
         },
         "B": {
-          "a": 66,
-          "d": 32,
-          "p": 25,
-          "n": 123,
-          "pct": 54
+          "a": 36,
+          "d": 46,
+          "p": 30,
+          "n": 112,
+          "pct": 32
         },
-        "gap": 45,
-        "minAgree": 9,
+        "C": {
+          "a": 7,
+          "d": 77,
+          "p": 14,
+          "n": 98,
+          "pct": 7
+        },
+        "gap": 77,
+        "minAgree": 7,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1309,23 +1547,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 209,
+        "total": 227,
         "A": {
-          "a": 92,
-          "d": 3,
-          "p": 3,
-          "n": 98,
-          "pct": 94
+          "a": 23,
+          "d": 7,
+          "p": 9,
+          "n": 39,
+          "pct": 59
         },
         "B": {
-          "a": 87,
-          "d": 7,
-          "p": 17,
-          "n": 111,
-          "pct": 78
+          "a": 89,
+          "d": 1,
+          "p": 9,
+          "n": 99,
+          "pct": 90
         },
-        "gap": 16,
-        "minAgree": 78,
+        "C": {
+          "a": 84,
+          "d": 2,
+          "p": 3,
+          "n": 89,
+          "pct": 94
+        },
+        "gap": 35,
+        "minAgree": 59,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1349,24 +1594,31 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 184,
+        "total": 200,
         "A": {
-          "a": 76,
-          "d": 7,
-          "p": 7,
-          "n": 90,
-          "pct": 84
+          "a": 24,
+          "d": 8,
+          "p": 3,
+          "n": 35,
+          "pct": 69
         },
         "B": {
-          "a": 78,
-          "d": 10,
-          "p": 6,
-          "n": 94,
+          "a": 75,
+          "d": 2,
+          "p": 4,
+          "n": 81,
+          "pct": 93
+        },
+        "C": {
+          "a": 70,
+          "d": 7,
+          "p": 7,
+          "n": 84,
           "pct": 83
         },
-        "gap": 1,
-        "minAgree": 83,
-        "consensus": 1
+        "gap": 24,
+        "minAgree": 69,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -1386,23 +1638,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 186,
+        "total": 203,
         "A": {
-          "a": 77,
-          "d": 2,
-          "p": 16,
-          "n": 95,
-          "pct": 81
+          "a": 4,
+          "d": 22,
+          "p": 9,
+          "n": 35,
+          "pct": 11
         },
         "B": {
-          "a": 34,
-          "d": 27,
-          "p": 30,
-          "n": 91,
-          "pct": 37
+          "a": 50,
+          "d": 5,
+          "p": 26,
+          "n": 81,
+          "pct": 62
         },
-        "gap": 44,
-        "minAgree": 37,
+        "C": {
+          "a": 67,
+          "d": 2,
+          "p": 18,
+          "n": 87,
+          "pct": 77
+        },
+        "gap": 66,
+        "minAgree": 11,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1425,23 +1684,30 @@
         "WHITE OR CAUCASIAN"
       ],
       "vote": {
-        "total": 171,
+        "total": 189,
         "A": {
-          "a": 82,
-          "d": 2,
-          "p": 4,
-          "n": 88,
-          "pct": 93
+          "a": 19,
+          "d": 10,
+          "p": 5,
+          "n": 34,
+          "pct": 56
         },
         "B": {
-          "a": 63,
-          "d": 11,
-          "p": 9,
-          "n": 83,
-          "pct": 76
+          "a": 66,
+          "d": 1,
+          "p": 5,
+          "n": 72,
+          "pct": 92
         },
-        "gap": 17,
-        "minAgree": 76,
+        "C": {
+          "a": 77,
+          "d": 2,
+          "p": 4,
+          "n": 83,
+          "pct": 93
+        },
+        "gap": 37,
+        "minAgree": 56,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1465,64 +1731,35 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 142,
+        "total": 158,
         "A": {
-          "a": 71,
-          "d": 1,
-          "p": 2,
-          "n": 74,
-          "pct": 96
+          "a": 8,
+          "d": 5,
+          "p": 13,
+          "n": 26,
+          "pct": 31
         },
         "B": {
-          "a": 37,
-          "d": 8,
-          "p": 23,
-          "n": 68,
-          "pct": 54
+          "a": 43,
+          "d": 4,
+          "p": 11,
+          "n": 58,
+          "pct": 74
         },
-        "gap": 42,
-        "minAgree": 54,
+        "C": {
+          "a": 73,
+          "d": 0,
+          "p": 1,
+          "n": 74,
+          "pct": 99
+        },
+        "gap": 68,
+        "minAgree": 31,
         "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
         "Education"
-      ],
-      "inReport": false
-    },
-    {
-      "id": "p68",
-      "kind": "poll",
-      "text": "I don’t think AI has benefits that outweigh the environmental and social repercussions of computer-based control over our lives and information. Taxing tech companies to neutralize their profits on AI and using proceeds to fund public needs",
-      "origin": "participant",
-      "place": "Prineville",
-      "chips": [
-        "PRINEVILLE, OR",
-        "Not Provided"
-      ],
-      "vote": {
-        "total": 132,
-        "A": {
-          "a": 62,
-          "d": 1,
-          "p": 9,
-          "n": 72,
-          "pct": 86
-        },
-        "B": {
-          "a": 17,
-          "d": 16,
-          "p": 27,
-          "n": 60,
-          "pct": 28
-        },
-        "gap": 58,
-        "minAgree": 28,
-        "consensus": 0
-      },
-      "source": "Open Poll",
-      "tags": [
-        "Environment"
       ],
       "inReport": false
     },
@@ -1540,23 +1777,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 125,
+        "total": 141,
         "A": {
-          "a": 18,
-          "d": 25,
-          "p": 25,
-          "n": 68,
-          "pct": 26
+          "a": 22,
+          "d": 2,
+          "p": 2,
+          "n": 26,
+          "pct": 85
         },
         "B": {
-          "a": 44,
+          "a": 33,
           "d": 5,
-          "p": 8,
-          "n": 57,
-          "pct": 77
+          "p": 13,
+          "n": 51,
+          "pct": 65
         },
-        "gap": 51,
-        "minAgree": 26,
+        "C": {
+          "a": 15,
+          "d": 25,
+          "p": 24,
+          "n": 64,
+          "pct": 23
+        },
+        "gap": 62,
+        "minAgree": 23,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1579,23 +1823,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 135,
+        "total": 153,
         "A": {
-          "a": 71,
+          "a": 22,
           "d": 0,
-          "p": 2,
-          "n": 73,
-          "pct": 97
+          "p": 3,
+          "n": 25,
+          "pct": 88
         },
         "B": {
-          "a": 55,
+          "a": 54,
           "d": 1,
-          "p": 6,
-          "n": 62,
-          "pct": 89
+          "p": 3,
+          "n": 58,
+          "pct": 93
         },
-        "gap": 8,
-        "minAgree": 89,
+        "C": {
+          "a": 68,
+          "d": 0,
+          "p": 2,
+          "n": 70,
+          "pct": 97
+        },
+        "gap": 9,
+        "minAgree": 88,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -1619,23 +1870,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 127,
+        "total": 143,
         "A": {
-          "a": 67,
-          "d": 1,
-          "p": 2,
-          "n": 70,
+          "a": 25,
+          "d": 0,
+          "p": 1,
+          "n": 26,
           "pct": 96
         },
         "B": {
-          "a": 52,
+          "a": 47,
           "d": 1,
-          "p": 4,
-          "n": 57,
-          "pct": 91
+          "p": 3,
+          "n": 51,
+          "pct": 92
         },
-        "gap": 5,
-        "minAgree": 91,
+        "C": {
+          "a": 63,
+          "d": 1,
+          "p": 2,
+          "n": 66,
+          "pct": 95
+        },
+        "gap": 4,
+        "minAgree": 92,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -1658,23 +1916,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 124,
+        "total": 140,
         "A": {
-          "a": 34,
-          "d": 13,
-          "p": 21,
-          "n": 68,
-          "pct": 50
+          "a": 22,
+          "d": 0,
+          "p": 2,
+          "n": 24,
+          "pct": 92
         },
         "B": {
-          "a": 49,
-          "d": 0,
-          "p": 7,
-          "n": 56,
-          "pct": 88
+          "a": 42,
+          "d": 2,
+          "p": 9,
+          "n": 53,
+          "pct": 79
         },
-        "gap": 38,
-        "minAgree": 50,
+        "C": {
+          "a": 30,
+          "d": 13,
+          "p": 20,
+          "n": 63,
+          "pct": 48
+        },
+        "gap": 44,
+        "minAgree": 48,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1694,23 +1959,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 131,
+        "total": 147,
         "A": {
-          "a": 46,
-          "d": 11,
-          "p": 15,
-          "n": 72,
-          "pct": 64
+          "a": 17,
+          "d": 4,
+          "p": 5,
+          "n": 26,
+          "pct": 65
         },
         "B": {
           "a": 41,
-          "d": 8,
-          "p": 10,
-          "n": 59,
-          "pct": 69
+          "d": 4,
+          "p": 7,
+          "n": 52,
+          "pct": 79
         },
-        "gap": 5,
-        "minAgree": 64,
+        "C": {
+          "a": 40,
+          "d": 11,
+          "p": 18,
+          "n": 69,
+          "pct": 58
+        },
+        "gap": 21,
+        "minAgree": 58,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1733,23 +2005,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 130,
+        "total": 148,
         "A": {
-          "a": 58,
-          "d": 4,
-          "p": 6,
-          "n": 68,
-          "pct": 85
+          "a": 5,
+          "d": 13,
+          "p": 7,
+          "n": 25,
+          "pct": 20
         },
         "B": {
-          "a": 32,
-          "d": 15,
-          "p": 15,
-          "n": 62,
-          "pct": 52
+          "a": 38,
+          "d": 4,
+          "p": 12,
+          "n": 54,
+          "pct": 70
         },
-        "gap": 33,
-        "minAgree": 52,
+        "C": {
+          "a": 61,
+          "d": 4,
+          "p": 4,
+          "n": 69,
+          "pct": 88
+        },
+        "gap": 68,
+        "minAgree": 20,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1769,23 +2048,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 133,
+        "total": 152,
         "A": {
-          "a": 71,
-          "d": 3,
-          "p": 1,
-          "n": 75,
-          "pct": 95
+          "a": 4,
+          "d": 17,
+          "p": 2,
+          "n": 23,
+          "pct": 17
         },
         "B": {
-          "a": 24,
-          "d": 21,
+          "a": 37,
+          "d": 5,
           "p": 13,
-          "n": 58,
-          "pct": 41
+          "n": 55,
+          "pct": 67
         },
-        "gap": 54,
-        "minAgree": 41,
+        "C": {
+          "a": 69,
+          "d": 3,
+          "p": 2,
+          "n": 74,
+          "pct": 93
+        },
+        "gap": 76,
+        "minAgree": 17,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1808,23 +2094,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 125,
+        "total": 140,
         "A": {
-          "a": 7,
-          "d": 41,
-          "p": 17,
-          "n": 65,
-          "pct": 11
+          "a": 19,
+          "d": 1,
+          "p": 3,
+          "n": 23,
+          "pct": 83
         },
         "B": {
-          "a": 41,
-          "d": 6,
-          "p": 13,
-          "n": 60,
-          "pct": 68
+          "a": 26,
+          "d": 9,
+          "p": 17,
+          "n": 52,
+          "pct": 50
         },
-        "gap": 57,
-        "minAgree": 11,
+        "C": {
+          "a": 6,
+          "d": 46,
+          "p": 13,
+          "n": 65,
+          "pct": 9
+        },
+        "gap": 74,
+        "minAgree": 9,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1845,23 +2138,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 130,
+        "total": 155,
         "A": {
-          "a": 58,
-          "d": 5,
-          "p": 7,
-          "n": 70,
-          "pct": 83
+          "a": 1,
+          "d": 23,
+          "p": 1,
+          "n": 25,
+          "pct": 4
         },
         "B": {
-          "a": 15,
-          "d": 31,
-          "p": 14,
-          "n": 60,
-          "pct": 25
+          "a": 28,
+          "d": 13,
+          "p": 17,
+          "n": 58,
+          "pct": 48
         },
-        "gap": 58,
-        "minAgree": 25,
+        "C": {
+          "a": 60,
+          "d": 3,
+          "p": 9,
+          "n": 72,
+          "pct": 83
+        },
+        "gap": 79,
+        "minAgree": 4,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1881,24 +2181,31 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 122,
+        "total": 135,
         "A": {
-          "a": 61,
+          "a": 14,
           "d": 5,
-          "p": 1,
-          "n": 67,
-          "pct": 91
+          "p": 3,
+          "n": 22,
+          "pct": 64
         },
         "B": {
-          "a": 44,
-          "d": 5,
-          "p": 6,
-          "n": 55,
-          "pct": 80
+          "a": 43,
+          "d": 1,
+          "p": 4,
+          "n": 48,
+          "pct": 90
         },
-        "gap": 11,
-        "minAgree": 80,
-        "consensus": 1
+        "C": {
+          "a": 57,
+          "d": 5,
+          "p": 3,
+          "n": 65,
+          "pct": 88
+        },
+        "gap": 26,
+        "minAgree": 64,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -1921,23 +2228,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 111,
+        "total": 125,
         "A": {
-          "a": 36,
-          "d": 4,
-          "p": 18,
-          "n": 58,
-          "pct": 62
+          "a": 10,
+          "d": 9,
+          "p": 4,
+          "n": 23,
+          "pct": 43
         },
         "B": {
-          "a": 28,
-          "d": 14,
-          "p": 11,
-          "n": 53,
-          "pct": 53
+          "a": 26,
+          "d": 8,
+          "p": 10,
+          "n": 44,
+          "pct": 59
         },
-        "gap": 9,
-        "minAgree": 53,
+        "C": {
+          "a": 35,
+          "d": 3,
+          "p": 20,
+          "n": 58,
+          "pct": 60
+        },
+        "gap": 17,
+        "minAgree": 43,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1961,23 +2275,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 105,
+        "total": 117,
         "A": {
-          "a": 10,
-          "d": 33,
-          "p": 16,
-          "n": 59,
-          "pct": 17
+          "a": 15,
+          "d": 1,
+          "p": 6,
+          "n": 22,
+          "pct": 68
         },
         "B": {
-          "a": 26,
-          "d": 1,
-          "p": 19,
-          "n": 46,
-          "pct": 57
+          "a": 18,
+          "d": 2,
+          "p": 15,
+          "n": 35,
+          "pct": 51
         },
-        "gap": 40,
-        "minAgree": 17,
+        "C": {
+          "a": 5,
+          "d": 34,
+          "p": 21,
+          "n": 60,
+          "pct": 8
+        },
+        "gap": 60,
+        "minAgree": 8,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -1998,23 +2319,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 84,
+        "total": 95,
         "A": {
-          "a": 5,
-          "d": 28,
-          "p": 19,
-          "n": 52,
-          "pct": 10
+          "a": 1,
+          "d": 13,
+          "p": 3,
+          "n": 17,
+          "pct": 6
         },
         "B": {
           "a": 3,
-          "d": 20,
+          "d": 15,
           "p": 9,
-          "n": 32,
-          "pct": 9
+          "n": 27,
+          "pct": 11
         },
-        "gap": 1,
-        "minAgree": 9,
+        "C": {
+          "a": 4,
+          "d": 26,
+          "p": 21,
+          "n": 51,
+          "pct": 8
+        },
+        "gap": 5,
+        "minAgree": 6,
         "consensus": -1
       },
       "source": "Open Poll",
@@ -2034,23 +2362,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 100,
+        "total": 115,
         "A": {
-          "a": 49,
-          "d": 3,
-          "p": 6,
-          "n": 58,
-          "pct": 84
+          "a": 2,
+          "d": 10,
+          "p": 7,
+          "n": 19,
+          "pct": 11
         },
         "B": {
-          "a": 11,
-          "d": 12,
-          "p": 19,
-          "n": 42,
-          "pct": 26
+          "a": 18,
+          "d": 5,
+          "p": 14,
+          "n": 37,
+          "pct": 49
         },
-        "gap": 58,
-        "minAgree": 26,
+        "C": {
+          "a": 50,
+          "d": 1,
+          "p": 8,
+          "n": 59,
+          "pct": 85
+        },
+        "gap": 74,
+        "minAgree": 11,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2072,23 +2407,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 96,
+        "total": 108,
         "A": {
-          "a": 49,
-          "d": 1,
-          "p": 5,
-          "n": 55,
-          "pct": 89
+          "a": 9,
+          "d": 3,
+          "p": 7,
+          "n": 19,
+          "pct": 47
         },
         "B": {
-          "a": 22,
-          "d": 4,
-          "p": 15,
-          "n": 41,
-          "pct": 54
+          "a": 25,
+          "d": 2,
+          "p": 8,
+          "n": 35,
+          "pct": 71
         },
-        "gap": 35,
-        "minAgree": 54,
+        "C": {
+          "a": 46,
+          "d": 0,
+          "p": 8,
+          "n": 54,
+          "pct": 85
+        },
+        "gap": 38,
+        "minAgree": 47,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2111,23 +2453,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 77,
+        "total": 87,
         "A": {
-          "a": 2,
-          "d": 45,
-          "p": 0,
-          "n": 47,
-          "pct": 4
+          "a": 1,
+          "d": 12,
+          "p": 2,
+          "n": 15,
+          "pct": 7
         },
         "B": {
-          "a": 1,
-          "d": 27,
-          "p": 2,
-          "n": 30,
-          "pct": 3
+          "a": 0,
+          "d": 23,
+          "p": 0,
+          "n": 23,
+          "pct": 0
         },
-        "gap": 1,
-        "minAgree": 3,
+        "C": {
+          "a": 2,
+          "d": 47,
+          "p": 0,
+          "n": 49,
+          "pct": 4
+        },
+        "gap": 7,
+        "minAgree": 0,
         "consensus": -1
       },
       "source": "Open Poll",
@@ -2152,23 +2501,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 83,
+        "total": 95,
         "A": {
-          "a": 32,
-          "d": 10,
-          "p": 7,
-          "n": 49,
+          "a": 11,
+          "d": 5,
+          "p": 1,
+          "n": 17,
           "pct": 65
         },
         "B": {
-          "a": 18,
-          "d": 11,
+          "a": 14,
+          "d": 7,
           "p": 5,
-          "n": 34,
-          "pct": 53
+          "n": 26,
+          "pct": 54
         },
-        "gap": 12,
-        "minAgree": 53,
+        "C": {
+          "a": 34,
+          "d": 10,
+          "p": 8,
+          "n": 52,
+          "pct": 65
+        },
+        "gap": 11,
+        "minAgree": 54,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2191,23 +2547,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 91,
+        "total": 107,
         "A": {
-          "a": 51,
-          "d": 0,
-          "p": 1,
-          "n": 52,
-          "pct": 98
+          "a": 11,
+          "d": 2,
+          "p": 5,
+          "n": 18,
+          "pct": 61
         },
         "B": {
           "a": 31,
-          "d": 1,
-          "p": 7,
-          "n": 39,
-          "pct": 79
+          "d": 0,
+          "p": 2,
+          "n": 33,
+          "pct": 94
         },
-        "gap": 19,
-        "minAgree": 79,
+        "C": {
+          "a": 55,
+          "d": 0,
+          "p": 1,
+          "n": 56,
+          "pct": 98
+        },
+        "gap": 37,
+        "minAgree": 61,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2230,23 +2593,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 77,
+        "total": 87,
         "A": {
           "a": 7,
-          "d": 20,
-          "p": 20,
-          "n": 47,
-          "pct": 15
+          "d": 5,
+          "p": 3,
+          "n": 15,
+          "pct": 47
         },
         "B": {
-          "a": 9,
-          "d": 11,
-          "p": 10,
-          "n": 30,
-          "pct": 30
+          "a": 3,
+          "d": 8,
+          "p": 12,
+          "n": 23,
+          "pct": 13
         },
-        "gap": 15,
-        "minAgree": 15,
+        "C": {
+          "a": 8,
+          "d": 23,
+          "p": 18,
+          "n": 49,
+          "pct": 16
+        },
+        "gap": 34,
+        "minAgree": 13,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2270,23 +2640,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 88,
+        "total": 101,
         "A": {
-          "a": 48,
-          "d": 2,
-          "p": 1,
-          "n": 51,
-          "pct": 94
+          "a": 9,
+          "d": 5,
+          "p": 4,
+          "n": 18,
+          "pct": 50
         },
         "B": {
-          "a": 26,
-          "d": 5,
-          "p": 6,
-          "n": 37,
-          "pct": 70
+          "a": 27,
+          "d": 0,
+          "p": 2,
+          "n": 29,
+          "pct": 93
         },
-        "gap": 24,
-        "minAgree": 70,
+        "C": {
+          "a": 50,
+          "d": 2,
+          "p": 2,
+          "n": 54,
+          "pct": 93
+        },
+        "gap": 43,
+        "minAgree": 50,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2310,23 +2687,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 94,
+        "total": 108,
         "A": {
-          "a": 45,
+          "a": 14,
           "d": 1,
-          "p": 6,
-          "n": 52,
-          "pct": 87
+          "p": 3,
+          "n": 18,
+          "pct": 78
         },
         "B": {
-          "a": 33,
-          "d": 3,
+          "a": 27,
+          "d": 2,
           "p": 6,
-          "n": 42,
-          "pct": 79
+          "n": 35,
+          "pct": 77
         },
-        "gap": 8,
-        "minAgree": 79,
+        "C": {
+          "a": 48,
+          "d": 1,
+          "p": 6,
+          "n": 55,
+          "pct": 87
+        },
+        "gap": 10,
+        "minAgree": 77,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2349,23 +2733,30 @@
         "WHITE OR CAUCASIAN"
       ],
       "vote": {
-        "total": 73,
+        "total": 84,
         "A": {
-          "a": 2,
-          "d": 31,
-          "p": 12,
-          "n": 45,
-          "pct": 4
+          "a": 10,
+          "d": 3,
+          "p": 3,
+          "n": 16,
+          "pct": 63
         },
         "B": {
-          "a": 11,
+          "a": 4,
           "d": 6,
           "p": 11,
-          "n": 28,
-          "pct": 39
+          "n": 21,
+          "pct": 19
         },
-        "gap": 35,
-        "minAgree": 4,
+        "C": {
+          "a": 1,
+          "d": 33,
+          "p": 13,
+          "n": 47,
+          "pct": 2
+        },
+        "gap": 61,
+        "minAgree": 2,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2388,23 +2779,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 33,
+        "total": 45,
         "A": {
-          "a": 13,
-          "d": 0,
-          "p": 4,
-          "n": 17,
-          "pct": 76
+          "a": 1,
+          "d": 5,
+          "p": 1,
+          "n": 7,
+          "pct": 14
         },
         "B": {
           "a": 1,
-          "d": 8,
-          "p": 7,
-          "n": 16,
-          "pct": 6
+          "d": 3,
+          "p": 9,
+          "n": 13,
+          "pct": 8
         },
-        "gap": 70,
-        "minAgree": 6,
+        "C": {
+          "a": 21,
+          "d": 0,
+          "p": 4,
+          "n": 25,
+          "pct": 84
+        },
+        "gap": 76,
+        "minAgree": 8,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2427,23 +2825,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 34,
+        "total": 48,
         "A": {
-          "a": 17,
-          "d": 0,
-          "p": 1,
-          "n": 18,
-          "pct": 94
+          "a": 0,
+          "d": 2,
+          "p": 4,
+          "n": 6,
+          "pct": 0
         },
         "B": {
-          "a": 5,
-          "d": 2,
-          "p": 9,
-          "n": 16,
-          "pct": 31
+          "a": 8,
+          "d": 0,
+          "p": 7,
+          "n": 15,
+          "pct": 53
         },
-        "gap": 63,
-        "minAgree": 31,
+        "C": {
+          "a": 27,
+          "d": 0,
+          "p": 0,
+          "n": 27,
+          "pct": 100
+        },
+        "gap": 100,
+        "minAgree": 0,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2463,23 +2868,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 35,
+        "total": 48,
         "A": {
-          "a": 15,
-          "d": 0,
-          "p": 3,
-          "n": 18,
-          "pct": 83
+          "a": 0,
+          "d": 7,
+          "p": 1,
+          "n": 8,
+          "pct": 0
         },
         "B": {
           "a": 1,
-          "d": 9,
-          "p": 7,
-          "n": 17,
-          "pct": 6
+          "d": 4,
+          "p": 9,
+          "n": 14,
+          "pct": 7
         },
-        "gap": 77,
-        "minAgree": 6,
+        "C": {
+          "a": 23,
+          "d": 0,
+          "p": 3,
+          "n": 26,
+          "pct": 88
+        },
+        "gap": 88,
+        "minAgree": 0,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2500,23 +2912,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 39,
+        "total": 51,
         "A": {
-          "a": 10,
-          "d": 7,
-          "p": 1,
-          "n": 18,
-          "pct": 56
+          "a": 9,
+          "d": 0,
+          "p": 0,
+          "n": 9,
+          "pct": 100
         },
         "B": {
-          "a": 19,
+          "a": 15,
           "d": 0,
           "p": 2,
-          "n": 21,
-          "pct": 90
+          "n": 17,
+          "pct": 88
         },
-        "gap": 34,
-        "minAgree": 56,
+        "C": {
+          "a": 13,
+          "d": 10,
+          "p": 2,
+          "n": 25,
+          "pct": 52
+        },
+        "gap": 48,
+        "minAgree": 52,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2539,24 +2958,31 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 41,
+        "total": 57,
         "A": {
-          "a": 20,
-          "d": 0,
-          "p": 0,
-          "n": 20,
-          "pct": 100
-        },
-        "B": {
-          "a": 17,
+          "a": 5,
           "d": 3,
           "p": 1,
-          "n": 21,
-          "pct": 81
+          "n": 9,
+          "pct": 56
         },
-        "gap": 19,
-        "minAgree": 81,
-        "consensus": 1
+        "B": {
+          "a": 18,
+          "d": 1,
+          "p": 1,
+          "n": 20,
+          "pct": 90
+        },
+        "C": {
+          "a": 26,
+          "d": 0,
+          "p": 2,
+          "n": 28,
+          "pct": 93
+        },
+        "gap": 37,
+        "minAgree": 56,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -2576,23 +3002,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 31,
+        "total": 42,
         "A": {
-          "a": 5,
-          "d": 3,
-          "p": 6,
-          "n": 14,
-          "pct": 36
+          "a": 3,
+          "d": 5,
+          "p": 0,
+          "n": 8,
+          "pct": 38
         },
         "B": {
-          "a": 6,
-          "d": 7,
-          "p": 4,
-          "n": 17,
-          "pct": 35
+          "a": 4,
+          "d": 2,
+          "p": 7,
+          "n": 13,
+          "pct": 31
         },
-        "gap": 1,
-        "minAgree": 35,
+        "C": {
+          "a": 5,
+          "d": 6,
+          "p": 10,
+          "n": 21,
+          "pct": 24
+        },
+        "gap": 14,
+        "minAgree": 24,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2615,23 +3048,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 38,
+        "total": 53,
         "A": {
-          "a": 14,
-          "d": 1,
-          "p": 4,
-          "n": 19,
-          "pct": 74
+          "a": 8,
+          "d": 0,
+          "p": 0,
+          "n": 8,
+          "pct": 100
         },
         "B": {
-          "a": 18,
-          "d": 0,
-          "p": 1,
-          "n": 19,
-          "pct": 95
+          "a": 14,
+          "d": 1,
+          "p": 2,
+          "n": 17,
+          "pct": 82
         },
-        "gap": 21,
-        "minAgree": 74,
+        "C": {
+          "a": 16,
+          "d": 3,
+          "p": 9,
+          "n": 28,
+          "pct": 57
+        },
+        "gap": 43,
+        "minAgree": 57,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2654,23 +3094,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 40,
+        "total": 55,
         "A": {
-          "a": 16,
+          "a": 8,
           "d": 0,
           "p": 1,
-          "n": 17,
-          "pct": 94
+          "n": 9,
+          "pct": 89
         },
         "B": {
-          "a": 22,
+          "a": 19,
+          "d": 1,
+          "p": 0,
+          "n": 20,
+          "pct": 95
+        },
+        "C": {
+          "a": 25,
           "d": 0,
           "p": 1,
-          "n": 23,
+          "n": 26,
           "pct": 96
         },
-        "gap": 2,
-        "minAgree": 94,
+        "gap": 7,
+        "minAgree": 89,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -2693,23 +3140,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 38,
+        "total": 53,
         "A": {
-          "a": 18,
-          "d": 0,
-          "p": 1,
-          "n": 19,
-          "pct": 95
+          "a": 4,
+          "d": 1,
+          "p": 3,
+          "n": 8,
+          "pct": 50
         },
         "B": {
           "a": 13,
-          "d": 2,
-          "p": 4,
-          "n": 19,
-          "pct": 68
+          "d": 1,
+          "p": 3,
+          "n": 17,
+          "pct": 76
         },
-        "gap": 27,
-        "minAgree": 68,
+        "C": {
+          "a": 27,
+          "d": 0,
+          "p": 1,
+          "n": 28,
+          "pct": 96
+        },
+        "gap": 46,
+        "minAgree": 50,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2731,23 +3185,30 @@
         "WHITE OR CAUCASIAN"
       ],
       "vote": {
-        "total": 39,
+        "total": 52,
         "A": {
-          "a": 20,
-          "d": 0,
-          "p": 0,
-          "n": 20,
-          "pct": 100
+          "a": 3,
+          "d": 1,
+          "p": 3,
+          "n": 7,
+          "pct": 43
         },
         "B": {
-          "a": 13,
-          "d": 2,
-          "p": 4,
-          "n": 19,
-          "pct": 68
+          "a": 12,
+          "d": 1,
+          "p": 2,
+          "n": 15,
+          "pct": 80
         },
-        "gap": 32,
-        "minAgree": 68,
+        "C": {
+          "a": 30,
+          "d": 0,
+          "p": 0,
+          "n": 30,
+          "pct": 100
+        },
+        "gap": 57,
+        "minAgree": 43,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2770,23 +3231,30 @@
         "WHITE OR CAUCASIAN"
       ],
       "vote": {
-        "total": 32,
+        "total": 43,
         "A": {
-          "a": 12,
-          "d": 2,
-          "p": 2,
-          "n": 16,
-          "pct": 75
+          "a": 3,
+          "d": 1,
+          "p": 3,
+          "n": 7,
+          "pct": 43
         },
         "B": {
-          "a": 7,
+          "a": 6,
           "d": 3,
-          "p": 6,
-          "n": 16,
-          "pct": 44
+          "p": 4,
+          "n": 13,
+          "pct": 46
         },
-        "gap": 31,
-        "minAgree": 44,
+        "C": {
+          "a": 13,
+          "d": 4,
+          "p": 6,
+          "n": 23,
+          "pct": 57
+        },
+        "gap": 14,
+        "minAgree": 43,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2809,23 +3277,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 34,
+        "total": 46,
         "A": {
-          "a": 11,
-          "d": 3,
-          "p": 3,
-          "n": 17,
-          "pct": 65
-        },
-        "B": {
-          "a": 15,
+          "a": 6,
           "d": 1,
           "p": 1,
-          "n": 17,
-          "pct": 88
+          "n": 8,
+          "pct": 75
         },
-        "gap": 23,
-        "minAgree": 65,
+        "B": {
+          "a": 13,
+          "d": 0,
+          "p": 0,
+          "n": 13,
+          "pct": 100
+        },
+        "C": {
+          "a": 16,
+          "d": 3,
+          "p": 6,
+          "n": 25,
+          "pct": 64
+        },
+        "gap": 36,
+        "minAgree": 64,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2848,23 +3323,30 @@
         "DEMOCRAT / PROGRESSIVE / LIBERAL"
       ],
       "vote": {
-        "total": 39,
+        "total": 53,
         "A": {
-          "a": 18,
+          "a": 8,
           "d": 0,
-          "p": 1,
-          "n": 19,
-          "pct": 95
+          "p": 0,
+          "n": 8,
+          "pct": 100
         },
         "B": {
-          "a": 19,
+          "a": 15,
+          "d": 1,
+          "p": 1,
+          "n": 17,
+          "pct": 88
+        },
+        "C": {
+          "a": 27,
           "d": 0,
           "p": 1,
-          "n": 20,
-          "pct": 95
+          "n": 28,
+          "pct": 96
         },
-        "gap": 0,
-        "minAgree": 95,
+        "gap": 12,
+        "minAgree": 88,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -2889,23 +3371,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 40,
+        "total": 56,
         "A": {
-          "a": 22,
-          "d": 0,
-          "p": 0,
-          "n": 22,
-          "pct": 100
+          "a": 3,
+          "d": 2,
+          "p": 2,
+          "n": 7,
+          "pct": 43
         },
         "B": {
-          "a": 13,
-          "d": 2,
-          "p": 3,
+          "a": 17,
+          "d": 0,
+          "p": 1,
           "n": 18,
-          "pct": 72
+          "pct": 94
         },
-        "gap": 28,
-        "minAgree": 72,
+        "C": {
+          "a": 31,
+          "d": 0,
+          "p": 0,
+          "n": 31,
+          "pct": 100
+        },
+        "gap": 57,
+        "minAgree": 43,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2930,23 +3419,30 @@
         "REPUBLICAN / CONSERVATIVE"
       ],
       "vote": {
-        "total": 40,
+        "total": 53,
         "A": {
-          "a": 20,
-          "d": 0,
+          "a": 6,
+          "d": 2,
           "p": 1,
-          "n": 21,
-          "pct": 95
+          "n": 9,
+          "pct": 67
         },
         "B": {
           "a": 13,
-          "d": 2,
-          "p": 4,
-          "n": 19,
-          "pct": 68
+          "d": 0,
+          "p": 3,
+          "n": 16,
+          "pct": 81
         },
-        "gap": 27,
-        "minAgree": 68,
+        "C": {
+          "a": 27,
+          "d": 0,
+          "p": 1,
+          "n": 28,
+          "pct": 96
+        },
+        "gap": 29,
+        "minAgree": 67,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -2971,23 +3467,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 36,
+        "total": 49,
         "A": {
-          "a": 18,
-          "d": 0,
+          "a": 7,
+          "d": 1,
           "p": 0,
-          "n": 18,
-          "pct": 100
+          "n": 8,
+          "pct": 88
         },
         "B": {
-          "a": 12,
-          "d": 1,
-          "p": 5,
-          "n": 18,
-          "pct": 67
+          "a": 8,
+          "d": 0,
+          "p": 6,
+          "n": 14,
+          "pct": 57
         },
-        "gap": 33,
-        "minAgree": 67,
+        "C": {
+          "a": 27,
+          "d": 0,
+          "p": 0,
+          "n": 27,
+          "pct": 100
+        },
+        "gap": 43,
+        "minAgree": 57,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3010,23 +3513,30 @@
         "NO PARTY PREFERENCE / INDEPENDENT"
       ],
       "vote": {
-        "total": 25,
+        "total": 35,
         "A": {
-          "a": 9,
+          "a": 2,
           "d": 0,
-          "p": 6,
-          "n": 15,
-          "pct": 60
+          "p": 1,
+          "n": 3,
+          "pct": 67
         },
         "B": {
-          "a": 3,
+          "a": 4,
           "d": 2,
-          "p": 5,
+          "p": 4,
           "n": 10,
-          "pct": 30
+          "pct": 40
         },
-        "gap": 30,
-        "minAgree": 30,
+        "C": {
+          "a": 14,
+          "d": 0,
+          "p": 8,
+          "n": 22,
+          "pct": 64
+        },
+        "gap": 27,
+        "minAgree": 40,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3047,23 +3557,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 29,
+        "total": 44,
         "A": {
-          "a": 17,
+          "a": 4,
           "d": 0,
           "p": 0,
-          "n": 17,
+          "n": 4,
           "pct": 100
         },
         "B": {
-          "a": 12,
-          "d": 0,
-          "p": 0,
-          "n": 12,
-          "pct": 100
+          "a": 13,
+          "d": 1,
+          "p": 1,
+          "n": 15,
+          "pct": 87
         },
-        "gap": 0,
-        "minAgree": 100,
+        "C": {
+          "a": 22,
+          "d": 2,
+          "p": 1,
+          "n": 25,
+          "pct": 88
+        },
+        "gap": 13,
+        "minAgree": 87,
         "consensus": 1
       },
       "source": "Open Poll",
@@ -3083,23 +3600,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 27,
+        "total": 41,
         "A": {
-          "a": 8,
-          "d": 3,
-          "p": 2,
-          "n": 13,
-          "pct": 62
+          "a": 3,
+          "d": 0,
+          "p": 1,
+          "n": 4,
+          "pct": 75
         },
         "B": {
-          "a": 12,
+          "a": 14,
           "d": 0,
-          "p": 2,
-          "n": 14,
-          "pct": 86
+          "p": 1,
+          "n": 15,
+          "pct": 93
         },
-        "gap": 24,
-        "minAgree": 62,
+        "C": {
+          "a": 12,
+          "d": 4,
+          "p": 6,
+          "n": 22,
+          "pct": 55
+        },
+        "gap": 38,
+        "minAgree": 55,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3121,67 +3645,35 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 28,
+        "total": 43,
         "A": {
-          "a": 12,
-          "d": 1,
-          "p": 1,
-          "n": 14,
-          "pct": 86
+          "a": 4,
+          "d": 0,
+          "p": 0,
+          "n": 4,
+          "pct": 100
         },
         "B": {
-          "a": 13,
+          "a": 14,
           "d": 1,
           "p": 0,
-          "n": 14,
+          "n": 15,
           "pct": 93
         },
-        "gap": 7,
-        "minAgree": 86,
+        "C": {
+          "a": 20,
+          "d": 3,
+          "p": 1,
+          "n": 24,
+          "pct": 83
+        },
+        "gap": 17,
+        "minAgree": 83,
         "consensus": 1
       },
       "source": "Open Poll",
       "tags": [
         "Governance & Decision-making"
-      ],
-      "inReport": false
-    },
-    {
-      "id": "p144",
-      "kind": "poll",
-      "text": "Data centers are consuming huge amounts of limited resources and impacting many communities just so people can play with chatGPT or create fake photos that are entertaining for a minute or two. The cost is not worth the reward.",
-      "origin": "participant",
-      "place": "Bend",
-      "chips": [
-        "BEND, OR",
-        "55-64",
-        "FEMALE",
-        "WHITE OR CAUCASIAN",
-        "DEMOCRAT / PROGRESSIVE / LIBERAL"
-      ],
-      "vote": {
-        "total": 1,
-        "A": {
-          "a": 1,
-          "d": 0,
-          "p": 0,
-          "n": 1,
-          "pct": 100
-        },
-        "B": {
-          "a": 0,
-          "d": 0,
-          "p": 0,
-          "n": 0,
-          "pct": 0
-        },
-        "gap": 100,
-        "minAgree": 0,
-        "consensus": 0
-      },
-      "source": "Open Poll",
-      "tags": [
-        "Data Centers"
       ],
       "inReport": false
     },
@@ -3196,62 +3688,30 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 21,
+        "total": 36,
         "A": {
           "a": 3,
-          "d": 4,
-          "p": 1,
-          "n": 8,
-          "pct": 38
-        },
-        "B": {
-          "a": 11,
-          "d": 0,
-          "p": 2,
-          "n": 13,
-          "pct": 85
-        },
-        "gap": 47,
-        "minAgree": 38,
-        "consensus": 0
-      },
-      "source": "Open Poll",
-      "tags": [
-        "Governance & Decision-making"
-      ],
-      "inReport": false
-    },
-    {
-      "id": "p149",
-      "kind": "poll",
-      "text": "I would like to apply my grandmother‘s standard assessment regarding AI: Is it necessary? Is it fair? Does it hurt anybody or anything?",
-      "origin": "participant",
-      "place": "Sisters",
-      "chips": [
-        "SISTERS, OR",
-        "65+",
-        "MALE",
-        "WHITE OR CAUCASIAN",
-        "DEMOCRAT / PROGRESSIVE / LIBERAL"
-      ],
-      "vote": {
-        "total": 1,
-        "A": {
-          "a": 1,
           "d": 0,
           "p": 0,
-          "n": 1,
+          "n": 3,
           "pct": 100
         },
         "B": {
-          "a": 0,
-          "d": 0,
-          "p": 0,
-          "n": 0,
-          "pct": 0
+          "a": 13,
+          "d": 1,
+          "p": 3,
+          "n": 17,
+          "pct": 76
         },
-        "gap": 100,
-        "minAgree": 0,
+        "C": {
+          "a": 4,
+          "d": 7,
+          "p": 5,
+          "n": 16,
+          "pct": 25
+        },
+        "gap": 75,
+        "minAgree": 25,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3270,24 +3730,31 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 16,
+        "total": 34,
         "A": {
-          "a": 5,
-          "d": 0,
-          "p": 0,
-          "n": 5,
-          "pct": 100
-        },
-        "B": {
-          "a": 10,
+          "a": 3,
           "d": 0,
           "p": 1,
-          "n": 11,
-          "pct": 91
+          "n": 4,
+          "pct": 75
         },
-        "gap": 9,
-        "minAgree": 91,
-        "consensus": 1
+        "B": {
+          "a": 14,
+          "d": 0,
+          "p": 0,
+          "n": 14,
+          "pct": 100
+        },
+        "C": {
+          "a": 16,
+          "d": 0,
+          "p": 0,
+          "n": 16,
+          "pct": 100
+        },
+        "gap": 25,
+        "minAgree": 75,
+        "consensus": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -3305,23 +3772,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 16,
+        "total": 27,
         "A": {
-          "a": 4,
-          "d": 1,
-          "p": 0,
-          "n": 5,
-          "pct": 80
+          "a": 2,
+          "d": 0,
+          "p": 1,
+          "n": 3,
+          "pct": 67
         },
         "B": {
-          "a": 5,
+          "a": 4,
           "d": 2,
           "p": 4,
-          "n": 11,
-          "pct": 45
+          "n": 10,
+          "pct": 40
         },
-        "gap": 35,
-        "minAgree": 45,
+        "C": {
+          "a": 9,
+          "d": 2,
+          "p": 3,
+          "n": 14,
+          "pct": 64
+        },
+        "gap": 27,
+        "minAgree": 40,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3340,23 +3814,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 14,
+        "total": 28,
         "A": {
-          "a": 5,
+          "a": 3,
           "d": 0,
-          "p": 0,
-          "n": 5,
-          "pct": 100
+          "p": 1,
+          "n": 4,
+          "pct": 75
         },
         "B": {
-          "a": 4,
-          "d": 4,
+          "a": 3,
+          "d": 5,
           "p": 1,
           "n": 9,
-          "pct": 44
+          "pct": 33
         },
-        "gap": 56,
-        "minAgree": 44,
+        "C": {
+          "a": 13,
+          "d": 0,
+          "p": 2,
+          "n": 15,
+          "pct": 87
+        },
+        "gap": 54,
+        "minAgree": 33,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3375,23 +3856,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 15,
+        "total": 27,
         "A": {
-          "a": 4,
-          "d": 0,
+          "a": 1,
+          "d": 1,
           "p": 1,
-          "n": 5,
-          "pct": 80
+          "n": 3,
+          "pct": 33
         },
         "B": {
           "a": 5,
           "d": 3,
-          "p": 2,
-          "n": 10,
-          "pct": 50
+          "p": 3,
+          "n": 11,
+          "pct": 45
         },
-        "gap": 30,
-        "minAgree": 50,
+        "C": {
+          "a": 11,
+          "d": 0,
+          "p": 2,
+          "n": 13,
+          "pct": 85
+        },
+        "gap": 52,
+        "minAgree": 33,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3410,23 +3898,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 12,
+        "total": 24,
         "A": {
           "a": 1,
           "d": 1,
-          "p": 2,
-          "n": 4,
-          "pct": 25
+          "p": 1,
+          "n": 3,
+          "pct": 33
         },
         "B": {
-          "a": 2,
-          "d": 2,
+          "a": 3,
+          "d": 1,
           "p": 4,
           "n": 8,
-          "pct": 25
+          "pct": 38
         },
-        "gap": 0,
-        "minAgree": 25,
+        "C": {
+          "a": 1,
+          "d": 5,
+          "p": 7,
+          "n": 13,
+          "pct": 8
+        },
+        "gap": 30,
+        "minAgree": 8,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3445,20 +3940,27 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 13,
+        "total": 25,
         "A": {
-          "a": 4,
+          "a": 2,
           "d": 0,
-          "p": 0,
-          "n": 4,
-          "pct": 100
+          "p": 1,
+          "n": 3,
+          "pct": 67
         },
         "B": {
           "a": 6,
           "d": 0,
-          "p": 3,
-          "n": 9,
-          "pct": 67
+          "p": 2,
+          "n": 8,
+          "pct": 75
+        },
+        "C": {
+          "a": 14,
+          "d": 0,
+          "p": 0,
+          "n": 14,
+          "pct": 100
         },
         "gap": 33,
         "minAgree": 67,
@@ -3480,23 +3982,30 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 15,
+        "total": 31,
         "A": {
-          "a": 5,
+          "a": 2,
           "d": 0,
-          "p": 0,
-          "n": 5,
-          "pct": 100
+          "p": 1,
+          "n": 3,
+          "pct": 67
         },
         "B": {
-          "a": 7,
+          "a": 10,
           "d": 0,
           "p": 3,
-          "n": 10,
-          "pct": 70
+          "n": 13,
+          "pct": 77
         },
-        "gap": 30,
-        "minAgree": 70,
+        "C": {
+          "a": 13,
+          "d": 0,
+          "p": 2,
+          "n": 15,
+          "pct": 87
+        },
+        "gap": 20,
+        "minAgree": 67,
         "consensus": 0
       },
       "source": "Open Poll",
@@ -3515,20 +4024,27 @@
         "SEED STATEMENT"
       ],
       "vote": {
-        "total": 13,
+        "total": 28,
         "A": {
-          "a": 4,
-          "d": 0,
-          "p": 0,
-          "n": 4,
-          "pct": 100
+          "a": 1,
+          "d": 1,
+          "p": 1,
+          "n": 3,
+          "pct": 33
         },
         "B": {
-          "a": 3,
-          "d": 1,
-          "p": 5,
-          "n": 9,
+          "a": 4,
+          "d": 2,
+          "p": 6,
+          "n": 12,
           "pct": 33
+        },
+        "C": {
+          "a": 13,
+          "d": 0,
+          "p": 0,
+          "n": 13,
+          "pct": 100
         },
         "gap": 67,
         "minAgree": 33,
@@ -3551,29 +4067,76 @@
         "Not Provided"
       ],
       "vote": {
-        "total": 11,
+        "total": 30,
         "A": {
+          "a": 0,
+          "d": 1,
+          "p": 0,
+          "n": 1,
+          "pct": 0
+        },
+        "B": {
+          "a": 13,
+          "d": 0,
+          "p": 1,
+          "n": 14,
+          "pct": 93
+        },
+        "C": {
+          "a": 15,
+          "d": 0,
+          "p": 0,
+          "n": 15,
+          "pct": 100
+        },
+        "gap": 100,
+        "minAgree": 0,
+        "consensus": 0
+      },
+      "source": "Open Poll",
+      "tags": [
+        "Environment",
+        "Economic Benefit"
+      ],
+      "inReport": false
+    },
+    {
+      "id": "p168",
+      "kind": "poll",
+      "text": "We can and should provide and receive education on critical thinking and evaluation and that includes the utilization of AI. AI can be an invaluable tool, but we must be intentional about its use.",
+      "origin": "participant",
+      "place": null,
+      "chips": [],
+      "vote": {
+        "total": 15,
+        "A": {
+          "a": 1,
+          "d": 0,
+          "p": 0,
+          "n": 1,
+          "pct": 100
+        },
+        "B": {
+          "a": 10,
+          "d": 0,
+          "p": 0,
+          "n": 10,
+          "pct": 100
+        },
+        "C": {
           "a": 4,
           "d": 0,
           "p": 0,
           "n": 4,
           "pct": 100
         },
-        "B": {
-          "a": 6,
-          "d": 1,
-          "p": 0,
-          "n": 7,
-          "pct": 86
-        },
-        "gap": 14,
-        "minAgree": 86,
+        "gap": 0,
+        "minAgree": 100,
         "consensus": 1
       },
       "source": "Open Poll",
       "tags": [
-        "Environment",
-        "Economic Benefit"
+        "AI Literacy"
       ],
       "inReport": false
     },
@@ -4100,8 +4663,18 @@
       "inReport": true
     }
   ],
-  "groups": {
-    "A": "Group A · skeptic-leaning",
-    "B": "Group B · optimist-leaning"
-  }
+  "groups": [
+    {
+      "key": "A",
+      "label": "Group A - Optimists"
+    },
+    {
+      "key": "B",
+      "label": "Group B - Pragmatists"
+    },
+    {
+      "key": "C",
+      "label": "Group C - Skeptics"
+    }
+  ]
 }

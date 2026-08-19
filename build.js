@@ -17,14 +17,97 @@ const OUTPUT = path.join(DIST, 'index.html');
 
 // Theme membership is derived: a record belongs to every theme that lists one of its
 // tags. A record carrying no tag any theme claims does not land somewhere wrong — it
-// drops out of the report altogether, silently. That is the one way this data can be
-// well-formed JSON and still be broken, so it fails the build.
+// drops out of the report altogether, silently.
+//
+// This used to fail the build, on the reasoning that a silent disappearance is worse
+// than a loud stop. But the invariant it protected was never a property of the data:
+// the original spreadsheet had untagged rows, and every record only satisfies this
+// today because the tags were hand-backfilled when themes moved from a fixed field to
+// derived membership. A refresh pulls in new Polis statements, which arrive untagged
+// by definition — tags are editorial and exist nowhere upstream. So this warns, and
+// tagging the named records is the editorial follow-up.
 function checkEveryRecordReachable(data, file) {
   const claimed = new Set(data.themes.flatMap(t => t.tags));
   const orphans = data.records.filter(r => !r.tags.some(tag => claimed.has(tag)));
   if (orphans.length) {
-    throw new Error(`${file}: ${orphans.length} record(s) carry no tag claimed by any `
-      + `theme and would appear under no theme at all: ${orphans.map(r => r.id).join(', ')}`);
+    console.warn(`  WARNING ${file}: ${orphans.length} record(s) carry no tag claimed by `
+      + `any theme and will appear under no theme at all: ${orphans.map(r => r.id).join(', ')}`);
+  }
+}
+
+// Everything the report shows about a poll statement is derived from its per-group
+// tallies, and those derivations are recomputed by the refresh script rather than
+// read from Polis. Recompute them here too: if the two ever disagree, the file is
+// telling readers something the votes underneath it do not say. Unlike the check
+// above this is never a judgement call, so it fails the build.
+//
+// Rounding is deliberately not uniform. `pct` is rounded for display, and gap/minAgree
+// are computed from those rounded values, but `consensus` is decided on the unrounded
+// fractions — p4's group B is 19.81%, which displays as 20 yet is genuinely below the
+// 20% threshold. Rounding first would flip it. A group nobody in it voted on counts as
+// 0% rather than undefined, matching how p144/p149 have always been stored.
+const VOTE_DERIVED = ['total', 'gap', 'minAgree', 'consensus'];
+const CONSENSUS_AGREE = 0.8;      // every group at or above → consensus (+1)
+const CONSENSUS_DISAGREE = 0.2;   // every group below → consensus (−1)
+
+function checkVoteIntegrity(data, file) {
+  const problems = [];
+  if (!Array.isArray(data.groups) || data.groups.length === 0) {
+    throw new Error(`${file}: "groups" must be a non-empty array of {key, label}`);
+  }
+  const keys = data.groups.map(g => g.key);
+  if (new Set(keys).size !== keys.length) {
+    throw new Error(`${file}: duplicate group key in [${keys.join(', ')}]`);
+  }
+
+  for (const r of data.records) {
+    if (!r.vote) continue;
+    const v = r.vote;
+    const say = msg => problems.push(`${r.id}: ${msg}`);
+
+    const has = Object.keys(v).filter(k => !VOTE_DERIVED.includes(k));
+    const unknown = has.filter(k => !keys.includes(k));
+    const missing = keys.filter(k => !v[k]);
+    // Usually this means a statement was left behind by a recluster: its tallies were
+    // computed over a group set the file no longer declares, and nothing can recompute
+    // them, so naming both sets is the only useful thing to say.
+    if (unknown.length || missing.length) {
+      say(`vote has tallies for [${has.join(', ')}], but the declared groups are `
+        + `[${keys.join(', ')}]`);
+      continue;
+    }
+
+    const fracs = [], pcts = [];
+    for (const k of keys) {
+      const g = v[k];
+      const n = g.a + g.d + g.p;
+      if (g.n !== n) say(`group ${k} n is ${g.n}, but a+d+p is ${n}`);
+      const frac = n > 0 ? g.a / n : 0;
+      const pct = Math.round(frac * 100);
+      if (g.pct !== pct) say(`group ${k} pct is ${g.pct}, but ${g.a}/${n} rounds to ${pct}`);
+      fracs.push(frac);
+      pcts.push(g.pct);
+    }
+
+    const total = keys.reduce((sum, k) => sum + v[k].n, 0);
+    const gap = Math.max(...pcts) - Math.min(...pcts);
+    const minAgree = Math.min(...pcts);
+    const consensus = fracs.every(f => f >= CONSENSUS_AGREE) ? 1
+      : fracs.every(f => f < CONSENSUS_DISAGREE) ? -1 : 0;
+    if (v.total !== total) say(`total is ${v.total}, but the groups sum to ${total}`);
+    if (v.gap !== gap) say(`gap is ${v.gap}, but the pcts spread ${gap}`);
+    if (v.minAgree !== minAgree) say(`minAgree is ${v.minAgree}, but the lowest pct is ${minAgree}`);
+    if (v.consensus !== consensus) say(`consensus is ${v.consensus}, but recomputes to ${consensus}`);
+  }
+
+  // One bad group key trips every record, so cap the list — the first few say
+  // what is wrong and the count says how far it spread.
+  if (problems.length) {
+    const SHOWN = 12;
+    const shown = problems.slice(0, SHOWN);
+    if (problems.length > SHOWN) shown.push(`… and ${problems.length - SHOWN} more`);
+    throw new Error(`${file}: ${problems.length} vote inconsistency(ies):\n    `
+      + shown.join('\n    '));
   }
 }
 
@@ -35,11 +118,16 @@ function checkEveryRecordReachable(data, file) {
 //   json — parsed (so a syntax error fails the build), then re-serialized minified
 //   raw  — inlined verbatim into the <style> / <script> tag that wraps it
 //
-// An optional 'check' runs against the parsed JSON for invariants the parse can't see.
+// An optional 'check' runs against the parsed JSON for invariants the parse can't see;
+// it may warn (and let the build through) or throw.
 const BLOCKS = {
   'app-css': { file: 'src/app.css', kind: 'raw' },
   'theme-descriptions': { file: 'data/theme-descriptions.json', kind: 'json' },
-  'bloom-data': { file: 'data/bloom-data.json', kind: 'json', check: checkEveryRecordReachable },
+  'bloom-data': {
+    file: 'data/bloom-data.json',
+    kind: 'json',
+    check: (data, file) => { checkEveryRecordReachable(data, file); checkVoteIntegrity(data, file); },
+  },
   'app-js': { file: 'src/app.js', kind: 'raw' },
 };
 
