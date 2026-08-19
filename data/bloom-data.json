@@ -4105,8 +4105,11 @@
       "kind": "poll",
       "text": "We can and should provide and receive education on critical thinking and evaluation and that includes the utilization of AI. AI can be an invaluable tool, but we must be intentional about its use.",
       "origin": "participant",
-      "place": null,
-      "chips": [],
+      "place": "Redmond",
+      "chips": [
+        "REDMOND, OR",
+        "Not Provided"
+      ],
       "vote": {
         "total": 15,
         "A": {
