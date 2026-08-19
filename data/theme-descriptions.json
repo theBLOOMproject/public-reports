@@ -1,9 +1,4 @@
 {
-  "_readme": "Editable copy for the Level 2 theme headers. Keyed by theme key. Each entry has a 'description' (the paragraph under the statement count) and an optional 'note' (currently unused by the UI, kept for editorial context). Percentages are drawn from OR_Open_Poll_Analysis_2 tallies: Group A (~131 participants) skews skeptical, Group B (~201) skews optimistic. If you edit a number here, check it against the underlying statement — the app does not recompute these.",
-  "_groups": {
-    "A": "Skeptics (Polis Group A, ~131 participants)",
-    "B": "Optimists (Polis Group B, ~201 participants)"
-  },
   "themes": {
     "governance": {
       "description": "There is almost no argument about who belongs in the room: involving rural and lower-income communities draws 91% and 94%, a formal seat for the Confederated Tribes of Warm Springs 91% and 90%. The fight is over what those rooms are for. Skeptics endorse the flat claim that AI's costs outweigh any benefit (83% vs 6%).",
