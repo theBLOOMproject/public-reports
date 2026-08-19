@@ -109,8 +109,10 @@ consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`, and the clip lengt
   (`emojiFor()`); `chips[]` is raw ALL-CAPS metadata (demographics, session, date)
   title-cased at render time by `titleCaseChip()`. `tags[]` is described below.
 - `groups[]`: the poll's opinion clusters, in render order — `key` (the `vote` key and the
-  letter on the square), `label` (editorial, shown in the L3 modal and expanded into the
-  List tab's key row by `groupTag()`), `members`. **However many Polis returns**: it
+  letter on the square) and `label` (editorial, shown in the L3 modal and expanded into
+  the List tab's key row by `groupTag()`). Nothing else: cluster sizes are printed by the
+  refresh script, not stored, because the report never shows them and a stale count is
+  worse than none. **However many Polis returns**: it
   re-clusters as votes arrive, so neither the count nor the meaning of any one letter is
   stable across refreshes. Nothing in `app.js` may assume two. See "Refreshing the poll".
 
@@ -145,9 +147,8 @@ Per-theme counts are derived at render time (`pollsOf()` / `quotesOf()`); there 
 nothing to keep in sync when records are added or removed.
 
 `data/theme-descriptions.json` — editorial prose keyed by theme `key`, rendered under the L2
-header. Its `_readme` field documents provenance. Percentages in these descriptions are
-hand-written and **not** recomputed by the app; verify any number you change against the
-underlying statement.
+header. Percentages in these descriptions are hand-written and **not** recomputed by the app; 
+verify any number you change against the underlying statement.
 
 Three fields are currently read by nothing: `themes[].full` (the long name — readers only
 ever see `short`), `records[].source` and `records[].inReport`. (`groups` used to be a
@@ -161,8 +162,15 @@ editing them changed nothing on screen.)
 `GET /tools/polis/report_data` (that route has no auth check, so no credentials are
 involved). `--help` documents every flag.
 
-Every live fetch saves the raw payload to `data/polis-snapshots/` — kept in the repo as the
-provenance record, never published (only `dist/` ships), and applied with `--from`. **Dry
+Every live fetch saves the payload to `data/polis-snapshots/`, re-indented so it can be
+read and diffed, and reduced to the fields the script actually reads — the tallies it
+merges, plus the cluster sizes and representative statements the re-label aid prints.
+Participant PCA positions, overall vote counts, Polis's own consensus and divisiveness
+scores and the base-cluster id lists are dropped; add them here and re-fetch if they ever
+become useful. So a snapshot records what a refresh was based on, but is not the verbatim
+response. Kept in the repo, never published (only `dist/` ships), and applied with `--from`.
+The same reduction runs on read, so merging a snapshot and merging the live response it
+came from cannot diverge. **Dry
 runs snapshot too, which is the point:** review with `--dry-run`, then apply that exact
 file with `--from`. Fetching a second time for the real run would merge a poll that has
 moved on since you read the report, so "apply what I reviewed" has to mean `--from`.
@@ -182,10 +190,16 @@ the themes are editorial, and where upstream disagrees the script reports and mo
   removal is a person's call. If the cluster count also changed, their votes were counted
   over the old groups and can't be recomputed; `checkVoteIntegrity` then fails the build
   naming them, which is the intended forcing function.
-- **Changed statement text** is reported in full, never applied.
+- **Changed statement text** is reported in full, never applied. Differences that are
+  only whitespace are counted but not listed — Polis returns trailing newlines and
+  non-breaking spaces that nobody typed, and eight of them per run would drown the one
+  that matters.
 - **Group labels are reset** to plain "Group A", because an inherited label is a claim
-  about a cluster that may no longer be the same one. The script prints each cluster's size
-  and representative statements to make re-labelling possible.
+  about a cluster that may no longer be the same one. To make re-labelling possible the
+  script prints each cluster's size and the statements Polis says most distinguish it,
+  each with that group's own agree% — repness ranks by distinctiveness, so a listed
+  statement may be one the group is defined by *rejecting*, and comhairle drops Polis's
+  agree/disagree direction. Without the percentage the list reads as self-contradictory.
 
 Records are matched by `id === "p" + tid`, so ids are stable across refreshes.
 

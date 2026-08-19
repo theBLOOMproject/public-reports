@@ -53,7 +53,7 @@ const CONSENSUS_DISAGREE = 0.2;   // every group below → consensus (−1)
 function checkVoteIntegrity(data, file) {
   const problems = [];
   if (!Array.isArray(data.groups) || data.groups.length === 0) {
-    throw new Error(`${file}: "groups" must be a non-empty array of {key, label, members}`);
+    throw new Error(`${file}: "groups" must be a non-empty array of {key, label}`);
   }
   const keys = data.groups.map(g => g.key);
   if (new Set(keys).size !== keys.length) {
