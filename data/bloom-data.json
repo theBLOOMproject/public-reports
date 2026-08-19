@@ -121,8 +121,7 @@
           "pct": 98
         },
         "gap": 14,
-        "minAgree": 84,
-        "consensus": 1
+        "minAgree": 84
       },
       "source": "Open Poll",
       "tags": [
@@ -163,8 +162,7 @@
           "pct": 85
         },
         "gap": 9,
-        "minAgree": 76,
-        "consensus": 0
+        "minAgree": 76
       },
       "source": "Open Poll",
       "tags": [
@@ -206,8 +204,7 @@
           "pct": 6
         },
         "gap": 24,
-        "minAgree": 6,
-        "consensus": 0
+        "minAgree": 6
       },
       "source": "Open Poll",
       "tags": [
@@ -249,8 +246,7 @@
           "pct": 82
         },
         "gap": 15,
-        "minAgree": 67,
-        "consensus": 0
+        "minAgree": 67
       },
       "source": "Open Poll",
       "tags": [
@@ -292,8 +288,7 @@
           "pct": 94
         },
         "gap": 4,
-        "minAgree": 90,
-        "consensus": 1
+        "minAgree": 90
       },
       "source": "Open Poll",
       "tags": [
@@ -334,8 +329,7 @@
           "pct": 57
         },
         "gap": 36,
-        "minAgree": 57,
-        "consensus": 0
+        "minAgree": 57
       },
       "source": "Open Poll",
       "tags": [
@@ -376,8 +370,7 @@
           "pct": 81
         },
         "gap": 1,
-        "minAgree": 81,
-        "consensus": 1
+        "minAgree": 81
       },
       "source": "Open Poll",
       "tags": [
@@ -418,8 +411,7 @@
           "pct": 85
         },
         "gap": 38,
-        "minAgree": 47,
-        "consensus": 0
+        "minAgree": 47
       },
       "source": "Open Poll",
       "tags": [
@@ -460,8 +452,7 @@
           "pct": 100
         },
         "gap": 24,
-        "minAgree": 76,
-        "consensus": 0
+        "minAgree": 76
       },
       "source": "Open Poll",
       "tags": [
@@ -502,8 +493,7 @@
           "pct": 92
         },
         "gap": 23,
-        "minAgree": 73,
-        "consensus": 0
+        "minAgree": 73
       },
       "source": "Open Poll",
       "tags": [
@@ -544,8 +534,7 @@
           "pct": 99
         },
         "gap": 26,
-        "minAgree": 73,
-        "consensus": 0
+        "minAgree": 73
       },
       "source": "Open Poll",
       "tags": [
@@ -587,8 +576,7 @@
           "pct": 74
         },
         "gap": 14,
-        "minAgree": 74,
-        "consensus": 0
+        "minAgree": 74
       },
       "source": "Open Poll",
       "tags": [
@@ -629,8 +617,7 @@
           "pct": 91
         },
         "gap": 4,
-        "minAgree": 91,
-        "consensus": 1
+        "minAgree": 91
       },
       "source": "Open Poll",
       "tags": [
@@ -671,8 +658,7 @@
           "pct": 0
         },
         "gap": 59,
-        "minAgree": 0,
-        "consensus": 0
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -713,8 +699,7 @@
           "pct": 31
         },
         "gap": 29,
-        "minAgree": 31,
-        "consensus": 0
+        "minAgree": 31
       },
       "source": "Open Poll",
       "tags": [
@@ -756,8 +741,7 @@
           "pct": 96
         },
         "gap": 42,
-        "minAgree": 54,
-        "consensus": 0
+        "minAgree": 54
       },
       "source": "Open Poll",
       "tags": [
@@ -799,8 +783,7 @@
           "pct": 91
         },
         "gap": 3,
-        "minAgree": 88,
-        "consensus": 1
+        "minAgree": 88
       },
       "source": "Open Poll",
       "tags": [
@@ -841,8 +824,7 @@
           "pct": 27
         },
         "gap": 58,
-        "minAgree": 27,
-        "consensus": 0
+        "minAgree": 27
       },
       "source": "Open Poll",
       "tags": [
@@ -883,8 +865,7 @@
           "pct": 86
         },
         "gap": 53,
-        "minAgree": 33,
-        "consensus": 0
+        "minAgree": 33
       },
       "source": "Open Poll",
       "tags": [
@@ -926,8 +907,7 @@
           "pct": 60
         },
         "gap": 31,
-        "minAgree": 60,
-        "consensus": 0
+        "minAgree": 60
       },
       "source": "Open Poll",
       "tags": [
@@ -968,8 +948,7 @@
           "pct": 2
         },
         "gap": 65,
-        "minAgree": 2,
-        "consensus": 0
+        "minAgree": 2
       },
       "source": "Open Poll",
       "tags": [
@@ -1011,8 +990,7 @@
           "pct": 3
         },
         "gap": 46,
-        "minAgree": 3,
-        "consensus": 0
+        "minAgree": 3
       },
       "source": "Open Poll",
       "tags": [
@@ -1054,8 +1032,7 @@
           "pct": 0
         },
         "gap": 48,
-        "minAgree": 0,
-        "consensus": 0
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -1097,8 +1074,7 @@
           "pct": 1
         },
         "gap": 20,
-        "minAgree": 1,
-        "consensus": 0
+        "minAgree": 1
       },
       "source": "Open Poll",
       "tags": [
@@ -1140,8 +1116,7 @@
           "pct": 6
         },
         "gap": 90,
-        "minAgree": 6,
-        "consensus": 0
+        "minAgree": 6
       },
       "source": "Open Poll",
       "tags": [
@@ -1182,8 +1157,7 @@
           "pct": 8
         },
         "gap": 29,
-        "minAgree": 8,
-        "consensus": 0
+        "minAgree": 8
       },
       "source": "Open Poll",
       "tags": [
@@ -1224,8 +1198,7 @@
           "pct": 7
         },
         "gap": 27,
-        "minAgree": 7,
-        "consensus": 0
+        "minAgree": 7
       },
       "source": "Open Poll",
       "tags": [
@@ -1266,8 +1239,7 @@
           "pct": 86
         },
         "gap": 54,
-        "minAgree": 32,
-        "consensus": 0
+        "minAgree": 32
       },
       "source": "Open Poll",
       "tags": [
@@ -1308,8 +1280,7 @@
           "pct": 2
         },
         "gap": 76,
-        "minAgree": 2,
-        "consensus": 0
+        "minAgree": 2
       },
       "source": "Open Poll",
       "tags": [
@@ -1350,8 +1321,7 @@
           "pct": 5
         },
         "gap": 8,
-        "minAgree": 5,
-        "consensus": -1
+        "minAgree": 5
       },
       "source": "Open Poll",
       "tags": [
@@ -1393,8 +1363,7 @@
           "pct": 94
         },
         "gap": 64,
-        "minAgree": 30,
-        "consensus": 0
+        "minAgree": 30
       },
       "source": "Open Poll",
       "tags": [
@@ -1440,8 +1409,7 @@
           "pct": 3
         },
         "gap": 14,
-        "minAgree": 0,
-        "consensus": -1
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -1484,8 +1452,7 @@
           "pct": 89
         },
         "gap": 59,
-        "minAgree": 30,
-        "consensus": 0
+        "minAgree": 30
       },
       "source": "Open Poll",
       "tags": [
@@ -1527,8 +1494,7 @@
           "pct": 7
         },
         "gap": 77,
-        "minAgree": 7,
-        "consensus": 0
+        "minAgree": 7
       },
       "source": "Open Poll",
       "tags": [
@@ -1570,8 +1536,7 @@
           "pct": 94
         },
         "gap": 35,
-        "minAgree": 59,
-        "consensus": 0
+        "minAgree": 59
       },
       "source": "Open Poll",
       "tags": [
@@ -1617,8 +1582,7 @@
           "pct": 83
         },
         "gap": 24,
-        "minAgree": 69,
-        "consensus": 0
+        "minAgree": 69
       },
       "source": "Open Poll",
       "tags": [
@@ -1661,8 +1625,7 @@
           "pct": 77
         },
         "gap": 66,
-        "minAgree": 11,
-        "consensus": 0
+        "minAgree": 11
       },
       "source": "Open Poll",
       "tags": [
@@ -1707,8 +1670,7 @@
           "pct": 93
         },
         "gap": 37,
-        "minAgree": 56,
-        "consensus": 0
+        "minAgree": 56
       },
       "source": "Open Poll",
       "tags": [
@@ -1754,8 +1716,7 @@
           "pct": 99
         },
         "gap": 68,
-        "minAgree": 31,
-        "consensus": 0
+        "minAgree": 31
       },
       "source": "Open Poll",
       "tags": [
@@ -1800,8 +1761,7 @@
           "pct": 23
         },
         "gap": 62,
-        "minAgree": 23,
-        "consensus": 0
+        "minAgree": 23
       },
       "source": "Open Poll",
       "tags": [
@@ -1846,8 +1806,7 @@
           "pct": 97
         },
         "gap": 9,
-        "minAgree": 88,
-        "consensus": 1
+        "minAgree": 88
       },
       "source": "Open Poll",
       "tags": [
@@ -1893,8 +1852,7 @@
           "pct": 95
         },
         "gap": 4,
-        "minAgree": 92,
-        "consensus": 1
+        "minAgree": 92
       },
       "source": "Open Poll",
       "tags": [
@@ -1939,8 +1897,7 @@
           "pct": 48
         },
         "gap": 44,
-        "minAgree": 48,
-        "consensus": 0
+        "minAgree": 48
       },
       "source": "Open Poll",
       "tags": [
@@ -1982,8 +1939,7 @@
           "pct": 58
         },
         "gap": 21,
-        "minAgree": 58,
-        "consensus": 0
+        "minAgree": 58
       },
       "source": "Open Poll",
       "tags": [
@@ -2028,8 +1984,7 @@
           "pct": 88
         },
         "gap": 68,
-        "minAgree": 20,
-        "consensus": 0
+        "minAgree": 20
       },
       "source": "Open Poll",
       "tags": [
@@ -2071,8 +2026,7 @@
           "pct": 93
         },
         "gap": 76,
-        "minAgree": 17,
-        "consensus": 0
+        "minAgree": 17
       },
       "source": "Open Poll",
       "tags": [
@@ -2117,8 +2071,7 @@
           "pct": 9
         },
         "gap": 74,
-        "minAgree": 9,
-        "consensus": 0
+        "minAgree": 9
       },
       "source": "Open Poll",
       "tags": [
@@ -2161,8 +2114,7 @@
           "pct": 83
         },
         "gap": 79,
-        "minAgree": 4,
-        "consensus": 0
+        "minAgree": 4
       },
       "source": "Open Poll",
       "tags": [
@@ -2204,8 +2156,7 @@
           "pct": 88
         },
         "gap": 26,
-        "minAgree": 64,
-        "consensus": 0
+        "minAgree": 64
       },
       "source": "Open Poll",
       "tags": [
@@ -2251,8 +2202,7 @@
           "pct": 60
         },
         "gap": 17,
-        "minAgree": 43,
-        "consensus": 0
+        "minAgree": 43
       },
       "source": "Open Poll",
       "tags": [
@@ -2298,8 +2248,7 @@
           "pct": 8
         },
         "gap": 60,
-        "minAgree": 8,
-        "consensus": 0
+        "minAgree": 8
       },
       "source": "Open Poll",
       "tags": [
@@ -2342,8 +2291,7 @@
           "pct": 8
         },
         "gap": 5,
-        "minAgree": 6,
-        "consensus": -1
+        "minAgree": 6
       },
       "source": "Open Poll",
       "tags": [
@@ -2385,8 +2333,7 @@
           "pct": 85
         },
         "gap": 74,
-        "minAgree": 11,
-        "consensus": 0
+        "minAgree": 11
       },
       "source": "Open Poll",
       "tags": [
@@ -2430,8 +2377,7 @@
           "pct": 85
         },
         "gap": 38,
-        "minAgree": 47,
-        "consensus": 0
+        "minAgree": 47
       },
       "source": "Open Poll",
       "tags": [
@@ -2476,8 +2422,7 @@
           "pct": 4
         },
         "gap": 7,
-        "minAgree": 0,
-        "consensus": -1
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -2524,8 +2469,7 @@
           "pct": 65
         },
         "gap": 11,
-        "minAgree": 54,
-        "consensus": 0
+        "minAgree": 54
       },
       "source": "Open Poll",
       "tags": [
@@ -2570,8 +2514,7 @@
           "pct": 98
         },
         "gap": 37,
-        "minAgree": 61,
-        "consensus": 0
+        "minAgree": 61
       },
       "source": "Open Poll",
       "tags": [
@@ -2616,8 +2559,7 @@
           "pct": 16
         },
         "gap": 34,
-        "minAgree": 13,
-        "consensus": 0
+        "minAgree": 13
       },
       "source": "Open Poll",
       "tags": [
@@ -2663,8 +2605,7 @@
           "pct": 93
         },
         "gap": 43,
-        "minAgree": 50,
-        "consensus": 0
+        "minAgree": 50
       },
       "source": "Open Poll",
       "tags": [
@@ -2710,8 +2651,7 @@
           "pct": 87
         },
         "gap": 10,
-        "minAgree": 77,
-        "consensus": 0
+        "minAgree": 77
       },
       "source": "Open Poll",
       "tags": [
@@ -2756,8 +2696,7 @@
           "pct": 2
         },
         "gap": 61,
-        "minAgree": 2,
-        "consensus": 0
+        "minAgree": 2
       },
       "source": "Open Poll",
       "tags": [
@@ -2802,8 +2741,7 @@
           "pct": 84
         },
         "gap": 76,
-        "minAgree": 8,
-        "consensus": 0
+        "minAgree": 8
       },
       "source": "Open Poll",
       "tags": [
@@ -2848,8 +2786,7 @@
           "pct": 100
         },
         "gap": 100,
-        "minAgree": 0,
-        "consensus": 0
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -2891,8 +2828,7 @@
           "pct": 88
         },
         "gap": 88,
-        "minAgree": 0,
-        "consensus": 0
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -2935,8 +2871,7 @@
           "pct": 52
         },
         "gap": 48,
-        "minAgree": 52,
-        "consensus": 0
+        "minAgree": 52
       },
       "source": "Open Poll",
       "tags": [
@@ -2981,8 +2916,7 @@
           "pct": 93
         },
         "gap": 37,
-        "minAgree": 56,
-        "consensus": 0
+        "minAgree": 56
       },
       "source": "Open Poll",
       "tags": [
@@ -3025,8 +2959,7 @@
           "pct": 24
         },
         "gap": 14,
-        "minAgree": 24,
-        "consensus": 0
+        "minAgree": 24
       },
       "source": "Open Poll",
       "tags": [
@@ -3071,8 +3004,7 @@
           "pct": 57
         },
         "gap": 43,
-        "minAgree": 57,
-        "consensus": 0
+        "minAgree": 57
       },
       "source": "Open Poll",
       "tags": [
@@ -3117,8 +3049,7 @@
           "pct": 96
         },
         "gap": 7,
-        "minAgree": 89,
-        "consensus": 1
+        "minAgree": 89
       },
       "source": "Open Poll",
       "tags": [
@@ -3163,8 +3094,7 @@
           "pct": 96
         },
         "gap": 46,
-        "minAgree": 50,
-        "consensus": 0
+        "minAgree": 50
       },
       "source": "Open Poll",
       "tags": [
@@ -3208,8 +3138,7 @@
           "pct": 100
         },
         "gap": 57,
-        "minAgree": 43,
-        "consensus": 0
+        "minAgree": 43
       },
       "source": "Open Poll",
       "tags": [
@@ -3254,8 +3183,7 @@
           "pct": 57
         },
         "gap": 14,
-        "minAgree": 43,
-        "consensus": 0
+        "minAgree": 43
       },
       "source": "Open Poll",
       "tags": [
@@ -3300,8 +3228,7 @@
           "pct": 64
         },
         "gap": 36,
-        "minAgree": 64,
-        "consensus": 0
+        "minAgree": 64
       },
       "source": "Open Poll",
       "tags": [
@@ -3346,8 +3273,7 @@
           "pct": 96
         },
         "gap": 12,
-        "minAgree": 88,
-        "consensus": 1
+        "minAgree": 88
       },
       "source": "Open Poll",
       "tags": [
@@ -3394,8 +3320,7 @@
           "pct": 100
         },
         "gap": 57,
-        "minAgree": 43,
-        "consensus": 0
+        "minAgree": 43
       },
       "source": "Open Poll",
       "tags": [
@@ -3442,8 +3367,7 @@
           "pct": 96
         },
         "gap": 29,
-        "minAgree": 67,
-        "consensus": 0
+        "minAgree": 67
       },
       "source": "Open Poll",
       "tags": [
@@ -3490,8 +3414,7 @@
           "pct": 100
         },
         "gap": 43,
-        "minAgree": 57,
-        "consensus": 0
+        "minAgree": 57
       },
       "source": "Open Poll",
       "tags": [
@@ -3536,8 +3459,7 @@
           "pct": 64
         },
         "gap": 27,
-        "minAgree": 40,
-        "consensus": 0
+        "minAgree": 40
       },
       "source": "Open Poll",
       "tags": [
@@ -3580,8 +3502,7 @@
           "pct": 88
         },
         "gap": 13,
-        "minAgree": 87,
-        "consensus": 1
+        "minAgree": 87
       },
       "source": "Open Poll",
       "tags": [
@@ -3623,8 +3544,7 @@
           "pct": 55
         },
         "gap": 38,
-        "minAgree": 55,
-        "consensus": 0
+        "minAgree": 55
       },
       "source": "Open Poll",
       "tags": [
@@ -3668,8 +3588,7 @@
           "pct": 83
         },
         "gap": 17,
-        "minAgree": 83,
-        "consensus": 1
+        "minAgree": 83
       },
       "source": "Open Poll",
       "tags": [
@@ -3711,8 +3630,7 @@
           "pct": 25
         },
         "gap": 75,
-        "minAgree": 25,
-        "consensus": 0
+        "minAgree": 25
       },
       "source": "Open Poll",
       "tags": [
@@ -3753,8 +3671,7 @@
           "pct": 100
         },
         "gap": 25,
-        "minAgree": 75,
-        "consensus": 0
+        "minAgree": 75
       },
       "source": "Open Poll",
       "tags": [
@@ -3795,8 +3712,7 @@
           "pct": 64
         },
         "gap": 27,
-        "minAgree": 40,
-        "consensus": 0
+        "minAgree": 40
       },
       "source": "Open Poll",
       "tags": [
@@ -3837,8 +3753,7 @@
           "pct": 87
         },
         "gap": 54,
-        "minAgree": 33,
-        "consensus": 0
+        "minAgree": 33
       },
       "source": "Open Poll",
       "tags": [
@@ -3879,8 +3794,7 @@
           "pct": 85
         },
         "gap": 52,
-        "minAgree": 33,
-        "consensus": 0
+        "minAgree": 33
       },
       "source": "Open Poll",
       "tags": [
@@ -3921,8 +3835,7 @@
           "pct": 8
         },
         "gap": 30,
-        "minAgree": 8,
-        "consensus": 0
+        "minAgree": 8
       },
       "source": "Open Poll",
       "tags": [
@@ -3963,8 +3876,7 @@
           "pct": 100
         },
         "gap": 33,
-        "minAgree": 67,
-        "consensus": 0
+        "minAgree": 67
       },
       "source": "Open Poll",
       "tags": [
@@ -4005,8 +3917,7 @@
           "pct": 87
         },
         "gap": 20,
-        "minAgree": 67,
-        "consensus": 0
+        "minAgree": 67
       },
       "source": "Open Poll",
       "tags": [
@@ -4047,8 +3958,7 @@
           "pct": 100
         },
         "gap": 67,
-        "minAgree": 33,
-        "consensus": 0
+        "minAgree": 33
       },
       "source": "Open Poll",
       "tags": [
@@ -4090,8 +4000,7 @@
           "pct": 100
         },
         "gap": 100,
-        "minAgree": 0,
-        "consensus": 0
+        "minAgree": 0
       },
       "source": "Open Poll",
       "tags": [
@@ -4134,8 +4043,7 @@
           "pct": 100
         },
         "gap": 0,
-        "minAgree": 100,
-        "consensus": 1
+        "minAgree": 100
       },
       "source": "Open Poll",
       "tags": [

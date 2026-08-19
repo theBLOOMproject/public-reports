@@ -576,7 +576,7 @@ body.reading .statPreview{opacity:0;pointer-events:none}
   min-height:30px;max-width:82%;
 }
 .who[hidden]{display:none}
-.who.consensus{background:var(--agree)}
+.who.consensus,.who.consensus-against{background:var(--agree)}
 .who.difference{background:var(--disagree)}
 .who.neutral{background:#484848}
 .who .av{

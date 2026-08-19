@@ -40,7 +40,8 @@ The `BLOCKS` map in `build.js` binds each placeholder id to a source file and a 
 - `json` (`data/*.json`) — parsed, then re-serialized without indentation; that parse *is*
   both the minification and the validity check. An optional `check` on the `BLOCKS` entry
   runs against the parsed data for invariants the parse cannot see; a check may warn and
-  let the build through (`checkEveryRecordReachable`) or throw (`checkVoteIntegrity`).
+  let the build through (`checkEveryRecordReachable`) or throw (`checkVoteIntegrity`,
+  which checks group keys, not arithmetic — see "Refreshing the poll").
 
 Adding a data file means adding a `BLOCKS` entry *and* a matching
 `<script type="application/json" id="...">` element in the template. The build fails
@@ -90,8 +91,9 @@ scroll position, highlights the squares it crosses, and feeds the bottom-sheet *
 and the minimap marker (`updateScrub()`, rAF-throttled).
 
 Tunable constants sit near the top of the script with comments: `MODES` (the map axis
-scoring), `DIFFERENCE_MIN_GAP` / `CONSENSUS_MIN_AGREE` (thresholds behind the
-consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`, and the clip lengths
+scoring), `DIFFERENCE_OVER_GAP` / `CONSENSUS_OVER_AGREE` / `CONSENSUS_UNDER_AGREE`
+(thresholds behind the consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`,
+and the clip lengths
 `QUOTE_CLIP` / `PREVIEW_CLIP`.
 
 ## Data
@@ -102,8 +104,8 @@ consensus/difference pill in `pillInfoFor()`), `SCRUB_INSET`, and the clip lengt
   the `--c` CSS custom property and the `theme-color` meta), and `tags[]` — the tags whose
   presence puts a record in this theme.
 - `records[]`: `kind` is `poll` or `quote`. Poll records have `vote` with one tally block
-  per group key (`vote.A`, `vote.B`, …) plus derived `total`, `gap`, `minAgree` and
-  `consensus`; quote records have `vote: null` and are therefore only ever reachable via
+  per group key (`vote.A`, `vote.B`, …) plus derived `total`, `gap` and `minAgree`;
+  quote records have `vote: null` and are therefore only ever reachable via
   the Quotes tab. `origin` is
   `participant` | `cocap_seed` | `listening_session` and selects the avatar emoji
   (`emojiFor()`); `chips[]` is raw ALL-CAPS metadata (demographics, session, date)
@@ -187,9 +189,9 @@ the themes are editorial, and where upstream disagrees the script reports and mo
 - **New statements** are appended in tid order with `tags: []` and no chips. They build,
   with a warning, and show under no theme until tagged.
 - **Statements gone from Polis** are left in place — their tags exist nowhere else, so
-  removal is a person's call. If the cluster count also changed, their votes were counted
-  over the old groups and can't be recomputed; `checkVoteIntegrity` then fails the build
-  naming them, which is the intended forcing function.
+  removal is a person's call. If the cluster count also changed, their tallies are keyed
+  to groups the file no longer declares and can't be recomputed; `checkVoteIntegrity`
+  then fails the build naming them, which is the intended forcing function.
 - **Changed statement text** is reported in full, never applied. Differences that are
   only whitespace are counted but not listed — Polis returns trailing newlines and
   non-breaking spaces that nobody typed, and eight of them per run would drown the one
@@ -204,12 +206,15 @@ the themes are editorial, and where upstream disagrees the script reports and mo
 Records are matched by `id === "p" + tid`, so ids are stable across refreshes.
 
 Two things a refresh silently invalidates, both editorial follow-ups: the hand-written
-percentages in `theme-descriptions.json`, and `DIFFERENCE_MIN_GAP` — it was calibrated on
+percentages in `theme-descriptions.json`, and `DIFFERENCE_OVER_GAP` — it was calibrated on
 two groups, and `max − min` widens mechanically as clusters are added.
 
-The derived fields are recomputed identically by the script and by `checkVoteIntegrity`,
-and reproduce the original import exactly. The rounding is deliberately not uniform:
-`pct` is rounded for display and `gap`/`minAgree` are computed from those rounded values,
-but `consensus` is decided on the **unrounded** fractions — `p4`'s group B is 19.81%, which
-displays as 20 yet is genuinely below the 20% threshold. A group that cast no votes counts
-as 0% rather than undefined (`p144`, `p149`).
+`voteFor()` in the script is the **only** writer of the derived fields, and re-running it
+over the snapshot the current data came from reproduces that data exactly. `pct` is
+rounded for display, and `gap`/`minAgree` are computed from those rounded values. A group
+that cast no votes on a statement counts as 0% rather than undefined; no record in the
+data is in that state today, but the script keeps the behaviour for when one is.
+
+`build.js` no longer recomputes any of this, so a **hand-edited** tally will not be caught:
+change an `a` and the `pct`/`gap`/`minAgree` beside it silently go stale. Edit tallies
+through a refresh, or recompute the derived fields by hand in the same pass.
