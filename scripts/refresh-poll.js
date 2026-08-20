@@ -34,12 +34,6 @@ const keyForGroup = id => {
   return String.fromCharCode(65 + id);
 };
 
-// Thresholds match CONSENSUS_AGREE / CONSENSUS_DISAGREE in the Civic OS insights page.
-// See build.js checkVoteIntegrity for why consensus is decided on unrounded fractions
-// while gap and minAgree use the rounded ones — it is load-bearing, not an oversight.
-const CONSENSUS_AGREE = 0.8;
-const CONSENSUS_DISAGREE = 0.2;
-
 // The display rounding, in one place: the merge stores it and the re-label aid prints it,
 // and a group shown as 88% here has to be the 88% that lands in the file.
 const pctOf = (agrees, n) => (n > 0 ? Math.round((agrees / n) * 100) : 0);
@@ -62,23 +56,19 @@ function voteFor(comment, keys) {
   for (const gv of comment.group_votes) byKey[keyForGroup(gv.group_id)] = gv;
 
   const vote = { total: 0 };
-  const fracs = [], pcts = [];
+  const pcts = [];
   for (const k of keys) {
     const gv = byKey[k] || { agrees: 0, disagrees: 0, passes: 0 };
     const n = gv.agrees + gv.disagrees + gv.passes;
     // A group that cast no vote on a statement counts as 0% agreement rather than
     // undefined — how p144/p149 have been stored since the original import.
-    const frac = n > 0 ? gv.agrees / n : 0;
     const pct = pctOf(gv.agrees, n);
     vote[k] = { a: gv.agrees, d: gv.disagrees, p: gv.passes, n, pct };
     vote.total += n;
-    fracs.push(frac);
     pcts.push(pct);
   }
   vote.gap = Math.max(...pcts) - Math.min(...pcts);
   vote.minAgree = Math.min(...pcts);
-  vote.consensus = fracs.every(f => f >= CONSENSUS_AGREE) ? 1
-    : fracs.every(f => f < CONSENSUS_DISAGREE) ? -1 : 0;
   return vote;
 }
 
@@ -314,7 +304,7 @@ function main(args, payload, snapshot) {
   heading('Opinion groups');
   if (regrouped) {
     console.log(`  !! Polis returned ${keys.length} cluster(s); the file had ${before.length}.`);
-    console.log('     Every statement\'s gap/minAgree/consensus is now computed over a');
+    console.log('     Every statement\'s gap/minAgree is now computed over a');
     console.log('     different number of groups — the numbers in theme-descriptions.json');
     console.log('     and the DIFFERENCE_MIN_GAP threshold both want a second look.');
   }

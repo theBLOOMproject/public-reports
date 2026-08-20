@@ -76,16 +76,19 @@ const MODES = {
 const SCRUB_TICK = { map: v => v + '%' };
 const SCRUB_INSET = 70;   // px reserved on the left of the lane so squares clear the scrub pill
 
-// thresholds for the statement-card indicator pill (consensus/difference/neutral)
-const DIFFERENCE_MIN_GAP = 35;    // group-to-group gap (points) counted as a real split
-const CONSENSUS_MIN_AGREE = 65;   // minAgree (%) counted as both groups genuinely on board
+const DIFFERENCE_OVER_GAP = 33;
+const CONSENSUS_OVER_AGREE = 66;
+const CONSENSUS_UNDER_AGREE = 33;
 
 // shared by the statement modal's pill and the List card's bar-top pill
 const pillInfoFor = v => {
-  if (v.gap >= DIFFERENCE_MIN_GAP)
+  const maxAgree = v.minAgree + v.gap;   // gap is max − min, so the ceiling needs no field
+  if (v.gap > DIFFERENCE_OVER_GAP)
     return { cls: 'difference', icon: 'static/difference.svg', label: 'DIFFERENCE (' + v.gap + ' PTS)' };
-  if (v.minAgree >= CONSENSUS_MIN_AGREE)
-    return { cls: 'consensus', icon: 'static/consensus.svg', label: 'CONSENSUS (' + v.minAgree + '% PRO)' };
+  if (v.minAgree > CONSENSUS_OVER_AGREE)
+    return { cls: 'consensus', icon: 'static/consensus.svg', label: 'CONSENSUS (' + v.minAgree + '% AGREE)' };
+  if (maxAgree < CONSENSUS_UNDER_AGREE)
+    return { cls: 'consensus-against', icon: 'static/consensus.svg', label: 'CONSENSUS (' + maxAgree + '% AGREE)' };
   return { cls: 'neutral', icon: null, label: v.minAgree + '% AGREE' };
 };
 
@@ -527,9 +530,8 @@ function updatePreview(hitIdxs) {
 
 function renderPreviewItem(idx) {
   const r = state.layout.items[idx].rec;
-  const v = r.vote;
   $('#spAv').textContent = emojiFor(r);
-  $('#spEyebrow').textContent = v.minAgree + '% AGREEMENT';
+  $('#spEyebrow').textContent = pillInfoFor(r.vote).label;
   $('#spText').textContent = clip(r.text, PREVIEW_CLIP);
   $('#spCard').onclick = () => open(idx);
 }

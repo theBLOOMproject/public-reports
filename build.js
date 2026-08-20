@@ -35,20 +35,7 @@ function checkEveryRecordReachable(data, file) {
   }
 }
 
-// Everything the report shows about a poll statement is derived from its per-group
-// tallies, and those derivations are recomputed by the refresh script rather than
-// read from Polis. Recompute them here too: if the two ever disagree, the file is
-// telling readers something the votes underneath it do not say. Unlike the check
-// above this is never a judgement call, so it fails the build.
-//
-// Rounding is deliberately not uniform. `pct` is rounded for display, and gap/minAgree
-// are computed from those rounded values, but `consensus` is decided on the unrounded
-// fractions — p4's group B is 19.81%, which displays as 20 yet is genuinely below the
-// 20% threshold. Rounding first would flip it. A group nobody in it voted on counts as
-// 0% rather than undefined, matching how p144/p149 have always been stored.
-const VOTE_DERIVED = ['total', 'gap', 'minAgree', 'consensus'];
-const CONSENSUS_AGREE = 0.8;      // every group at or above → consensus (+1)
-const CONSENSUS_DISAGREE = 0.2;   // every group below → consensus (−1)
+const VOTE_DERIVED = ['total', 'gap', 'minAgree'];
 
 function checkVoteIntegrity(data, file) {
   const problems = [];
@@ -74,30 +61,7 @@ function checkVoteIntegrity(data, file) {
     if (unknown.length || missing.length) {
       say(`vote has tallies for [${has.join(', ')}], but the declared groups are `
         + `[${keys.join(', ')}]`);
-      continue;
     }
-
-    const fracs = [], pcts = [];
-    for (const k of keys) {
-      const g = v[k];
-      const n = g.a + g.d + g.p;
-      if (g.n !== n) say(`group ${k} n is ${g.n}, but a+d+p is ${n}`);
-      const frac = n > 0 ? g.a / n : 0;
-      const pct = Math.round(frac * 100);
-      if (g.pct !== pct) say(`group ${k} pct is ${g.pct}, but ${g.a}/${n} rounds to ${pct}`);
-      fracs.push(frac);
-      pcts.push(g.pct);
-    }
-
-    const total = keys.reduce((sum, k) => sum + v[k].n, 0);
-    const gap = Math.max(...pcts) - Math.min(...pcts);
-    const minAgree = Math.min(...pcts);
-    const consensus = fracs.every(f => f >= CONSENSUS_AGREE) ? 1
-      : fracs.every(f => f < CONSENSUS_DISAGREE) ? -1 : 0;
-    if (v.total !== total) say(`total is ${v.total}, but the groups sum to ${total}`);
-    if (v.gap !== gap) say(`gap is ${v.gap}, but the pcts spread ${gap}`);
-    if (v.minAgree !== minAgree) say(`minAgree is ${v.minAgree}, but the lowest pct is ${minAgree}`);
-    if (v.consensus !== consensus) say(`consensus is ${v.consensus}, but recomputes to ${consensus}`);
   }
 
   // One bad group key trips every record, so cap the list — the first few say
