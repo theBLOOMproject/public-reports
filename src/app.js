@@ -220,15 +220,14 @@ function buildCard(r) {
   card.append(who);
 
   const stats = el('div', 'icStats');
-  [['A', 'Skeptics'], ['B', 'Optimists']].forEach(([key, groupLabel]) => {
-    const v = r.vote[key];
-    const pct = Math.max(0, Math.min(100, v.pct));
+  groupsOf(r.vote).forEach(g => {
+    const pct = Math.max(0, Math.min(100, g.pct));
     const color = tierColorFor(pct);
     const stat = el('div', 'icStat');
-    const val = el('div', 'icVal', v.pct + '%');
+    const val = el('div', 'icVal', g.pct + '%');
     val.style.color = color;
     stat.append(val);
-    stat.append(el('div', 'icLabel', groupLabel));
+    stat.append(el('div', 'icLabel', groupTag(g)));
     const track = el('div', 'icBarTrack');
     const fill = el('div', 'icBarFill');
     fill.style.width = pct + '%';
