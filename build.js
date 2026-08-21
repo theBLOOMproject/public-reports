@@ -91,6 +91,40 @@ function checkInsightIdsResolve(insights, file) {
   if (bad.length) throw new Error(`${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
 }
 
+// group-info.json is a hand-maintained snapshot (participant counts, display color) keyed
+// by group key, kept separate from bloom-data.json's own groups[] because refresh-poll.js
+// deliberately never persists cluster sizes there (see its comment on why). A refresh that
+// regroups — a different number of keys, or the same keys meaning different clusters — makes
+// this file stale in a way nothing here can detect; it can only catch a key mismatch.
+function checkGroupInfoKeys(info, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const groupKeys = bloomData.groups.map(g => g.key);
+  const infoKeys = Object.keys(info).filter(k => !k.startsWith('_'));
+  const missing = groupKeys.filter(k => !infoKeys.includes(k));
+  const extra = infoKeys.filter(k => !groupKeys.includes(k));
+  if (missing.length || extra.length) {
+    console.warn(`  WARNING ${file}: out of sync with bloom-data.json's groups `
+      + `[${groupKeys.join(', ')}]`
+      + (missing.length ? ` — missing entries for [${missing.join(', ')}]` : '')
+      + (extra.length ? `; stale entries for [${extra.join(', ')}] no longer in bloom-data.json` : ''));
+  }
+}
+
+// group-statements.json's ids reference bloom-data records by id; a typo or a record
+// getting renumbered/removed would otherwise fail silently at runtime (a dead defining-
+// statement page). Cross-check against bloom-data.json directly since a BLOCKS 'check'
+// only sees its own file's parsed data.
+function checkGroupStatementIdsResolve(statements, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const knownIds = new Set(bloomData.records.map(r => r.id));
+  const bad = [];
+  for (const [group, entries] of Object.entries(statements)) {
+    if (group.startsWith('_')) continue;
+    entries.forEach(e => { if (!knownIds.has(e.id)) bad.push(`${group}: ${e.id}`); });
+  }
+  if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
+}
+
 // Placeholder id -> { file, kind }. Every id needs a matching <!--INJECT:{id}-->
 // in index.template.html; for 'json' blocks the id is also the <script> element id
 // the app reads the data back out of.
@@ -109,6 +143,8 @@ const BLOCKS = {
     check: (data, file) => { checkEveryRecordReachable(data, file); checkVoteIntegrity(data, file); },
   },
   'bloom-insights': { file: 'data/bloom-insights.json', kind: 'json', check: checkInsightIdsResolve },
+  'group-info': { file: 'data/group-info.json', kind: 'json', check: checkGroupInfoKeys },
+  'group-statements': { file: 'data/group-statements.json', kind: 'json', check: checkGroupStatementIdsResolve },
   'app-js': { file: 'src/app.js', kind: 'raw' },
 };
 

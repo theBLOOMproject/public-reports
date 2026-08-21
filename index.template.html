@@ -22,6 +22,47 @@
 
 <div class="shell">
 
+  <!-- ══ LEVEL 0 — INTRO PAGES ══
+       Order (title → demogs → groups) is set by INTRO_PAGES in src/app.js,
+       not by this markup — that array drives routing and wires each
+       .introNext arrow to whatever page comes after its own. Adding a page
+       means adding a <main class="introPage" id="..."> here AND an entry
+       in INTRO_PAGES; either alone leaves the other half not working. -->
+  <main class="introPage" id="l0-title">
+    <div class="masthead">
+      <div class="eyebrow label">Central Oregon &amp; AI</div>
+      <h1>What did Central Oregonians have to say about AI?</h1>
+      <p>Along with other organizations, the Central Oregon Civic Action Project (COCAP) talked to 400+ real people to hear what they thought should be done about AI.</p>
+    </div>
+    <button class="introNext" aria-label="Continue to demographics">
+      <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </main>
+
+  <main class="introPage" id="l0-demogs">
+    <div class="masthead">
+      <div class="eyebrow label">Central Oregon &amp; AI</div>
+      <h1>400+</h1>
+      <p>People across the region participated in this conversation, both online and in person.</p>
+      <span class="demogLink">See full demographics…</span>
+    </div>
+    <button class="introNext" aria-label="Continue to groups">
+      <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </main>
+
+  <main class="introPage" id="l0-groups">
+    <div class="masthead">
+      <div class="eyebrow label">Bloom Project · COCAP · Central Oregon</div>
+      <h1>We identified a few different kinds of people…</h1>
+      <p>Click each to learn more about what distinguished them from the rest.</p>
+    </div>
+    <div class="groupBubbles" id="groupBubbles"></div>
+    <button class="introNext" aria-label="Continue to themes">
+      <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </main>
+
   <!-- ══ LEVEL 1 ══ -->
   <main id="l1">
     <div class="masthead">
@@ -84,12 +125,36 @@
     </div>
   </div>
 
+  <!-- ══ GROUP DETAIL ══ -->
+  <div id="gdetail" role="dialog" aria-modal="true" aria-label="Group detail" aria-hidden="true">
+    <div class="scrim" id="gscrim"></div>
+    <div class="card">
+      <div class="cardtop">
+        <div class="gcHead">
+          <div class="gcName" id="gcName"></div>
+          <div class="gcSub label">Defining Statements</div>
+        </div>
+        <button class="closeb" id="gCloseb" aria-label="Close">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5l11 11M13.5 2.5l-11 11" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="cardbody" id="gCardbody"></div>
+      <div class="cardfoot">
+        <button id="gPrev" aria-label="Previous"><svg viewBox="0 0 26 14" aria-hidden="true"><path d="M25 7H1.6M7.4 1.4L1.2 7l6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="pos" id="gPos"></div>
+        <button id="gNext" aria-label="Next"><svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ═══ DATA — from data/*.json, minified. Read back by id, in src/app.js. ═══ -->
 <script type="application/json" id="theme-descriptions"><!--INJECT:theme-descriptions--></script>
 <script type="application/json" id="bloom-data"><!--INJECT:bloom-data--></script>
 <script type="application/json" id="bloom-insights"><!--INJECT:bloom-insights--></script>
+<script type="application/json" id="group-info"><!--INJECT:group-info--></script>
+<script type="application/json" id="group-statements"><!--INJECT:group-statements--></script>
 
 <!-- ═══ APP — from src/app.js. ═══ -->
 <script>

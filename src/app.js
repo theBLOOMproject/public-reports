@@ -5,6 +5,8 @@ const J = id => JSON.parse(document.getElementById(id).textContent);
 const DATA = J('bloom-data');
 const DESC = J('theme-descriptions');
 const INSIGHTS = J('bloom-insights');
+const GROUP_INFO = J('group-info');
+const GROUP_STATEMENTS = J('group-statements');
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
@@ -37,6 +39,8 @@ const emojiFor = r => {
 
 const byKey = {};
 DATA.themes.forEach(t => byKey[t.key] = t);
+const byId = {};
+DATA.records.forEach(r => byId[r.id] = r);
 // A theme *is* the records carrying any of its tags — membership is derived, not
 // stored, so a statement that spans two subjects belongs to both themes.
 const recsOf = t => DATA.records.filter(r => r.tags.some(g => t.tags.includes(g)));
@@ -66,9 +70,6 @@ const groupTag = g => {
 };
 const countLabel = (np, nq) =>
   `${np} statement${np === 1 ? '' : 's'} · ${nq} quote${nq === 1 ? '' : 's'}`;
-
-const byId = {};
-DATA.records.forEach(r => byId[r.id] = r);
 
 // a short, human phrase for who said it — gender + place, drawn straight
 // from the real chip data (no fabricated demographics). Falls back
@@ -130,6 +131,145 @@ const claimPhrase = (claim, direction) => {
 const state = { theme: null, sel: -1, layout: [] };
 let scrollRaf = null, l1Scroll = 0;
 let carouselTimers = [];
+
+/* ─── LEVEL 0 ─────────────────────────────────────────── */
+// The ordered sequence of intro pages shown before the theme grid, each a
+// plain <main class="introPage" id="..."> in the template. This array is
+// the single source of truth for that order: route() shows/hides by walking
+// it, the initial redirect below targets its first entry, and each page's
+// .introNext arrow is wired to whichever entry comes right after its own —
+// so reordering, inserting, or removing a page is a one-line change here
+// (plus adding/removing the matching markup), never a hunt through route().
+const INTRO_PAGES = [
+  { key: 'title', id: 'l0-title' },
+  { key: 'demogs', id: 'l0-demogs' },
+  { key: 'groups', id: 'l0-groups' },
+];
+
+// group-info.json is a hand-maintained snapshot (see its own _readme for
+// provenance and staleness caveats) — bloom-data.json's own groups[] never
+// carries participant counts, since refresh-poll.js deliberately avoids
+// storing cluster sizes that go stale the moment Polis reclusters.
+const groupByKey = {};
+DATA.groups.forEach(g => groupByKey[g.key] = g);
+// group-info's per-key extras (participants/color/description) merged onto
+// bloom-data.json's own {key, label} — shared by the bubble list and the
+// detail modal so both always agree on a group's display name/color.
+const groupInfoOf = key => ({ ...groupByKey[key], ...(GROUP_INFO[key] || {}) });
+
+function buildGroups() {
+  const wrap = $('#groupBubbles');
+  const groups = DATA.groups.map(g => groupInfoOf(g.key));
+  const maxN = Math.max(...groups.map(g => g.participants || 0), 1);
+  groups.forEach(g => {
+    const row = el('button', 'gbubble');
+    row.type = 'button';
+    row.dataset.key = g.key;
+    row.setAttribute('aria-label', groupTag(g) + ': ' + (g.participants || 0) + ' people — see defining statements');
+    row.style.setProperty('--c', g.color || 'var(--home)');
+    const scale = Math.sqrt((g.participants || 0) / maxN);
+    const size = Math.round(84 + scale * 90);   // ~84–174px, scaled by relative headcount
+    const av = el('div', 'gAv');
+    av.style.setProperty('--sz', size + 'px');
+    row.append(av);
+    const label = el('div', 'gLabel');
+    label.append(el('div', 'gName', groupTag(g)));
+    label.append(el('div', 'gCount', (g.participants || 0) + ' people'));
+    row.append(label);
+    row.onclick = () => openGroup(g.key);
+    wrap.append(row);
+  });
+}
+
+/* ─── GROUP DETAIL MODAL ──────────────────────────────── */
+// Page 0 is the hand-written description (see group-info.json's _readme);
+// pages 1..N are group-statements.json's defining statements, most
+// representative first. Deliberately its own small state/open/close/page
+// set rather than reusing L3's — the content shape (a generated blurb vs.
+// a themed statement card) is different enough that sharing would mean
+// branching L3's open() on what kind of thing it's showing.
+const gstate = { key: null, page: 0 };
+
+function openGroup(key) {
+  gstate.key = key;
+  gstate.page = 0;
+  const g = groupInfoOf(key);
+  document.querySelectorAll('.gbubble.sel').forEach(n => n.classList.remove('sel'));
+  document.querySelector(`.gbubble[data-key="${key}"]`)?.classList.add('sel');
+  $('#gdetail').style.setProperty('--c', g.color || 'var(--home)');
+  $('#gcName').textContent = groupTag(g);
+  renderGroupPage();
+  $('#gdetail').classList.add('on');
+  $('#gdetail').setAttribute('aria-hidden', 'false');
+  $('#gCloseb').focus({ preventScroll: true });
+}
+
+function closeGroup() {
+  $('#gdetail').classList.remove('on');
+  $('#gdetail').setAttribute('aria-hidden', 'true');
+  document.querySelector('.gbubble.sel')?.classList.remove('sel');
+  gstate.key = null;
+}
+
+function pageGroup(d) {
+  const total = 1 + (GROUP_STATEMENTS[gstate.key] || []).length;
+  const i = gstate.page + d;
+  if (i >= 0 && i < total) { gstate.page = i; renderGroupPage(); }
+}
+
+function renderGroupPage() {
+  const g = groupInfoOf(gstate.key);
+  const stmts = GROUP_STATEMENTS[gstate.key] || [];
+  const total = 1 + stmts.length;
+  const body = $('#gCardbody');
+  body.innerHTML = '';
+  body.scrollTop = 0;
+
+  if (gstate.page === 0) {
+    const wrap = el('div', 'gdDesc');
+    wrap.append(el('div', 'gdKicker label', 'Quick Description'));
+    wrap.append(el('p', 'gdText', g.description || ''));
+    body.append(wrap);
+  } else {
+    const r = byId[stmts[gstate.page - 1].id];
+    const quotewrap = el('div', 'quotewrap');
+    quotewrap.append(el('blockquote', null, '“' + r.text + '”'));
+    body.append(quotewrap);
+    // same per-group agree% breakdown L3 shows for any statement — reused
+    // verbatim via groupsOf() so the two never drift apart in presentation
+    const m = el('div', 'meta');
+    const p = el('section');
+    p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
+    groupsOf(r.vote).forEach(gr => {
+      const row = el('div', 'grow');
+      const top = el('div', 'top');
+      top.append(el('span', null, gr.label));
+      top.append(el('b', null, gr.pct + '% agree'));
+      row.append(top);
+      const bar = el('div', 'bar');
+      const tot = Math.max(1, gr.n);
+      [['d', gr.d], ['p', gr.p], ['a', gr.a]].forEach(([cls, v]) => {
+        const i2 = el('i', cls);
+        i2.style.flex = (v / tot) + ' 0 0';
+        if (!v) i2.style.display = 'none';
+        bar.append(i2);
+      });
+      row.append(bar);
+      p.append(row);
+    });
+    const key = el('div', 'barkey');
+    [['d', 'Disagree'], ['p', 'Pass'], ['a', 'Agree']].forEach(([c, l]) => {
+      const s = el('span'); s.append(el('i', c)); s.append(document.createTextNode(l)); key.append(s);
+    });
+    p.append(key);
+    m.append(p);
+    body.append(m);
+  }
+
+  $('#gPos').innerHTML = (gstate.page + 1) + ' <em>|</em> ' + total;
+  $('#gPrev').disabled = gstate.page === 0;
+  $('#gNext').disabled = gstate.page === total - 1;
+}
 
 /* ─── LEVEL 1 ─────────────────────────────────────────── */
 function buildL1() {
@@ -451,16 +591,26 @@ const page = d => {
   if (i >= 0 && i < state.layout.items.length) open(i);
 };
 
+function hideIntroPages() {
+  INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = 'none'; });
+}
+
 /* ─── ROUTING ─────────────────────────────────────────── */
+// The homepage is the bare root ("" / "#/") — the theme grid moved to its
+// own named route, #/themes, rather than squatting on root the way it used
+// to. "" resolves to INTRO_PAGES[0] (title) below, same as any unrecognized
+// key: an unknown link falls back to the actual homepage, not the grid.
 function route() {
   // no mode segment anymore — split()[0] also means an old bookmarked
   // #/{themeKey}/map (or /list, /quotes) link still lands on the right
   // theme; the trailing segment is simply ignored.
   const key = location.hash.replace(/^#\/?/, '').split('/')[0];
-  const t = byKey[key];
-  if (!t) {
+
+  if (key === 'themes') {
     close();
+    document.body.classList.remove('groups-page');
     const back = state.theme !== null;
+    hideIntroPages();
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
     $('#l1').style.display = '';
@@ -470,8 +620,27 @@ function route() {
     if (back) scrollTo({ top: l1Scroll, behavior: 'auto' });
     return;
   }
+
+  const t = byKey[key];
+  if (!t) {
+    const intro = INTRO_PAGES.find(p => p.key === key) || INTRO_PAGES[0];
+    close();
+    // only Groups is a white page — this is what keeps the desktop gutter
+    // matched to whichever intro page is actually showing (see app.css)
+    document.body.classList.toggle('groups-page', intro.key === 'groups');
+    INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = p === intro ? '' : 'none'; });
+    $('#l1').style.display = 'none';
+    $('#l2').classList.remove('on');
+    $('#l2').setAttribute('aria-hidden', 'true');
+    document.title = 'Bloom — A Conversation on AI in Central Oregon';
+    document.documentElement.style.setProperty('--c', 'var(--home)');
+    state.theme = null;
+    return;
+  }
+  document.body.classList.remove('groups-page');
   const themeChanged = state.theme !== t;
   state.theme = t;
+  hideIntroPages();
   $('#l1').style.display = 'none';
   $('#l2').classList.add('on');
   $('#l2').setAttribute('aria-hidden', 'false');
@@ -482,13 +651,33 @@ function route() {
 }
 
 /* ─── WIRE UP ─────────────────────────────────────────── */
+buildGroups();
 buildL1();
-$('#back').onclick = () => { location.hash = '#/'; };
+// each .introNext just advances to whatever INTRO_PAGES says comes after
+// its own page — reordering/adding a page here needs no per-button wiring
+INTRO_PAGES.forEach((p, i) => {
+  const btn = document.querySelector(`#${p.id} .introNext`);
+  const next = INTRO_PAGES[i + 1];
+  // past the last intro page (Groups), "next" is the theme grid, at its own
+  // named route rather than root — root is the homepage now, not the grid
+  if (btn) btn.onclick = () => { location.hash = next ? '#/' + next.key : '#/themes'; };
+});
+$('#back').onclick = () => { location.hash = '#/themes'; };
 $('#closeb').onclick = close;
 $('#scrim').onclick = close;
 $('#prev').onclick = () => page(-1);
 $('#next').onclick = () => page(1);
+$('#gCloseb').onclick = closeGroup;
+$('#gscrim').onclick = closeGroup;
+$('#gPrev').onclick = () => pageGroup(-1);
+$('#gNext').onclick = () => pageGroup(1);
 addEventListener('keydown', e => {
+  if ($('#gdetail').classList.contains('on')) {
+    if (e.key === 'Escape') { closeGroup(); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { pageGroup(1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { pageGroup(-1); e.preventDefault(); }
+    return;
+  }
   if (!$('#l3').classList.contains('on')) return;
   if (e.key === 'Escape') { close(); e.preventDefault(); }
   if (e.key === 'ArrowRight') { page(1); e.preventDefault(); }
@@ -496,5 +685,7 @@ addEventListener('keydown', e => {
 });
 addEventListener('hashchange', route);
 
+// no rewrite needed on a fresh visit — route() already resolves an empty
+// hash to the homepage (the first intro page) on its own
 route();
 })();

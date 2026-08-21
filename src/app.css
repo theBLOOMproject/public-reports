@@ -9,6 +9,7 @@
   --pass:#C4C4C4;
   --home:#0D1B3E;
   --amber:#DE8A2E;  /* mid tier for the card's %-agree readout (0-33 red · 33-67 amber · 67-100 green) */
+  --gold:#E9A23C;  /* accent for the Demographics intro page, per its mock */
 
   --geom:'Geom','Futura',system-ui,sans-serif;
   --body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
@@ -61,11 +62,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .masthead{padding:26px 22px 20px}
 .masthead .eyebrow{color:rgba(255,255,255,.45);margin-bottom:9px}
 .masthead h1{
-  font-family:var(--geom);font-weight:700;font-size:23px;line-height:1.14;
-  margin:0;letter-spacing:-.012em;max-width:16em;
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(30px,9vw,40px);line-height:1.06;
+  margin:0;letter-spacing:-.02em;max-width:16em;
 }
 .masthead p{
-  font-size:14px;line-height:1.45;color:rgba(255,255,255,.5);
+  font-size:16.5px;line-height:1.5;color:rgba(255,255,255,.5);
   margin:12px 0 0;max-width:32em;
 }
 
@@ -118,6 +120,133 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .legend i.q{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)}
 
 /* ─────────────────────────────────────────────
+   LEVEL 0 — INTRO PAGES
+   A small ordered sequence shown before the theme grid (title → demogs →
+   groups, per INTRO_PAGES in app.js — that array is what actually drives
+   page order and the next-arrow's destination; this is just their shared
+   shell/layout. Each page sets its own background/text color below, per
+   its own mock — title and demogs stay in the dark --home most of the
+   report opens in; groups switches to white/ink. A new page only needs
+   its own #id + .masthead content (+ a one-line color rule if it isn't
+   the dark default) to slot in.
+   ───────────────────────────────────────────── */
+.introPage{
+  position:relative;min-height:100vh;min-height:100dvh;padding-bottom:100px;
+}
+#l0-title,#l0-demogs{background:var(--home);color:#fff}
+#l0-groups{background:var(--paper);color:var(--ink)}
+
+/* the shared .masthead h1/p sizing (above, under LEVEL 1) already reads as
+   a cover page rather than a grid caption; intro pages only need the width
+   constraints relaxed, since L1's are tuned for its own shorter copy */
+.introPage .masthead h1{max-width:none}
+.introPage .masthead p{max-width:26em}
+
+#l0-groups .masthead .eyebrow{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+/* Geom + solid ink per design call — the shared .masthead p rule (light,
+   body-font) is right for a dark background but reads as unreadable here,
+   the one .introPage that isn't dark */
+#l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink)}
+
+/* the Demographics page's headline stat, per its mock — bigger than any
+   other intro heading since it's the one thing that page is making the
+   case with; "See full demographics…" is inert copy for now (matches the
+   mock's text without the modal it would otherwise open) */
+#l0-demogs .masthead h1{font-size:clamp(64px,20vw,110px);line-height:1;letter-spacing:-.02em}
+.demogLink{
+  display:inline-block;margin-top:14px;
+  font-family:var(--geom);font-weight:600;font-size:15px;
+  color:var(--gold);
+}
+
+.groupBubbles{
+  padding:14px 22px 20px;
+  display:flex;flex-direction:column;gap:22px;
+  --gscale:1;
+}
+.gbubble{
+  display:flex;align-items:center;
+  animation:tallyIn .5s cubic-bezier(.2,.8,.3,1) both;
+}
+/* alternate which side each bubble faces — avatar-left/label-right, then
+   avatar-right/label-left — so the row reads as a loose zigzag rather than
+   a plain uniform list, echoing the scattered feel of the reference image */
+.gbubble:nth-child(even){flex-direction:row-reverse;text-align:right}
+
+.gAv{
+  flex:none;border-radius:50%;
+  /* --sz is the JS-computed base size (scaled by relative headcount); --gscale
+     is a purely cosmetic breakpoint multiplier on top of that, redefined below */
+  width:calc(var(--sz,120px) * var(--gscale,1));
+  height:calc(var(--sz,120px) * var(--gscale,1));
+  background:var(--c,var(--home));
+  box-shadow:0 10px 28px color-mix(in srgb,var(--c,var(--home)) 50%,transparent);
+  position:relative;
+}
+.gAv::before,.gAv::after{
+  content:'';position:absolute;top:50%;
+  width:13%;height:24%;
+  background:#fff;border-radius:999px;
+  transform:translateY(-50%);
+}
+.gAv::before{left:31%}
+.gAv::after{right:31%}
+
+/* pulled toward the avatar it sits next to so the two visibly overlap.
+   position:relative (matching .gAv) puts the label back in normal DOM-order
+   stacking — it comes after the avatar in the markup, so it paints on top;
+   without this both being "positioned" the same way, the avatar (which needs
+   position:relative for its eye dots) would win regardless of source order. */
+.gLabel{
+  position:relative;
+  min-width:0;margin-left:-30px;
+  background:#fff;color:var(--ink);
+  border:1px solid color-mix(in srgb,var(--c,var(--home)) 30%,#fff);
+  border-radius:16px;
+  padding:11px 16px;
+}
+.gbubble:nth-child(even) .gLabel{margin-left:0;margin-right:-30px}
+.gName{font-family:var(--geom);font-weight:700;font-size:17px;color:var(--c,var(--home))}
+.gCount{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(0,0,0,.5);margin-top:2px;
+}
+
+/* the "continue to the next intro page" bubble — same position/style on
+   every .introPage; app.js wires each one to whatever INTRO_PAGES says
+   comes after its own page, so this never needs a page-specific variant */
+.introNext{
+  position:absolute;right:22px;bottom:26px;
+  width:52px;height:52px;border-radius:50%;
+  background:#fff;color:var(--home);
+  display:grid;place-items:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.4);
+  transition:transform .2s ease;
+}
+@media (hover:hover){
+  .introNext:hover{transform:scale(1.07)}
+}
+.introNext svg{width:22px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
+
+@media (min-width:660px){
+  .groupBubbles{padding:20px 22px 30px;gap:8px;--gscale:1.22}
+  /* same left/right-facing zigzag as mobile, just drawn in from the shell's
+     edges toward the centerline — centered as a group, then nudged back out
+     a little so the two sides don't collide right on the centerline */
+  .gbubble{justify-content:center}
+  .gbubble:nth-child(odd){transform:translateX(-56px)}
+  .gbubble:nth-child(even){transform:translateX(56px)}
+  .gLabel{margin-left:-40px}
+  .gbubble:nth-child(even) .gLabel{margin-left:0;margin-right:-40px}
+  .gName{font-size:19px}
+  .gCount{font-size:12px}
+  /* the desktop gutter otherwise tints navy (body's --c fallback, correct
+     for title/demogs) while Groups' own content is white — keep them
+     matched only there */
+  body.groups-page{background:var(--paper)}
+}
+
+/* ─────────────────────────────────────────────
    LEVEL 2 — THEME VIEWER
    White throughout — the theme color is used only as an accent (headings,
    pills, borders, bars), never as a page background. Keeps contrast high
@@ -162,7 +291,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   color:var(--ink);letter-spacing:-.003em;
 }
 @media (min-width:660px){
-  .masthead p{font-size:16px}
+  /* placed after the base rules above so it actually wins the cascade —
+     an earlier attempt put this override before them and silently lost */
+  .masthead p{font-size:18.5px}
   .hero .desc{font-size:18.5px}
 }
 
@@ -443,6 +574,37 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--c);
 }
 .cardfoot .pos em{font-style:normal;opacity:.45}
+
+/* ─────────────────────────────────────────────
+   GROUP DETAIL MODAL
+   Shares .scrim/.card/.cardtop/.cardbody/.cardfoot/.closeb/.pos with L3 —
+   only the bits specific to this modal (header, description page, and the
+   clickable bubble it opens from) get their own rules.
+   ───────────────────────────────────────────── */
+.gbubble{cursor:pointer}
+@media (hover:hover){
+  .gbubble:hover .gAv{filter:brightness(1.08)}
+}
+.gbubble:active .gAv{filter:brightness(.92)}
+.gbubble.sel .gAv{box-shadow:0 0 0 4px rgba(255,255,255,.55),0 10px 28px color-mix(in srgb,var(--c,var(--home)) 55%,transparent)}
+
+#gdetail{display:none;position:fixed;inset:0;z-index:60}
+#gdetail.on{display:block}
+
+.gcHead{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gcName{
+  font-family:var(--geom);font-weight:700;font-size:17px;color:var(--c);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.gcSub{color:color-mix(in srgb,var(--c) 55%,#fff)}
+
+.gdDesc{padding:28px 22px 26px}
+.gdKicker{color:color-mix(in srgb,var(--c) 55%,#fff);margin-bottom:12px}
+.gdText{
+  margin:0;color:var(--c);
+  font-family:var(--geom);font-weight:600;
+  font-size:22px;line-height:1.34;letter-spacing:-.01em;
+}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
