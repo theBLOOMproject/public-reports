@@ -23,6 +23,8 @@ node scripts/refresh-poll.js --from <snapshot.json>   # apply a saved payload, n
 
 No package.json, no dependencies, no test suite, no linter. Node is used only for
 `build.js` and `scripts/refresh-poll.js` (stdlib `fs`/`path`, plus the global `fetch`).
+`vendor/d3-custom.min.js` is not an exception: it is a checked-in file, inlined like any
+other source, never resolved or fetched.
 
 ## Build model
 
@@ -39,7 +41,18 @@ it. Only what lands in `dist/` is public, which is why repo sources can stay in 
 
 `data/` - All Data, editorial content, etc
 
-Three nested pages, bundled as one Single Page App
+`vendor/d3-custom.min.js` - a checked-in subset of d3 (geo + zoom) used by the
+Demographics map, so the published page still makes no network requests
+
+An ordered run of intro pages comes before the theme grid: **Title → Demographics →
+Opinion Groups → Consensus**. 
+
+Demographics is an interactive county map with a marker per city, plus a modal breaking
+down age/political/gender/race. Opinion Groups is a card per cluster, each opening a paged
+modal of that group's defining statements. Consensus is a card stack of hand-picked
+statements. Title is still a placeholder.
+
+Then three nested pages, bundled as one Single Page App
 
 - **Landing Page (`#l1`)** — theme grid, one block per theme`.
 - **Single Theme Page (`#l2`)** — one theme: a "What we learned" table of contents, a
@@ -49,9 +62,12 @@ Three nested pages, bundled as one Single Page App
 - **L3 (`#l3`)** — statement detail modal, keyboard Esc/←/→. A statement's card can appear 
 - twice on the page (its insight carousel and All Statements)
 
-**Routing** is the URL hash: `#/{themeKey}`, handled by `route()` on `hashchange` (a
-trailing segment, e.g. from an old bookmarked link, is parsed but ignored). Navigation is
-done by assigning `location.hash`, not by calling render functions directly.
+**Routing** is the URL hash, handled by `route()` on `hashchange`. The bare root is the
+homepage (the first intro page); each intro page has its own key (`#/demogs`, `#/groups`,
+`#/consensus`), the theme grid lives at `#/themes`, and a single theme at `#/{themeKey}`
+(a trailing segment, e.g. from an old bookmarked link, is parsed but ignored). An
+unrecognized key falls back to the homepage. Navigation is done by assigning
+`location.hash`, not by calling render functions directly.
 
 ## Data
 
@@ -63,6 +79,27 @@ done by assigning `location.hash`, not by calling render functions directly.
 
 `data/bloom-insights.json` — Editorial content revolving around insights. Keyed by theme.
 `direction` (`agree`/`disagree`/`divided`/`mixed`) - Top-level consensus category
+
+`data/group-info.json` — per opinion group: participant count, color, tagline and a
+hand-written description, for the Opinion Groups page and its modal. Hand-maintained; `refresh-poll.js`
+never touches it.
+
+`data/group-statements.json` — per opinion group, the statements that most define it, in
+rank order, feeding the rest of that group's modal.
+
+`data/consensus-statements.json` — the statement ids shown on the Consensus page, in order.
+
+`data/demographics.json` — the Demographics detail modal, one category per tab.
+
+`data/participant-locations.json` — cities with participant counts and real lat/lng for the
+Demographics map, plus an `other` bucket for every zip not broken out. Note that d3-geo
+takes points as `[lng, lat]` — the reverse of these fields' reading order.
+
+`data/oregon-counties.json` — GeoJSON for all 36 Oregon counties, from the U.S. Census
+Bureau via `us-atlas`. All 36 are kept, not just the three Central Oregon ones, so the
+map's zoomed-out bound is the real state outline.
+
+Each of these carries its own `_readme` recording where its numbers came from.
 
 ### Themes are derived from tags
 
@@ -109,6 +146,7 @@ the themes are editorial, and where upstream disagrees the script reports and mo
 
 Records are matched by `id === "p" + tid`, so ids are stable across refreshes.
 
-Two things a refresh silently invalidates, both editorial follow-ups: the hand-written
-percentages in `theme-descriptions.json`, and `DIFFERENCE_OVER_GAP` — it was calibrated on
-two groups, and `max − min` widens mechanically as clusters are added.
+Three things a refresh silently invalidates, all editorial follow-ups: the hand-written
+percentages in `theme-descriptions.json`; `DIFFERENCE_OVER_GAP` — it was calibrated on
+two groups, and `max − min` widens mechanically as clusters are added; and the participant
+counts in `group-info.json`, which need a fresh clustering run to re-derive.
