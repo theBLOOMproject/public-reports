@@ -22,6 +22,78 @@
 
 <div class="shell">
 
+  <!-- ══ TOP PAGE BAR ══
+       One shared fixed bar for all four post-title steps (demogs/groups/
+       consensus/themes) rather than markup duplicated per page — its label
+       and back/next targets are driven by NAV_BAR_LABELS/NAV_SEQUENCE in
+       src/app.js's route(), not by anything here. -->
+  <nav class="pageBar" id="pageBar" aria-hidden="true">
+    <div class="pageBarProgress"><div class="pageBarProgressFill" id="pageBarProgressFill"></div></div>
+    <div class="pageBarName">
+      <span class="pageBarStep" id="pageBarStep"></span>
+      <span class="pageBarLabel" id="pageBarLabel"></span>
+    </div>
+    <div class="pageBarNav">
+      <button class="pageBarBack" id="pageBarBack" type="button" aria-label="Back">
+        <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M25 7H1.6M7.4 1.4L1.2 7l6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="pageBarNext" id="pageBarNext" type="button">
+        NEXT
+        <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══ LEVEL 0 — INTRO PAGES ══
+       Order (title → demogs → groups → consensus) is set by INTRO_PAGES in
+       src/app.js, not by this markup — that array drives routing and wires
+       each .introNext arrow to whatever page comes after its own. Adding a
+       page means adding a <main class="introPage" id="..."> here AND an
+       entry in INTRO_PAGES; either alone leaves the other half not working. -->
+  <main class="introPage" id="l0-title">
+    <div class="masthead">
+      <div class="eyebrow label">Central Oregon &amp; AI</div>
+      <h1>What did Central Oregonians have to say about AI?</h1>
+      <p>Along with other organizations, the Central Oregon Civic Action Project (COCAP) talked to 400+ real people to hear what they thought should be done about AI.</p>
+      <button class="diveIn" id="diveIn" type="button">Dive in</button>
+    </div>
+  </main>
+
+  <main class="introPage" id="l0-demogs">
+    <div class="masthead">
+      <div class="eyebrow label">Central Oregon &amp; AI</div>
+    </div>
+    <div class="demogMap" id="demogMap">
+      <svg id="demogSvg" aria-hidden="true"></svg>
+    </div>
+    <button class="introNext demogReset" id="demogReset" type="button" aria-label="Reset map view">
+      <svg viewBox="0 0 22 22" aria-hidden="true"><path d="M11 4v4M11 4a7 7 0 1 1-6.1 3.6M4.9 4.6V8h3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="demogStat">
+      <h1>400+</h1>
+      <p>People across the region participated in this conversation, both online and in person.</p>
+      <button class="demogLink" id="demogLink" type="button">See full demographics…</button>
+    </div>
+  </main>
+
+  <main class="introPage" id="l0-groups">
+    <div class="masthead">
+      <div class="eyebrow label">Bloom Project · COCAP · Central Oregon</div>
+      <h1>We identified a few different kinds of people…</h1>
+      <p>Click each to learn more about what distinguished them from the rest.</p>
+    </div>
+    <div class="groupBubbles" id="groupBubbles"></div>
+  </main>
+
+  <main class="introPage" id="l0-consensus">
+    <div class="masthead">
+      <div class="eyebrow label">Bloom Project · COCAP · Central Oregon</div>
+      <h1>…but we found a lot of common ground.</h1>
+      <p>Despite their differences, everyone generally agreed on the importance of transparency and community involvement.</p>
+    </div>
+    <div class="lane listView" id="consensusLane"></div>
+  </main>
+
   <!-- ══ LEVEL 1 ══ -->
   <main id="l1">
     <div class="masthead">
@@ -84,12 +156,61 @@
     </div>
   </div>
 
+  <!-- ══ GROUP DETAIL ══ -->
+  <div id="gdetail" role="dialog" aria-modal="true" aria-label="Group detail" aria-hidden="true">
+    <div class="scrim" id="gscrim"></div>
+    <div class="card">
+      <div class="cardtop">
+        <div class="gcHead">
+          <div class="ddTitle" id="gcName"></div>
+        </div>
+        <button class="closeb" id="gCloseb" aria-label="Close">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5l11 11M13.5 2.5l-11 11" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="cardbody" id="gCardbody"></div>
+      <div class="cardfoot">
+        <button id="gPrev" aria-label="Previous"><svg viewBox="0 0 26 14" aria-hidden="true"><path d="M25 7H1.6M7.4 1.4L1.2 7l6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="pos" id="gPos"></div>
+        <button id="gNext" aria-label="Next"><svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DEMOGRAPHICS DETAIL ══ -->
+  <div id="ddetail" role="dialog" aria-modal="true" aria-label="Demographics detail" aria-hidden="true">
+    <div class="scrim" id="dscrim"></div>
+    <div class="card">
+      <div class="cardtop">
+        <div class="gcHead">
+          <div class="ddTitle" id="dcName"></div>
+        </div>
+        <button class="closeb" id="dCloseb" aria-label="Close">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5l11 11M13.5 2.5l-11 11" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="ddTabs label" id="ddTabs" role="tablist" aria-label="Demographic category"></div>
+      <div class="cardbody" id="dCardbody"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ═══ DATA — from data/*.json, minified. Read back by id, in src/app.js. ═══ -->
 <script type="application/json" id="theme-descriptions"><!--INJECT:theme-descriptions--></script>
 <script type="application/json" id="bloom-data"><!--INJECT:bloom-data--></script>
 <script type="application/json" id="bloom-insights"><!--INJECT:bloom-insights--></script>
+<script type="application/json" id="group-info"><!--INJECT:group-info--></script>
+<script type="application/json" id="group-statements"><!--INJECT:group-statements--></script>
+<script type="application/json" id="consensus-statements"><!--INJECT:consensus-statements--></script>
+<script type="application/json" id="participant-locations"><!--INJECT:participant-locations--></script>
+<script type="application/json" id="demographics"><!--INJECT:demographics--></script>
+<script type="application/json" id="oregon-counties"><!--INJECT:oregon-counties--></script>
+
+<!-- ═══ VENDOR — d3-custom.min.js (11 core D3 v3.x modules, concatenated). ═══ -->
+<script>
+<!--INJECT:d3-vendor-->
+</script>
 
 <!-- ═══ APP — from src/app.js. ═══ -->
 <script>

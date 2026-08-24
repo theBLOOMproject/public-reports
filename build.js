@@ -91,17 +91,103 @@ function checkInsightIdsResolve(insights, file) {
   if (bad.length) throw new Error(`${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
 }
 
+// group-info.json is a hand-maintained snapshot (participant counts, display color) keyed
+// by group key, kept separate from bloom-data.json's own groups[] because refresh-poll.js
+// deliberately never persists cluster sizes there (see its comment on why). A refresh that
+// regroups — a different number of keys, or the same keys meaning different clusters — makes
+// this file stale in a way nothing here can detect; it can only catch a key mismatch.
+function checkGroupInfoKeys(info, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const groupKeys = bloomData.groups.map(g => g.key);
+  const infoKeys = Object.keys(info).filter(k => !k.startsWith('_'));
+  const missing = groupKeys.filter(k => !infoKeys.includes(k));
+  const extra = infoKeys.filter(k => !groupKeys.includes(k));
+  if (missing.length || extra.length) {
+    console.warn(`  WARNING ${file}: out of sync with bloom-data.json's groups `
+      + `[${groupKeys.join(', ')}]`
+      + (missing.length ? ` — missing entries for [${missing.join(', ')}]` : '')
+      + (extra.length ? `; stale entries for [${extra.join(', ')}] no longer in bloom-data.json` : ''));
+  }
+}
+
+// group-statements.json's ids reference bloom-data records by id; a typo or a record
+// getting renumbered/removed would otherwise fail silently at runtime (a dead defining-
+// statement page). Cross-check against bloom-data.json directly since a BLOCKS 'check'
+// only sees its own file's parsed data.
+function checkGroupStatementIdsResolve(statements, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const knownIds = new Set(bloomData.records.map(r => r.id));
+  const bad = [];
+  for (const [group, entries] of Object.entries(statements)) {
+    if (group.startsWith('_')) continue;
+    entries.forEach(e => { if (!knownIds.has(e.id)) bad.push(`${group}: ${e.id}`); });
+  }
+  if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
+}
+
+// consensus-statements.json's ids reference bloom-data records by id, same
+// deal as group-statements.json's — a typo or a renumbered/removed record
+// would otherwise fail silently at runtime (a Consensus card that never
+// renders instead of an error at build time).
+function checkConsensusIdsResolve(consensus, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const knownIds = new Set(bloomData.records.map(r => r.id));
+  const bad = consensus.ids.filter(id => !knownIds.has(id));
+  if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
+}
+
+// participant-locations.json's per-city counts plus 'other' are meant to add up to
+// 'total' (every row in the source CSV, mapped or not) — catches a hand-edit to one
+// number that forgets the others, which the parse alone can't see.
+function checkParticipantLocationTotals(loc, file) {
+  const mapped = loc.cities.reduce((s, c) => s + c.count, 0) + loc.other;
+  if (mapped !== loc.total) {
+    console.warn(`  WARNING ${file}: cities[].count + other (${mapped}) does not equal `
+      + `total (${loc.total})`);
+  }
+}
+
+// demographics.json's per-category answered count can't exceed the shared total —
+// catches a hand-edit to one category that forgets the file's total was for all of
+// them, which the parse alone can't see.
+function checkDemographicsAnswered(demo, file) {
+  const bad = demo.categories.filter(c => c.answered > demo.total);
+  if (bad.length) {
+    console.warn(`  WARNING ${file}: categor(y/ies) with answered > total (${demo.total}): `
+      + bad.map(c => `${c.key} (${c.answered})`).join(', '));
+  }
+}
+
+// oregon-counties.json's three Central Oregon counties (Deschutes/Crook/Jefferson)
+// are the Demographics map's home view — without them there's nothing to render on
+// load, so a missing one throws rather than warns, unlike the softer full-count check
+// below (a future Census source update changing the county count is surprising but
+// not fatal to the tri-county view).
+const DEMOG_HOME_FIPS = ['41017', '41013', '41031'];
+function checkOregonCountiesShape(geo, file) {
+  const ids = new Set(geo.features.map(f => f.id));
+  const missing = DEMOG_HOME_FIPS.filter(id => !ids.has(id));
+  if (missing.length) {
+    throw new Error(`${file}: missing required Central Oregon FIPS id(s) [${missing.join(', ')}]`);
+  }
+  if (geo.features.length !== 36) {
+    console.warn(`  WARNING ${file}: expected 36 Oregon counties, found ${geo.features.length}`);
+  }
+}
+
 // Placeholder id -> { file, kind }. Every id needs a matching <!--INJECT:{id}-->
 // in index.template.html; for 'json' blocks the id is also the <script> element id
 // the app reads the data back out of.
 //
 //   json — parsed (so a syntax error fails the build), then re-serialized minified
-//   raw  — inlined verbatim into the <style> / <script> tag that wraps it
+//   raw  — inlined verbatim at the placeholder; for app-css/app-js/d3-vendor that's
+//          inside the <style>/<script> tag the template wraps them in
 //
 // An optional 'check' runs against the parsed JSON for invariants the parse can't see;
 // it may warn (and let the build through) or throw.
 const BLOCKS = {
   'app-css': { file: 'src/app.css', kind: 'raw' },
+  'd3-vendor': { file: 'vendor/d3-custom.min.js', kind: 'raw' },
   'theme-descriptions': { file: 'data/theme-descriptions.json', kind: 'json' },
   'bloom-data': {
     file: 'data/bloom-data.json',
@@ -109,6 +195,24 @@ const BLOCKS = {
     check: (data, file) => { checkEveryRecordReachable(data, file); checkVoteIntegrity(data, file); },
   },
   'bloom-insights': { file: 'data/bloom-insights.json', kind: 'json', check: checkInsightIdsResolve },
+  'group-info': { file: 'data/group-info.json', kind: 'json', check: checkGroupInfoKeys },
+  'group-statements': { file: 'data/group-statements.json', kind: 'json', check: checkGroupStatementIdsResolve },
+  'consensus-statements': { file: 'data/consensus-statements.json', kind: 'json', check: checkConsensusIdsResolve },
+  'participant-locations': {
+    file: 'data/participant-locations.json',
+    kind: 'json',
+    check: checkParticipantLocationTotals,
+  },
+  'oregon-counties': {
+    file: 'data/oregon-counties.json',
+    kind: 'json',
+    check: checkOregonCountiesShape,
+  },
+  'demographics': {
+    file: 'data/demographics.json',
+    kind: 'json',
+    check: checkDemographicsAnswered,
+  },
   'app-js': { file: 'src/app.js', kind: 'raw' },
 };
 

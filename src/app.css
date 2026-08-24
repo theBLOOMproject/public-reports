@@ -9,12 +9,16 @@
   --pass:#C4C4C4;
   --home:#0D1B3E;
   --amber:#DE8A2E;  /* mid tier for the card's %-agree readout (0-33 red · 33-67 amber · 67-100 green) */
+  --gold:#E9A23C;  /* accent for the Demographics intro page, per its mock */
 
   --geom:'Geom','Futura',system-ui,sans-serif;
   --body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
   --mono:'DM Mono',ui-monospace,'SF Mono',monospace;
 
   --nav-h:46px;
+  --bar-blue:#00216F;   /* top page-nav bar — deliberately distinct from --home */
+  --bar-pink:#BE00C1;
+  --bar-h:70px;
 }
 
 *{box-sizing:border-box}
@@ -42,7 +46,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   min-height:100vh;
   min-height:100dvh;
   background:var(--ink);
+  padding-bottom:0;
+  transition:padding-bottom .35s cubic-bezier(.2,.85,.3,1);
 }
+/* reserves room at the bottom to clear #pageBar, kept in sync with its own
+   slide-in/out (see updateNavBar() in app.js) rather than snapping instantly */
+body.navBarOn .shell{padding-bottom:var(--bar-h)}
 @media (min-width:660px){
   /* on the roomier desktop layout, the gutter around the column tints to
      match whatever's active — the open theme's color, or --home on L1.
@@ -50,6 +59,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   body{background:var(--c,var(--home))}
   body:has(#l2.on){background:var(--paper)}
   .shell{max-width:800px}
+  :root{--bar-h:96px}
 }
 
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
@@ -61,11 +71,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .masthead{padding:26px 22px 20px}
 .masthead .eyebrow{color:rgba(255,255,255,.45);margin-bottom:9px}
 .masthead h1{
-  font-family:var(--geom);font-weight:700;font-size:23px;line-height:1.14;
-  margin:0;letter-spacing:-.012em;max-width:16em;
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(30px,9vw,40px);line-height:1.06;
+  margin:0;letter-spacing:-.02em;max-width:16em;
 }
 .masthead p{
-  font-size:14px;line-height:1.45;color:rgba(255,255,255,.5);
+  font-size:16.5px;line-height:1.5;color:rgba(255,255,255,.5);
   margin:12px 0 0;max-width:32em;
 }
 
@@ -118,6 +129,303 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .legend i.q{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)}
 
 /* ─────────────────────────────────────────────
+   LEVEL 0 — INTRO PAGES
+   A small ordered sequence shown before the theme grid (title → demogs →
+   groups, per INTRO_PAGES in app.js — that array is what actually drives
+   page order and the next-arrow's destination; this is just their shared
+   shell/layout. Each page sets its own background/text color below, per
+   its own mock — title and demogs stay in the dark --home most of the
+   report opens in; groups switches to white/ink. A new page only needs
+   its own #id + .masthead content (+ a one-line color rule if it isn't
+   the dark default) to slot in.
+   ───────────────────────────────────────────── */
+.introPage{
+  position:relative;min-height:100vh;min-height:100dvh;padding-bottom:100px;
+}
+#l0-title,#l0-demogs{background:var(--home);color:#fff}
+#l0-groups{background:var(--paper);color:var(--ink)}
+/* darker at the very top, settling into the flat --agree green (same token
+   .who.consensus's pill already uses — "consensus" and "agree" are the
+   same color throughout the report) by ~20% down the page */
+#l0-consensus{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--agree) 60%,#000) 0%,var(--agree) 20%);
+  color:#fff;
+}
+/* title's only child (.masthead) both axes centered on the page — the
+   other intro pages keep normal top-down flow, this one doesn't. Zeroing
+   the shared .introPage bottom padding (reserved on other pages for
+   #demogReset/general breathing room) so the centering is true, not
+   skewed upward by leftover bottom space title has no use for. */
+#l0-title{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:0}
+
+/* the shared .masthead h1/p sizing (above, under LEVEL 1) already reads as
+   a cover page rather than a grid caption; intro pages only need the width
+   constraints relaxed, since L1's are tuned for its own shorter copy */
+.introPage .masthead h1{max-width:none}
+.introPage .masthead p{max-width:26em}
+
+#l0-groups .masthead .eyebrow{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+/* Geom + solid ink per design call — the shared .masthead p rule (light,
+   body-font) is right for a dark background but reads as unreadable here,
+   the one .introPage that isn't dark */
+#l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink)}
+
+/* the county map — a sibling of .masthead, not inside it. Full-bleed behind
+   the whole page: real Oregon county geometry (data/oregon-counties.json)
+   rendered and panned/zoomed by vendored D3 (vendor/d3-custom.min.js) —
+   initDemogMap()/fitDemogMap()/demogZoomed() in app.js. overflow:hidden is
+   cheap defensive insurance on top of d3-zoom's own translateExtent clamp. */
+.demogMap{position:absolute;inset:0;overflow:hidden;z-index:1}
+.demogMap > svg{display:block;width:100%;height:100%}
+
+/* county fill/stroke — vector-effect:non-scaling-stroke keeps the boundary
+   lines a constant screen width across zoom levels, the CSS-only half of
+   the "stays legible at any zoom" requirement (the other half, keeping
+   city marker/label size constant, is handled in JS — see demogZoomed()) */
+.demogCounty{
+  fill:none;
+  stroke:rgba(255,255,255,.35);stroke-width:.75px;
+  vector-effect:non-scaling-stroke;
+}
+.demogCounty.inRegion{fill:var(--gold);fill-opacity:.16}
+.demogBg{fill:transparent}
+.demogCity{cursor:pointer}
+
+.demogDot{fill:var(--gold);fill-opacity:.9}
+/* white pill behind each city name, tucked slightly under the dot's edge
+   (see DEMOG_LABEL_OVERLAP in app.js) so the two visibly overlap */
+.demogLabelBg{fill:#fff;pointer-events:none}
+.demogDotLabel{
+  font-family:var(--geom);font-weight:600;font-size:16px;
+  fill:var(--home);
+  pointer-events:none;
+}
+/* major-city labels fade out once you've zoomed out past DEMOG_LABEL_MIN_ZOOM,
+   so a wide view reads as dots-in-context rather than a wall of pills. The 7
+   smaller places (.minor) start hidden and only appear once you've zoomed in
+   past DEMOG_MINOR_LABEL_MIN_ZOOM — kept simple for now/deliberately equal in
+   every other way (size, color) rather than visually downweighting them. */
+.demogLabelBg,.demogDotLabel{transition:opacity .2s ease}
+.demogMarkers.labelsHidden .demogCity:not(.minor) .demogLabelBg,
+.demogMarkers.labelsHidden .demogCity:not(.minor) .demogDotLabel{opacity:0}
+.demogCity.minor .demogLabelBg,
+.demogCity.minor .demogDotLabel{opacity:0}
+.demogMarkers.minorLabelsShown .demogCity.minor .demogLabelBg,
+.demogMarkers.minorLabelsShown .demogCity.minor .demogDotLabel{opacity:1}
+
+/* hover/tap info tooltip — sits in the same spot as the plain pill label
+   (same overlap anchor, see DEMOG_LABEL_OVERLAP), just a taller two-line
+   dark card instead of a one-line white pill. Lives in its own layer
+   (.demogHoverLayer, appended after dots+labels in initDemogMap) so it
+   always paints above every dot/label, on any city, at any zoom. */
+/* pointer-events:none while hidden, so an invisible tooltip never blocks a
+   nearby city's dot/label; auto once .hovered, so drifting the mouse onto
+   the now-visible box itself keeps it open instead of immediately flickering
+   away the instant it stops being over the dot/label that triggered it */
+.demogHoverBg{fill:var(--home);pointer-events:none}
+.demogCity.hovered .demogHoverBg{pointer-events:auto}
+.demogHoverName{
+  font-family:var(--geom);font-weight:700;font-size:20px;
+  fill:#fff;pointer-events:none;
+}
+.demogHoverCount{
+  font-family:var(--mono);font-size:14px;letter-spacing:.05em;text-transform:uppercase;
+  fill:rgba(255,255,255,.7);pointer-events:none;
+}
+.demogHoverBg,.demogHoverName,.demogHoverCount{opacity:0;transition:opacity .15s ease}
+.demogCity.hovered .demogHoverBg,
+.demogCity.hovered .demogHoverName,
+.demogCity.hovered .demogHoverCount{opacity:1}
+
+/* .demogMap going position:absolute promotes it into the "positioned"
+   paint bucket ahead of these still-static siblings by default — without
+   an explicit stack here they'd paint (and sit) underneath the map instead
+   of over it as the intended overlay. Scoped to #l0-demogs since .masthead
+   is shared across every L0 page. */
+#l0-demogs .masthead,#l0-demogs .demogStat{position:relative;z-index:2}
+#l0-demogs .introNext{z-index:2}
+/* solid backing band behind the eyebrow so it stays legible now that the
+   map sits right up against the top of the page with no scrim */
+#l0-demogs .masthead{background:var(--home)}
+
+/* the reset button borrows .introNext's whole visual shell (circle, shadow,
+   hover transition) via a second class on the same element — the arrow's
+   own bottom-right slot is already taken by page navigation, so this sits
+   at bottom-left instead, both thumb-reachable on mobile. Compound selector
+   (not a same-specificity bare .demogReset) so this reliably beats the base
+   .introNext rule regardless of declaration order. */
+.introNext.demogReset{left:22px;right:auto;bottom:26px}
+
+/* the headline stat sits below the map rather than inside .masthead —
+   the mock centers this block, unlike Title's left-aligned copy. Its own
+   gradient (solid --home fading to transparent going down) grounds the
+   text against the map underneath it. */
+.demogStat{
+  padding:35px 22px 24px;text-align:center;
+  background:linear-gradient(180deg,var(--home) 0%,transparent 100%);
+}
+.demogStat h1{
+  font-family:var(--geom);font-weight:700;margin:0;
+  font-size:clamp(64px,20vw,110px);line-height:1;letter-spacing:-.02em;
+}
+.demogStat p{font-size:18px;line-height:1.5;margin:8px auto 0;max-width:26em}
+@media (min-width:660px){
+  .demogStat p{font-size:20px}
+}
+.demogLink{
+  display:inline-block;margin-top:16px;
+  background:#fff;color:var(--home);
+  padding:12px 24px;border-radius:999px;
+  font-family:var(--geom);font-weight:600;font-size:16.5px;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  transition:transform .15s ease;
+}
+.demogLink:active{transform:scale(.96)}
+
+
+.groupBubbles{
+  padding:14px 22px 20px;
+  display:flex;flex-direction:column;gap:14px;
+}
+/* a plain bordered card per group — the outline is the only thing carrying
+   the group's color; everything else on the card is black/gray so the
+   name (the one colored line) is what actually draws the eye */
+.gbubble{
+  display:block;width:100%;text-align:left;
+  background:none;
+  border:1.5px solid color-mix(in srgb,var(--c,var(--home)) 55%,#fff);
+  border-radius:16px;
+  padding:16px 18px;
+  animation:tallyIn .5s cubic-bezier(.2,.8,.3,1) both;
+}
+.gName{font-family:var(--geom);font-weight:700;font-size:21px;color:var(--c,var(--home))}
+.gCount{
+  font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(0,0,0,.5);margin-top:4px;
+}
+.gTagline{
+  font-style:italic;color:rgba(0,0,0,.65);
+  font-size:17px;line-height:1.4;
+  margin:10px 0 0;
+}
+
+/* the "continue to the next intro page" bubble — same position/style on
+   every .introPage; app.js wires each one to whatever INTRO_PAGES says
+   comes after its own page, so this never needs a page-specific variant */
+.introNext{
+  position:absolute;right:22px;bottom:26px;
+  width:52px;height:52px;border-radius:50%;
+  background:#fff;color:var(--home);
+  display:grid;place-items:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.4);
+  transition:transform .2s ease;
+}
+@media (hover:hover){
+  .introNext:hover{transform:scale(1.07)}
+}
+.introNext svg{width:22px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
+
+/* the title page's primary CTA — a white pill matching .demogLink's
+   established look, centered with the rest of the (otherwise left-aligned)
+   masthead copy rather than sharing its alignment. h1/p carry their own
+   max-width (16em/32em) for line length, which narrows their own box but
+   doesn't center that box — text-align:center only centers text *within*
+   a box, so without margin:auto here they'd sit flush-left inside the
+   wider, truly-centered .masthead despite reading centered internally. */
+#l0-title .masthead{text-align:center}
+#l0-title .masthead h1{margin-left:auto;margin-right:auto}
+#l0-title .masthead p{color:#fff;font-size:19px;margin-left:auto;margin-right:auto}
+.diveIn{
+  display:inline-block;margin-top:18px;
+  background:#fff;color:var(--home);
+  padding:12px 26px;border-radius:999px;
+  font-family:var(--geom);font-weight:600;font-size:19px;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  transition:transform .15s ease;
+}
+.diveIn:active{transform:scale(.96)}
+@media (min-width:660px){
+  #l0-title .masthead p{font-size:21px}
+  .diveIn{font-size:21px}
+}
+
+/* ─────────────────────────────────────────────
+   TOP PAGE BAR — shared across demogs/groups/consensus/themes (see
+   NAV_BAR_LABELS/updateNavBar() in app.js). Column-width-matched to .shell
+   rather than full-viewport, so it reads as part of the same one-column
+   layout on wide viewports instead of a separate full-bleed strip.
+   Hidden state is off-screen via transform, not display:none, so both the
+   entrance (delayed, see JS) and the exit (immediate) can transition;
+   .shown is the only thing toggling it either direction. ───────────────*/
+.pageBar{
+  position:fixed;bottom:0;left:50%;z-index:50;
+  width:100%;max-width:600px;
+  height:var(--bar-h);
+  transform:translate(-50%,100%);
+  transition:transform .35s cubic-bezier(.2,.85,.3,1);
+  background:var(--bar-blue);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;
+}
+.pageBar.shown{transform:translate(-50%,0)}
+@media (min-width:660px){
+  .pageBar{max-width:800px}
+}
+/* track (faint, full width) + fill (solid, X/Y of the way across) — the
+   track alone reads as a subtle top divider even at step 1, same job the
+   plain border it replaced was doing */
+.pageBarProgress{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:rgba(255,255,255,.2);
+}
+.pageBarProgressFill{
+  height:100%;width:0;background:#fff;
+  transition:width .3s ease;
+}
+.pageBarName{
+  font-family:var(--geom);font-weight:600;color:#fff;
+  font-size:17px;letter-spacing:-.01em;
+  display:flex;align-items:baseline;gap:8px;min-width:0;
+}
+.pageBarStep{opacity:.6;flex:none}
+.pageBarLabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pageBarNav{flex:none;display:flex;align-items:center;gap:10px}
+.pageBarBack{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.16);color:#fff;
+  display:grid;place-items:center;
+  transition:background .2s ease;
+}
+@media (hover:hover){
+  .pageBarBack:hover{background:rgba(255,255,255,.26)}
+}
+.pageBarBack svg{width:16px;height:9px;stroke:currentColor;stroke-width:2;fill:none}
+.pageBarNext{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bar-pink);color:#fff;
+  padding:10px 18px;border-radius:999px;
+  font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.08em;
+  transition:opacity .2s ease;
+}
+.pageBarNext[disabled]{opacity:.35;pointer-events:none}
+.pageBarNext svg{width:15px;height:9px;stroke:currentColor;stroke-width:2;fill:none}
+@media (min-width:660px){
+  .pageBarName{font-size:22px}
+  .pageBarNext{font-size:13px;padding:12px 22px}
+}
+
+@media (min-width:660px){
+  .groupBubbles{padding:20px 22px 30px;gap:16px}
+  .gName{font-size:24px}
+  .gCount{font-size:14px}
+  .gTagline{font-size:19px}
+  /* the desktop gutter otherwise tints navy (body's --c fallback, correct
+     for title/demogs) while Groups' own content is white — keep them
+     matched only there */
+  body.groups-page{background:var(--paper)}
+}
+
+/* ─────────────────────────────────────────────
    LEVEL 2 — THEME VIEWER
    White throughout — the theme color is used only as an accent (headings,
    pills, borders, bars), never as a page background. Keeps contrast high
@@ -162,7 +470,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   color:var(--ink);letter-spacing:-.003em;
 }
 @media (min-width:660px){
-  .masthead p{font-size:16px}
+  /* placed after the base rules above so it actually wins the cascade —
+     an earlier attempt put this override before them and silently lost */
+  .masthead p{font-size:18.5px}
   .hero .desc{font-size:18.5px}
 }
 
@@ -306,6 +616,107 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   color:color-mix(in srgb,var(--c) 55%,#000);text-align:center;
 }
 
+/* ─── L0 — CONSENSUS card stack ───────────────────────────────────── */
+/* The List tab's card styles, kept when the tab system was removed because
+   #l0-consensus is now their only consumer (see buildConsensus() in app.js).
+   Deliberately distinct from the .icard used on theme pages: the point of
+   this page is the 0-100% axis with one lettered square per opinion group. */
+.lane{
+  position:relative;
+  overflow:visible;
+  display:flow-root;
+}
+.lane.listView{
+  display:flex;flex-direction:column;gap:12px;
+  padding:6px 22px 46px;
+}
+
+.lcard{
+  display:block;width:100%;text-align:left;
+  background:#fff;border-radius:20px;
+  padding:16px 18px 0;
+  overflow:hidden;   /* so the bottom viz's bleed can meet the card's own rounded corners */
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease,box-shadow .2s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+@media (hover:hover){
+  .lcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
+}
+.lcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
+
+/* eyebrow — the participant's emoji plus their demographic chips,
+   marqueeing sideways when the text is too long for the card */
+.lWho{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:9px;
+  color:color-mix(in srgb,var(--c) 62%,#000);
+}
+.lWho .lEmoji{flex:none;font-size:15px;line-height:1}
+.lWho .lDemoWrap{flex:1;min-width:0;overflow:hidden}
+.lWho .lDemoTrack{
+  display:inline-flex;gap:2.4em;white-space:nowrap;
+  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+}
+.lWho .lDemoTrack.marquee{animation:lDemoScroll var(--marquee-dur,10s) linear infinite}
+@keyframes lDemoScroll{from{transform:translateX(0)}to{transform:translateX(var(--marquee-dist,-50%))}}
+
+.lText{
+  margin:0 0 16px;color:var(--ink);
+  font-family:var(--geom);font-weight:600;
+  font-size:23px;line-height:1.32;letter-spacing:-.012em;
+}
+
+/* bottom viz — where each group's agreement % lands on a disagree-to-
+   agree track. Labels sit in the card's normal (uncolored) flow; only
+   the track itself is tinted and bled flush to the card's edges (and
+   its bottom corners). */
+.lBarLabels{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(0,0,0,.8);
+  margin-bottom:8px;
+}
+.lBarLabels .who{flex:none}
+.lBar{
+  margin:0 -18px;
+  padding:10px 18px 14px;
+  background:color-mix(in srgb,var(--c) 13%,transparent);
+}
+/* --sq is the group square's size, and the JS reads it back to compute the
+   track's usable width — change it here, not there. Polis can return more
+   clusters than the two this started with, so past three the squares shrink
+   to keep them all on the track. */
+.lBarTrack{position:relative;--sq:26px;height:var(--sq)}
+.lBarTrack.tight{--sq:20px}
+/* 0%/100% end labels — centered on the same half-square inset the group
+   squares use at their own extremes (HALF_SQ in the JS), so a square sitting
+   right on 0% or 100% lands directly on top of its label */
+.lBarEdge{
+  position:absolute;top:50%;
+  font-family:var(--geom);font-weight:700;font-size:14px;
+  color:var(--c);opacity:.65;
+}
+.lBarEdge.lo{left:calc(var(--sq) / 2);transform:translate(-50%,-50%)}
+.lBarEdge.hi{right:calc(var(--sq) / 2);transform:translate(50%,-50%)}
+.lBarMid{
+  position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:rgba(0,0,0,.18);
+  transform:translateX(-50%);
+}
+.lBarLine{
+  position:absolute;top:50%;height:2.5px;
+  background:var(--c);transform:translateY(-50%);
+}
+.lBarSq{
+  position:absolute;top:50%;width:var(--sq);height:var(--sq);
+  transform:translate(-50%,-50%);
+  background:var(--c);border-radius:6px;
+  display:grid;place-items:center;
+  font-family:var(--geom);font-weight:700;font-size:11px;color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+
 /* ─────────────────────────────────────────────
    LEVEL 3 — STATEMENT
    ───────────────────────────────────────────── */
@@ -417,6 +828,38 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .barkey span{display:inline-flex;align-items:center;gap:5px}
 .barkey i{width:9px;height:3px;border-radius:2px;flex:none}
 
+/* #gdetail's own take on the shared .meta/.grow/.bar block above (L3 keeps
+   the plain mono/dimmed version) — a real Geom heading instead of a small
+   caps label, the vote count moved to its own line under it, group names
+   read as plain black with no "Group A/B/C" prefix (groupTag() drops it —
+   which group this is is already the modal's own header), no disagree/
+   pass/agree legend, and every bar thick. .current (the group the modal
+   is about, sorted first in JS) is what carries color now — its label and
+   the card title (#gcName, reusing .ddTitle) are the only colored text in
+   the whole modal; everything else is plain black/gray. */
+#gdetail .meta h4{
+  font-family:var(--geom);font-weight:700;font-size:16px;letter-spacing:0;text-transform:none;
+  color:var(--ink);
+}
+#gdetail .gdVoteCount{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(0,0,0,.55);
+  margin:2px 0 14px;
+}
+#gdetail .grow .top{align-items:center}
+#gdetail .grow .top span{color:var(--ink)}
+#gdetail .grow .top b{color:var(--ink)}
+/* the current group's label is a small solid badge (white on theme color)
+   instead of plain colored text, and a touch larger than the others */
+#gdetail .grow.current .top span{
+  color:#fff;background:var(--c);
+  padding:3px 9px;border-radius:999px;
+  font-size:11.5px;
+}
+#gdetail .ddTitle{color:var(--c)}
+#gdetail .quotewrap blockquote{color:var(--ink)}
+#gdetail .bar{height:8px}
+
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tags i{
   font-style:normal;
@@ -443,6 +886,79 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--c);
 }
 .cardfoot .pos em{font-style:normal;opacity:.45}
+
+/* ─────────────────────────────────────────────
+   GROUP DETAIL MODAL
+   Shares .scrim/.card/.cardtop/.cardbody/.cardfoot/.closeb/.pos with L3 —
+   only the bits specific to this modal (header, description page, and the
+   clickable bubble it opens from) get their own rules.
+   ───────────────────────────────────────────── */
+.gbubble{cursor:pointer;transition:background .2s ease,transform .15s ease}
+@media (hover:hover){
+  .gbubble:hover{background:color-mix(in srgb,var(--c,var(--home)) 6%,transparent)}
+}
+.gbubble:active{transform:scale(.98)}
+.gbubble.sel{background:color-mix(in srgb,var(--c,var(--home)) 10%,transparent)}
+
+#gdetail{display:none;position:fixed;inset:0;z-index:60}
+#gdetail.on{display:block}
+
+.gcHead{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gdDesc{padding:28px 22px 26px}
+.gdText{
+  margin:0;color:var(--ink);
+  font-family:var(--geom);font-weight:600;
+  font-size:22px;line-height:1.34;letter-spacing:-.01em;
+}
+
+/* ─────────────────────────────────────────────
+   DEMOGRAPHICS DETAIL MODAL
+   Shares .scrim/.card/.cardtop/.cardbody/.closeb/.gcHead with L3/#gdetail —
+   no .cardfoot, since navigation is by tab rather than prev/next paging.
+   ───────────────────────────────────────────── */
+#ddetail{display:none;position:fixed;inset:0;z-index:60;--c:var(--ink)}
+#ddetail.on{display:block}
+
+.ddTitle{
+  font-family:var(--geom);font-weight:700;font-size:32px;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.ddTabs{
+  display:flex;flex-wrap:nowrap;gap:6px;
+  padding:0 16px 14px;flex:none;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
+  border-bottom:1px solid color-mix(in srgb,var(--c) 16%,#fff);
+}
+.ddTabs button{
+  flex:none;
+  font-size:10.5px;letter-spacing:.08em;
+  padding:7px 12px;border-radius:999px;
+  background:color-mix(in srgb,var(--home) 10%,#fff);color:var(--home);
+  transition:background .2s ease,color .2s ease;
+}
+.ddTabs button[aria-pressed="true"]{background:var(--home);color:#fff;font-weight:500}
+
+.ddIntro{margin:0;padding:20px 22px 4px;font-size:17px;line-height:1.5;color:var(--ink)}
+.ddIntro b{font-weight:700;color:var(--agree)}
+
+.ddList{padding:6px 0 0}
+.ddRow{
+  position:relative;isolation:isolate;
+  display:flex;align-items:center;gap:10px;
+  padding:14px 22px;
+  border-top:1px solid rgba(0,0,0,.08);
+  font-size:16px;overflow:hidden;
+}
+.ddRow:last-child{border-bottom:1px solid rgba(0,0,0,.08)}
+.ddRow::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  width:var(--pct);
+  background:color-mix(in srgb,var(--rc) 10%,#fff);
+}
+.ddSwatch{width:11px;height:11px;border-radius:3px;flex:none;background:var(--rc)}
+.ddLabel{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.ddPct{font-family:var(--mono);font-weight:600;color:var(--ink);flex:none}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
