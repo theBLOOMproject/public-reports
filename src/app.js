@@ -7,6 +7,9 @@ const DESC = J('theme-descriptions');
 const INSIGHTS = J('bloom-insights');
 const GROUP_INFO = J('group-info');
 const GROUP_STATEMENTS = J('group-statements');
+const PARTICIPANT_LOCATIONS = J('participant-locations');
+const DEMOGRAPHICS = J('demographics');
+const OREGON_COUNTIES = J('oregon-counties');
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
@@ -39,6 +42,9 @@ const emojiFor = r => {
 
 const byKey = {};
 DATA.themes.forEach(t => byKey[t.key] = t);
+// borrowed for the demographics modal's row swatches — no per-category color of
+// its own, so it cycles through the same palette the theme grid already uses
+const THEME_COLORS = DATA.themes.map(t => t.color);
 const byId = {};
 DATA.records.forEach(r => byId[r.id] = r);
 // A theme *is* the records carrying any of its tags — membership is derived, not
@@ -131,6 +137,8 @@ const claimPhrase = (claim, direction) => {
 const state = { theme: null, sel: -1, layout: [] };
 let scrollRaf = null, l1Scroll = 0;
 let carouselTimers = [];
+let demogSvg = null, demogWorld = null, demogMarkersG = null, demogProjection = null,
+  demogPath = null, demogZoom = null, demogResizeTimer = null;
 
 /* ─── LEVEL 0 ─────────────────────────────────────────── */
 // The ordered sequence of intro pages shown before the theme grid, each a
@@ -145,6 +153,309 @@ const INTRO_PAGES = [
   { key: 'demogs', id: 'l0-demogs' },
   { key: 'groups', id: 'l0-groups' },
 ];
+
+// participant-locations.json's cities become clickable markers over real
+// Oregon county geometry (data/oregon-counties.json, sourced from the U.S.
+// Census Bureau — see its own _readme), rendered and panned/zoomed by
+// vendored D3 (vendor/d3-custom.min.js — d3-geo for the projection/path
+// generator, d3-zoom for the gesture engine; see that file's own header for
+// exactly which modules and why). Marker radius is scaled by sqrt of count
+// rather than count itself — Bend outnumbers Prineville 8 to 1, and a linear
+// scale would render that as a barely-visible speck next to a blob.
+const TRI_COUNTY_FIPS = new Set(['41017', '41013', '41031']);   // Deschutes, Crook, Jefferson
+const DEMOG_MAX_ZOOM_IN = 8;        // tunable: multiple of the home (city-cluster) fit scale
+const DEMOG_RESET_DURATION = 500;   // ms
+const DEMOG_MIN_R = 13, DEMOG_MAX_R = 70;
+
+// One-time DOM/data-binding setup. The projection isn't fit to real pixel
+// dimensions yet at this point — #l0-demogs may still be display:none — that
+// happens in fitDemogMap(), driven by a ResizeObserver so it naturally fires
+// once the page becomes visible, on every real resize, and across the 660px
+// breakpoint, all through one mechanism.
+function initDemogMap() {
+  demogSvg = d3.select('#demogSvg');
+  demogSvg.append('rect').attr('class', 'demogBg');
+  demogWorld = demogSvg.append('g').attr('class', 'demogWorld');
+  demogMarkersG = demogSvg.append('g').attr('class', 'demogMarkers');
+
+  demogProjection = d3.geoMercator();
+  demogPath = d3.geoPath(demogProjection);
+
+  demogWorld.selectAll('path')
+    .data(OREGON_COUNTIES.features, d => d.id)
+    .join('path')
+    .attr('class', d => 'demogCounty' + (TRI_COUNTY_FIPS.has(d.id) ? ' inRegion' : ''));
+
+  // SVG has no cross-element z-index for plain shapes — paint order is DOM
+  // order, full stop. So dots/labels/hover-tooltips live in three separate
+  // layers (all dots, then all labels, then all hover tooltips) rather than
+  // interleaved per-city groups: that's what guarantees every label paints
+  // above every dot and every hover tooltip paints above everything, even
+  // one city's stuff over a different city's much bigger overlapping dot,
+  // regardless of which city happens to come first in the data. All three
+  // layers' groups share the .demogCity class (keyed to the same city
+  // objects) so sizing/positioning/zoom code can keep treating "a city's
+  // stuff" uniformly.
+  const cityClass = d => 'demogCity' + (d.major ? '' : ' minor');
+  const dotsLayer = demogMarkersG.append('g').attr('class', 'demogDotsLayer');
+  const labelsLayer = demogMarkersG.append('g').attr('class', 'demogLabelsLayer');
+  const hoverLayer = demogMarkersG.append('g').attr('class', 'demogHoverLayer');
+
+  const dotGroups = dotsLayer.selectAll('g')
+    .data(PARTICIPANT_LOCATIONS.cities, d => d.name)
+    .join('g')
+    .attr('class', cityClass);
+  dotGroups.append('circle').attr('class', 'demogDot');
+
+  const labelGroups = labelsLayer.selectAll('g')
+    .data(PARTICIPANT_LOCATIONS.cities, d => d.name)
+    .join('g')
+    .attr('class', cityClass);
+  // paint order within a label = DOM order too: pill background, then text
+  labelGroups.append('rect').attr('class', 'demogLabelBg');
+  labelGroups.append('text').attr('class', 'demogDotLabel').attr('y', 4).text(d => d.name);
+
+  // hover/tap info tooltip: name on top, count below — see updateDemogHoverLayout()
+  const hoverGroups = hoverLayer.selectAll('g')
+    .data(PARTICIPANT_LOCATIONS.cities, d => d.name)
+    .join('g')
+    .attr('class', cityClass);
+  hoverGroups.append('rect').attr('class', 'demogHoverBg');
+  hoverGroups.append('text').attr('class', 'demogHoverName').text(d => d.name);
+  hoverGroups.append('text').attr('class', 'demogHoverCount')
+    .text(d => d.count + (d.count === 1 ? ' person' : ' people'));
+
+  updateDemogDotSizes();
+  updateDemogHoverLayout();
+
+  // hover reveals the tooltip on desktop; click/tap does the same (and is
+  // the only way to reach it on touch, which has no hover state) — both
+  // funnel through the same show/hide-all-others functions
+  [dotGroups, labelGroups, hoverGroups].forEach(sel => {
+    sel.on('pointerenter', (event, d) => demogHoverShow(d));
+    sel.on('pointerleave', (event, d) => demogHoverHide(d));
+    sel.on('click', (event, d) => { event.stopPropagation(); demogHoverShow(d); });
+  });
+  demogSvg.select('.demogBg').on('click', () => demogHoverShow(null));
+
+  demogZoom = d3.zoom().on('zoom', demogZoomed);
+  demogSvg.call(demogZoom);
+  demogSvg.on('dblclick.zoom', null);   // double-tap/dblclick-to-zoom wasn't asked for
+
+  const ro = new ResizeObserver(() => {
+    clearTimeout(demogResizeTimer);
+    demogResizeTimer = setTimeout(() => {
+      const box = $('#demogMap').getBoundingClientRect();
+      fitDemogMap(box.width, box.height);
+    }, 220);
+  });
+  ro.observe($('#demogMap'));
+}
+
+// Linear: radius is a straight ratio of count to the largest city's count
+// (Bend), not compressed toward the top the way sqrt would — settled on
+// after live A/B'ing both against the base size via a since-removed dev panel.
+const DEMOG_LABEL_OVERLAP = 10;   // px the label pill tucks into the dot's edge
+const DEMOG_LABEL_PAD_X = 9, DEMOG_LABEL_PAD_Y = 5;   // pill padding around the text
+
+function updateDemogDotSizes() {
+  const maxN = Math.max(...PARTICIPANT_LOCATIONS.cities.map(c => c.count));
+  // d.r lives on the shared city objects (data-joined into both layers by
+  // the same key), so computing it once here is visible to both below
+  PARTICIPANT_LOCATIONS.cities.forEach(d => {
+    d.r = DEMOG_MIN_R + (DEMOG_MAX_R - DEMOG_MIN_R) * (d.count / maxN);
+  });
+  demogMarkersG.selectAll('.demogDotsLayer .demogDot').attr('r', d => d.r.toFixed(1));
+  demogMarkersG.selectAll('.demogLabelsLayer .demogCity').each(function (d) {
+    const g = d3.select(this);
+    const text = g.select('.demogDotLabel').attr('x', d.r - DEMOG_LABEL_OVERLAP);
+    // getBBox() reads the text's own rendered geometry, independent of the
+    // svg's current viewBox/zoom transform, so this is safe to call before
+    // fitDemogMap() has ever run
+    const box = text.node().getBBox();
+    g.select('.demogLabelBg')
+      .attr('x', box.x - DEMOG_LABEL_PAD_X)
+      .attr('y', box.y - DEMOG_LABEL_PAD_Y)
+      .attr('width', box.width + DEMOG_LABEL_PAD_X * 2)
+      .attr('height', box.height + DEMOG_LABEL_PAD_Y * 2)
+      .attr('rx', box.height / 2 + DEMOG_LABEL_PAD_Y);
+  });
+}
+
+// Fits the projection to the home view, then derives the zoom's pan/scale
+// bounds from the FULL 36-county collection's projected bounds — this is
+// what makes "zoom all the way out" land on the real Oregon outline rather
+// than an arbitrary crop. A resize always resets to the home view rather
+// than trying to preserve an equivalent pan/zoom at the new size.
+function fitDemogMap(w, h) {
+  if (w <= 0 || h <= 0) return;   // page still hidden — nothing to measure yet
+  demogSvg.attr('viewBox', `0 0 ${w} ${h}`);
+
+  // The home view fits the city POINTS, not the tri-county polygons — the
+  // county shapes include a lot of empty land the report doesn't care about;
+  // fitting to where the markers actually sit keeps the default view focused
+  // on the cities themselves rather than the wider region. PAD leaves room
+  // for marker radius/labels at the fitted extent's edges; TOP_OFFSET pushes
+  // the cluster down so it doesn't sit directly under the eyebrow text
+  // overlaid at the top of the page.
+  const PAD = 100;   // bigger PAD = more surrounding context fit into view = more zoomed out
+  const TOP_OFFSET = h * 0.16;
+  const cityPoints = {
+    type: 'FeatureCollection',
+    features: PARTICIPANT_LOCATIONS.cities.map(c => (
+      { type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] } }
+    )),
+  };
+  // fitExtent's first argument is an extent [[x0,y0],[x1,y1]] (unlike
+  // fitSize, which wants a plain [width,height] — see the note this file
+  // used to carry on that exact mixup) — used here specifically because it
+  // lets the fitted extent be inset/offset, not just sized.
+  demogProjection.fitExtent([[PAD, PAD + TOP_OFFSET], [w - PAD, h - PAD]], cityPoints);
+  demogWorld.selectAll('path').attr('d', demogPath);
+
+  demogMarkersG.selectAll('.demogCity').each(d => {
+    // d3-geo takes points as [lng, lat] — the reverse of these field names'
+    // own reading order (see participant-locations.json's _readme)
+    d.projected = demogProjection([d.lng, d.lat]);
+  });
+
+  const [[x0, y0], [x1, y1]] = demogPath.bounds(OREGON_COUNTIES);
+  const kMin = Math.min(w / (x1 - x0), h / (y1 - y0));
+  demogZoom.scaleExtent([kMin, DEMOG_MAX_ZOOM_IN])
+    .translateExtent([[x0, y0], [x1, y1]])
+    .extent([[0, 0], [w, h]]);
+
+  demogSvg.call(demogZoom.transform, d3.zoomIdentity);
+}
+
+// below this scale (relative to the k=1 home view), major-city labels fade
+// out so a zoomed-out view reads as dots-in-context rather than a wall of
+// overlapping pill labels — tunable
+const DEMOG_LABEL_MIN_ZOOM = 0.6;
+// the 7 smaller places (data/participant-locations.json's non-major cities)
+// stay label-less until you've zoomed in past this — tunable
+const DEMOG_MINOR_LABEL_MIN_ZOOM = 1.8;
+
+function demogZoomed(event) {
+  demogWorld.attr('transform', event.transform);
+  demogMarkersG.classed('labelsHidden', event.transform.k < DEMOG_LABEL_MIN_ZOOM);
+  demogMarkersG.classed('minorLabelsShown', event.transform.k >= DEMOG_MINOR_LABEL_MIN_ZOOM);
+  // markers are repositioned individually, never given the group transform
+  // itself — that's what keeps .demogDot's radius and .demogDotLabel's
+  // font-size a fixed screen size at every zoom level, unlike a plain
+  // uniform-scale approach
+  demogMarkersG.selectAll('.demogCity').attr('transform', d => {
+    const [x, y] = event.transform.apply(d.projected);
+    return `translate(${x},${y})`;
+  });
+}
+
+function resetDemogMap() {
+  demogHoverShow(null);
+  const sel = REDUCED ? demogSvg : demogSvg.transition().duration(DEMOG_RESET_DURATION);
+  sel.call(demogZoom.transform, d3.zoomIdentity);
+}
+
+/* ─── DEMOGRAPHICS MAP — hover/tap info tooltip ───────── */
+// Positions each city's two-line tooltip (name + count) at the same anchor
+// the plain label pill uses (see DEMOG_LABEL_OVERLAP), just taller since
+// it's two lines. Unions the two text lines' own bboxes rather than reading
+// the group's bbox — the group also contains .demogHoverBg, which starts at
+// a phantom 0×0 at the origin before this runs and would otherwise skew
+// the union on the very first layout pass.
+function updateDemogHoverLayout() {
+  demogMarkersG.selectAll('.demogHoverLayer .demogCity').each(function (d) {
+    const g = d3.select(this);
+    const x = d.r - DEMOG_LABEL_OVERLAP;
+    const nameBox = g.select('.demogHoverName').attr('x', x).attr('y', 0).node().getBBox();
+    const countBox = g.select('.demogHoverCount').attr('x', x).attr('y', 21).node().getBBox();
+    const bx = Math.min(nameBox.x, countBox.x);
+    const by = Math.min(nameBox.y, countBox.y);
+    const bx2 = Math.max(nameBox.x + nameBox.width, countBox.x + countBox.width);
+    const by2 = Math.max(nameBox.y + nameBox.height, countBox.y + countBox.height);
+    g.select('.demogHoverBg')
+      .attr('x', bx - DEMOG_LABEL_PAD_X)
+      .attr('y', by - DEMOG_LABEL_PAD_Y)
+      .attr('width', (bx2 - bx) + DEMOG_LABEL_PAD_X * 2)
+      .attr('height', (by2 - by) + DEMOG_LABEL_PAD_Y * 2)
+      .attr('rx', 10);
+  });
+}
+
+// Only ever one city's tooltip showing at a time — .classed() with a
+// per-datum predicate clears every other city's .hovered in the same pass.
+// city === null (the map background, or resetDemogMap) hides all of them.
+function demogHoverShow(city) {
+  demogMarkersG.selectAll('.demogHoverLayer .demogCity').classed('hovered', d => d === city);
+}
+function demogHoverHide(city) {
+  demogMarkersG.selectAll('.demogHoverLayer .demogCity')
+    .filter(d => d === city)
+    .classed('hovered', false);
+}
+
+/* ─── DEMOGRAPHICS DETAIL MODAL ───────────────────────── */
+// data/demographics.json's own _readme has the derivation: each category's
+// breakdown is a share of only the respondents who answered that question,
+// not of everyone — the modal's copy spells that denominator out per tab.
+const dstate = { key: DEMOGRAPHICS.categories[0].key };
+
+function openDemog() {
+  dstate.key = DEMOGRAPHICS.categories[0].key;
+  buildDemogTabs();
+  renderDemogTab();
+  $('#ddetail').classList.add('on');
+  $('#ddetail').setAttribute('aria-hidden', 'false');
+  $('#dCloseb').focus({ preventScroll: true });
+}
+
+function closeDemog() {
+  $('#ddetail').classList.remove('on');
+  $('#ddetail').setAttribute('aria-hidden', 'true');
+}
+
+function buildDemogTabs() {
+  const wrap = $('#ddTabs');
+  wrap.innerHTML = '';
+  DEMOGRAPHICS.categories.forEach(cat => {
+    const b = el('button', null, cat.label.toUpperCase());
+    b.type = 'button';
+    b.setAttribute('role', 'tab');
+    b.dataset.key = cat.key;
+    b.setAttribute('aria-pressed', cat.key === dstate.key ? 'true' : 'false');
+    b.onclick = () => { dstate.key = cat.key; renderDemogTab(); };
+    wrap.append(b);
+  });
+}
+
+function renderDemogTab() {
+  const cat = DEMOGRAPHICS.categories.find(c => c.key === dstate.key);
+  document.querySelectorAll('#ddTabs button').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.key === dstate.key ? 'true' : 'false'));
+  $('#dcName').textContent = cat.label;
+
+  const body = $('#dCardbody');
+  body.innerHTML = '';
+  body.scrollTop = 0;
+
+  const pctAnswered = Math.round(cat.answered / DEMOGRAPHICS.total * 100);
+  const intro = el('p', 'ddIntro');
+  intro.innerHTML = `<b>${pctAnswered}%</b> of respondents provided this information. `
+    + `Of those <b>${cat.answered}</b> people that provided this information, here is the breakdown:`;
+  body.append(intro);
+
+  const list = el('div', 'ddList');
+  cat.breakdown.forEach((row, i) => {
+    const r = el('div', 'ddRow');
+    r.style.setProperty('--rc', THEME_COLORS[i % THEME_COLORS.length]);
+    r.style.setProperty('--pct', row.pct + '%');
+    r.append(el('span', 'ddSwatch'));
+    r.append(el('span', 'ddLabel', row.label));
+    r.append(el('span', 'ddPct', row.pct + '%'));
+    list.append(r);
+  });
+  body.append(list);
+}
 
 // group-info.json is a hand-maintained snapshot (see its own _readme for
 // provenance and staleness caveats) — bloom-data.json's own groups[] never
@@ -601,6 +912,16 @@ function hideIntroPages() {
 // to. "" resolves to INTRO_PAGES[0] (title) below, same as any unrecognized
 // key: an unknown link falls back to the actual homepage, not the grid.
 function route() {
+  // #gdetail/#ddetail are floating overlays independent of whichever page
+  // opened them (unlike #l3, which route() already closes per-branch below)
+  // — without this they'd stay visibly open over whatever page you navigate
+  // to next, since nothing else ever closes them. The demog hover tooltip
+  // doesn't need this — it's nested inside #l0-demogs, so hideIntroPages()
+  // already hides it along with the rest of that page — but clearing its
+  // state too avoids it appearing "already open" if you navigate back.
+  closeGroup();
+  closeDemog();
+  demogHoverShow(null);
   // no mode segment anymore — split()[0] also means an old bookmarked
   // #/{themeKey}/map (or /list, /quotes) link still lands on the right
   // theme; the trailing segment is simply ignored.
@@ -651,6 +972,7 @@ function route() {
 }
 
 /* ─── WIRE UP ─────────────────────────────────────────── */
+initDemogMap();
 buildGroups();
 buildL1();
 // each .introNext just advances to whatever INTRO_PAGES says comes after
@@ -671,7 +993,15 @@ $('#gCloseb').onclick = closeGroup;
 $('#gscrim').onclick = closeGroup;
 $('#gPrev').onclick = () => pageGroup(-1);
 $('#gNext').onclick = () => pageGroup(1);
+$('#demogLink').onclick = openDemog;
+$('#dCloseb').onclick = closeDemog;
+$('#dscrim').onclick = closeDemog;
+$('#demogReset').onclick = resetDemogMap;
 addEventListener('keydown', e => {
+  if ($('#ddetail').classList.contains('on')) {
+    if (e.key === 'Escape') { closeDemog(); e.preventDefault(); }
+    return;
+  }
   if ($('#gdetail').classList.contains('on')) {
     if (e.key === 'Escape') { closeGroup(); e.preventDefault(); }
     if (e.key === 'ArrowRight') { pageGroup(1); e.preventDefault(); }

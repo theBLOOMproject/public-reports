@@ -3,3 +3,6 @@ dist/
 
 # Local reference images, not part of the site.
 references/
+
+# macOS Finder metadata.
+.DS_Store

@@ -125,17 +125,58 @@ function checkGroupStatementIdsResolve(statements, file) {
   if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
 }
 
+// participant-locations.json's per-city counts plus 'other' are meant to add up to
+// 'total' (every row in the source CSV, mapped or not) — catches a hand-edit to one
+// number that forgets the others, which the parse alone can't see.
+function checkParticipantLocationTotals(loc, file) {
+  const mapped = loc.cities.reduce((s, c) => s + c.count, 0) + loc.other;
+  if (mapped !== loc.total) {
+    console.warn(`  WARNING ${file}: cities[].count + other (${mapped}) does not equal `
+      + `total (${loc.total})`);
+  }
+}
+
+// demographics.json's per-category answered count can't exceed the shared total —
+// catches a hand-edit to one category that forgets the file's total was for all of
+// them, which the parse alone can't see.
+function checkDemographicsAnswered(demo, file) {
+  const bad = demo.categories.filter(c => c.answered > demo.total);
+  if (bad.length) {
+    console.warn(`  WARNING ${file}: categor(y/ies) with answered > total (${demo.total}): `
+      + bad.map(c => `${c.key} (${c.answered})`).join(', '));
+  }
+}
+
+// oregon-counties.json's three Central Oregon counties (Deschutes/Crook/Jefferson)
+// are the Demographics map's home view — without them there's nothing to render on
+// load, so a missing one throws rather than warns, unlike the softer full-count check
+// below (a future Census source update changing the county count is surprising but
+// not fatal to the tri-county view).
+const DEMOG_HOME_FIPS = ['41017', '41013', '41031'];
+function checkOregonCountiesShape(geo, file) {
+  const ids = new Set(geo.features.map(f => f.id));
+  const missing = DEMOG_HOME_FIPS.filter(id => !ids.has(id));
+  if (missing.length) {
+    throw new Error(`${file}: missing required Central Oregon FIPS id(s) [${missing.join(', ')}]`);
+  }
+  if (geo.features.length !== 36) {
+    console.warn(`  WARNING ${file}: expected 36 Oregon counties, found ${geo.features.length}`);
+  }
+}
+
 // Placeholder id -> { file, kind }. Every id needs a matching <!--INJECT:{id}-->
 // in index.template.html; for 'json' blocks the id is also the <script> element id
 // the app reads the data back out of.
 //
 //   json — parsed (so a syntax error fails the build), then re-serialized minified
-//   raw  — inlined verbatim into the <style> / <script> tag that wraps it
+//   raw  — inlined verbatim at the placeholder; for app-css/app-js/d3-vendor that's
+//          inside the <style>/<script> tag the template wraps them in
 //
 // An optional 'check' runs against the parsed JSON for invariants the parse can't see;
 // it may warn (and let the build through) or throw.
 const BLOCKS = {
   'app-css': { file: 'src/app.css', kind: 'raw' },
+  'd3-vendor': { file: 'vendor/d3-custom.min.js', kind: 'raw' },
   'theme-descriptions': { file: 'data/theme-descriptions.json', kind: 'json' },
   'bloom-data': {
     file: 'data/bloom-data.json',
@@ -145,6 +186,21 @@ const BLOCKS = {
   'bloom-insights': { file: 'data/bloom-insights.json', kind: 'json', check: checkInsightIdsResolve },
   'group-info': { file: 'data/group-info.json', kind: 'json', check: checkGroupInfoKeys },
   'group-statements': { file: 'data/group-statements.json', kind: 'json', check: checkGroupStatementIdsResolve },
+  'participant-locations': {
+    file: 'data/participant-locations.json',
+    kind: 'json',
+    check: checkParticipantLocationTotals,
+  },
+  'oregon-counties': {
+    file: 'data/oregon-counties.json',
+    kind: 'json',
+    check: checkOregonCountiesShape,
+  },
+  'demographics': {
+    file: 'data/demographics.json',
+    kind: 'json',
+    check: checkDemographicsAnswered,
+  },
   'app-js': { file: 'src/app.js', kind: 'raw' },
 };
 

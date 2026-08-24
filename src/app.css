@@ -148,16 +148,118 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
    the one .introPage that isn't dark */
 #l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink)}
 
-/* the Demographics page's headline stat, per its mock — bigger than any
-   other intro heading since it's the one thing that page is making the
-   case with; "See full demographics…" is inert copy for now (matches the
-   mock's text without the modal it would otherwise open) */
-#l0-demogs .masthead h1{font-size:clamp(64px,20vw,110px);line-height:1;letter-spacing:-.02em}
-.demogLink{
-  display:inline-block;margin-top:14px;
-  font-family:var(--geom);font-weight:600;font-size:15px;
-  color:var(--gold);
+/* the county map — a sibling of .masthead, not inside it. Full-bleed behind
+   the whole page: real Oregon county geometry (data/oregon-counties.json)
+   rendered and panned/zoomed by vendored D3 (vendor/d3-custom.min.js) —
+   initDemogMap()/fitDemogMap()/demogZoomed() in app.js. overflow:hidden is
+   cheap defensive insurance on top of d3-zoom's own translateExtent clamp. */
+.demogMap{position:absolute;inset:0;overflow:hidden;z-index:1}
+.demogMap > svg{display:block;width:100%;height:100%}
+
+/* county fill/stroke — vector-effect:non-scaling-stroke keeps the boundary
+   lines a constant screen width across zoom levels, the CSS-only half of
+   the "stays legible at any zoom" requirement (the other half, keeping
+   city marker/label size constant, is handled in JS — see demogZoomed()) */
+.demogCounty{
+  fill:none;
+  stroke:rgba(255,255,255,.35);stroke-width:.75px;
+  vector-effect:non-scaling-stroke;
 }
+.demogCounty.inRegion{fill:var(--gold);fill-opacity:.16}
+.demogBg{fill:transparent}
+.demogCity{cursor:pointer}
+
+.demogDot{fill:var(--gold);fill-opacity:.9}
+/* white pill behind each city name, tucked slightly under the dot's edge
+   (see DEMOG_LABEL_OVERLAP in app.js) so the two visibly overlap */
+.demogLabelBg{fill:#fff;pointer-events:none}
+.demogDotLabel{
+  font-family:var(--geom);font-weight:600;font-size:16px;
+  fill:var(--home);
+  pointer-events:none;
+}
+/* major-city labels fade out once you've zoomed out past DEMOG_LABEL_MIN_ZOOM,
+   so a wide view reads as dots-in-context rather than a wall of pills. The 7
+   smaller places (.minor) start hidden and only appear once you've zoomed in
+   past DEMOG_MINOR_LABEL_MIN_ZOOM — kept simple for now/deliberately equal in
+   every other way (size, color) rather than visually downweighting them. */
+.demogLabelBg,.demogDotLabel{transition:opacity .2s ease}
+.demogMarkers.labelsHidden .demogCity:not(.minor) .demogLabelBg,
+.demogMarkers.labelsHidden .demogCity:not(.minor) .demogDotLabel{opacity:0}
+.demogCity.minor .demogLabelBg,
+.demogCity.minor .demogDotLabel{opacity:0}
+.demogMarkers.minorLabelsShown .demogCity.minor .demogLabelBg,
+.demogMarkers.minorLabelsShown .demogCity.minor .demogDotLabel{opacity:1}
+
+/* hover/tap info tooltip — sits in the same spot as the plain pill label
+   (same overlap anchor, see DEMOG_LABEL_OVERLAP), just a taller two-line
+   dark card instead of a one-line white pill. Lives in its own layer
+   (.demogHoverLayer, appended after dots+labels in initDemogMap) so it
+   always paints above every dot/label, on any city, at any zoom. */
+/* pointer-events:none while hidden, so an invisible tooltip never blocks a
+   nearby city's dot/label; auto once .hovered, so drifting the mouse onto
+   the now-visible box itself keeps it open instead of immediately flickering
+   away the instant it stops being over the dot/label that triggered it */
+.demogHoverBg{fill:var(--home);pointer-events:none}
+.demogCity.hovered .demogHoverBg{pointer-events:auto}
+.demogHoverName{
+  font-family:var(--geom);font-weight:700;font-size:20px;
+  fill:#fff;pointer-events:none;
+}
+.demogHoverCount{
+  font-family:var(--mono);font-size:14px;letter-spacing:.05em;text-transform:uppercase;
+  fill:rgba(255,255,255,.7);pointer-events:none;
+}
+.demogHoverBg,.demogHoverName,.demogHoverCount{opacity:0;transition:opacity .15s ease}
+.demogCity.hovered .demogHoverBg,
+.demogCity.hovered .demogHoverName,
+.demogCity.hovered .demogHoverCount{opacity:1}
+
+/* .demogMap going position:absolute promotes it into the "positioned"
+   paint bucket ahead of these still-static siblings by default — without
+   an explicit stack here they'd paint (and sit) underneath the map instead
+   of over it as the intended overlay. Scoped to #l0-demogs since .masthead
+   is shared across every L0 page. */
+#l0-demogs .masthead,#l0-demogs .demogStat{position:relative;z-index:2}
+#l0-demogs .introNext{z-index:2}
+/* solid backing band behind the eyebrow so it stays legible now that the
+   map sits right up against the top of the page with no scrim */
+#l0-demogs .masthead{background:var(--home)}
+
+/* the reset button borrows .introNext's whole visual shell (circle, shadow,
+   hover transition) via a second class on the same element — the arrow's
+   own bottom-right slot is already taken by page navigation, so this sits
+   at bottom-left instead, both thumb-reachable on mobile. Compound selector
+   (not a same-specificity bare .demogReset) so this reliably beats the base
+   .introNext rule regardless of declaration order. */
+.introNext.demogReset{left:22px;right:auto;bottom:26px}
+
+/* the headline stat sits below the map rather than inside .masthead —
+   the mock centers this block, unlike Title's left-aligned copy. Its own
+   gradient (solid --home fading to transparent going down) grounds the
+   text against the map underneath it. */
+.demogStat{
+  padding:35px 22px 24px;text-align:center;
+  background:linear-gradient(180deg,var(--home) 0%,transparent 100%);
+}
+.demogStat h1{
+  font-family:var(--geom);font-weight:700;margin:0;
+  font-size:clamp(64px,20vw,110px);line-height:1;letter-spacing:-.02em;
+}
+.demogStat p{font-size:18px;line-height:1.5;margin:8px auto 0;max-width:26em}
+@media (min-width:660px){
+  .demogStat p{font-size:20px}
+}
+.demogLink{
+  display:inline-block;margin-top:16px;
+  background:#fff;color:var(--home);
+  padding:12px 24px;border-radius:999px;
+  font-family:var(--geom);font-weight:600;font-size:16.5px;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  transition:transform .15s ease;
+}
+.demogLink:active{transform:scale(.96)}
+
 
 .groupBubbles{
   padding:14px 22px 20px;
@@ -605,6 +707,55 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   font-family:var(--geom);font-weight:600;
   font-size:22px;line-height:1.34;letter-spacing:-.01em;
 }
+
+/* ─────────────────────────────────────────────
+   DEMOGRAPHICS DETAIL MODAL
+   Shares .scrim/.card/.cardtop/.cardbody/.closeb/.gcHead with L3/#gdetail —
+   no .cardfoot, since navigation is by tab rather than prev/next paging.
+   ───────────────────────────────────────────── */
+#ddetail{display:none;position:fixed;inset:0;z-index:60;--c:var(--ink)}
+#ddetail.on{display:block}
+
+.ddTitle{
+  font-family:var(--geom);font-weight:700;font-size:32px;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.ddTabs{
+  display:flex;flex-wrap:nowrap;gap:6px;
+  padding:0 16px 14px;flex:none;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
+  border-bottom:1px solid color-mix(in srgb,var(--c) 16%,#fff);
+}
+.ddTabs button{
+  flex:none;
+  font-size:10.5px;letter-spacing:.08em;
+  padding:7px 12px;border-radius:999px;
+  background:color-mix(in srgb,var(--home) 10%,#fff);color:var(--home);
+  transition:background .2s ease,color .2s ease;
+}
+.ddTabs button[aria-pressed="true"]{background:var(--home);color:#fff;font-weight:500}
+
+.ddIntro{margin:0;padding:20px 22px 4px;font-size:17px;line-height:1.5;color:var(--ink)}
+.ddIntro b{font-weight:700;color:var(--agree)}
+
+.ddList{padding:6px 0 0}
+.ddRow{
+  position:relative;isolation:isolate;
+  display:flex;align-items:center;gap:10px;
+  padding:14px 22px;
+  border-top:1px solid rgba(0,0,0,.08);
+  font-size:16px;overflow:hidden;
+}
+.ddRow:last-child{border-bottom:1px solid rgba(0,0,0,.08)}
+.ddRow::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  width:var(--pct);
+  background:color-mix(in srgb,var(--rc) 10%,#fff);
+}
+.ddSwatch{width:11px;height:11px;border-radius:3px;flex:none;background:var(--rc)}
+.ddLabel{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.ddPct{font-family:var(--mono);font-weight:600;color:var(--ink);flex:none}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
