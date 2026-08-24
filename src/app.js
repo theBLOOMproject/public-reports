@@ -7,6 +7,7 @@ const DESC = J('theme-descriptions');
 const INSIGHTS = J('bloom-insights');
 const GROUP_INFO = J('group-info');
 const GROUP_STATEMENTS = J('group-statements');
+const CONSENSUS_STATEMENTS = J('consensus-statements');
 const PARTICIPANT_LOCATIONS = J('participant-locations');
 const DEMOGRAPHICS = J('demographics');
 const OREGON_COUNTIES = J('oregon-counties');
@@ -144,14 +145,14 @@ let demogSvg = null, demogWorld = null, demogMarkersG = null, demogProjection = 
 // The ordered sequence of intro pages shown before the theme grid, each a
 // plain <main class="introPage" id="..."> in the template. This array is
 // the single source of truth for that order: route() shows/hides by walking
-// it, the initial redirect below targets its first entry, and each page's
-// .introNext arrow is wired to whichever entry comes right after its own —
+// it, and NAV_SEQUENCE (see #pageBar) is this order with 'themes' appended —
 // so reordering, inserting, or removing a page is a one-line change here
 // (plus adding/removing the matching markup), never a hunt through route().
 const INTRO_PAGES = [
   { key: 'title', id: 'l0-title' },
   { key: 'demogs', id: 'l0-demogs' },
   { key: 'groups', id: 'l0-groups' },
+  { key: 'consensus', id: 'l0-consensus' },
 ];
 
 // participant-locations.json's cities become clickable markers over real
@@ -471,22 +472,15 @@ const groupInfoOf = key => ({ ...groupByKey[key], ...(GROUP_INFO[key] || {}) });
 function buildGroups() {
   const wrap = $('#groupBubbles');
   const groups = DATA.groups.map(g => groupInfoOf(g.key));
-  const maxN = Math.max(...groups.map(g => g.participants || 0), 1);
   groups.forEach(g => {
     const row = el('button', 'gbubble');
     row.type = 'button';
     row.dataset.key = g.key;
     row.setAttribute('aria-label', groupTag(g) + ': ' + (g.participants || 0) + ' people — see defining statements');
     row.style.setProperty('--c', g.color || 'var(--home)');
-    const scale = Math.sqrt((g.participants || 0) / maxN);
-    const size = Math.round(84 + scale * 90);   // ~84–174px, scaled by relative headcount
-    const av = el('div', 'gAv');
-    av.style.setProperty('--sz', size + 'px');
-    row.append(av);
-    const label = el('div', 'gLabel');
-    label.append(el('div', 'gName', groupTag(g)));
-    label.append(el('div', 'gCount', (g.participants || 0) + ' people'));
-    row.append(label);
+    row.append(el('div', 'gName', groupTag(g)));
+    row.append(el('div', 'gCount', (g.participants || 0) + ' people'));
+    if (g.tagline) row.append(el('p', 'gTagline', g.tagline));
     row.onclick = () => openGroup(g.key);
     wrap.append(row);
   });
@@ -538,7 +532,6 @@ function renderGroupPage() {
 
   if (gstate.page === 0) {
     const wrap = el('div', 'gdDesc');
-    wrap.append(el('div', 'gdKicker label', 'Quick Description'));
     wrap.append(el('p', 'gdText', g.description || ''));
     body.append(wrap);
   } else {
@@ -546,15 +539,22 @@ function renderGroupPage() {
     const quotewrap = el('div', 'quotewrap');
     quotewrap.append(el('blockquote', null, '“' + r.text + '”'));
     body.append(quotewrap);
-    // same per-group agree% breakdown L3 shows for any statement — reused
-    // verbatim via groupsOf() so the two never drift apart in presentation
+    // same per-group agree% numbers L3 shows for any statement (via
+    // groupsOf(), so the two never drift), but its own presentation: no
+    // "Group A/B/C" prefix (groupTag() — this modal's own header already
+    // says which group it is), no disagree/pass/agree legend, and the
+    // group the modal is about sorted first with a visibly thicker bar
+    // rather than sitting wherever DATA.groups' own A/B/C order puts it.
     const m = el('div', 'meta');
     const p = el('section');
-    p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
-    groupsOf(r.vote).forEach(gr => {
-      const row = el('div', 'grow');
+    p.append(el('h4', null, 'Open Poll Responses'));
+    p.append(el('div', 'gdVoteCount', r.vote.total + ' votes'));
+    const rows = groupsOf(r.vote);
+    rows.sort((a, b) => (a.key === gstate.key) === (b.key === gstate.key) ? 0 : a.key === gstate.key ? -1 : 1);
+    rows.forEach(gr => {
+      const row = el('div', gr.key === gstate.key ? 'grow current' : 'grow');
       const top = el('div', 'top');
-      top.append(el('span', null, gr.label));
+      top.append(el('span', null, groupTag(gr)));
       top.append(el('b', null, gr.pct + '% agree'));
       row.append(top);
       const bar = el('div', 'bar');
@@ -568,11 +568,6 @@ function renderGroupPage() {
       row.append(bar);
       p.append(row);
     });
-    const key = el('div', 'barkey');
-    [['d', 'Disagree'], ['p', 'Pass'], ['a', 'Agree']].forEach(([c, l]) => {
-      const s = el('span'); s.append(el('i', c)); s.append(document.createTextNode(l)); key.append(s);
-    });
-    p.append(key);
     m.append(p);
     body.append(m);
   }
@@ -580,6 +575,98 @@ function renderGroupPage() {
   $('#gPos').innerHTML = (gstate.page + 1) + ' <em>|</em> ' + total;
   $('#gPrev').disabled = gstate.page === 0;
   $('#gNext').disabled = gstate.page === total - 1;
+}
+
+/* ─── L0 — CONSENSUS ──────────────────────────────────── */
+// nudgeApart() and the .lcard/.lBar* styles this page renders with were
+// the List tab's, removed along with the L2 tab system; the Consensus
+// page is now their only consumer, so they live here rather than in a
+// shared layer that no longer has a second caller.
+function nudgeApart(xs, minGap, lo, hi) {
+  const order = xs.map((x, i) => i).sort((a, b) => xs[a] - xs[b]);
+  const out = xs.slice();
+  order.forEach((i, n) => {
+    out[i] = n === 0 ? Math.max(lo, xs[i]) : Math.max(xs[i], out[order[n - 1]] + minGap);
+  });
+  for (let n = order.length - 1; n >= 0; n--) {
+    const i = order[n];
+    const limit = n === order.length - 1 ? hi : out[order[n + 1]] - minGap;
+    out[i] = Math.max(lo, Math.min(out[i], limit));
+  }
+  return out;
+}
+
+function buildConsensus() {
+  const lane = $('#consensusLane');
+  lane.innerHTML = '';
+  const records = CONSENSUS_STATEMENTS.ids.map(id => byId[id]).filter(Boolean);
+  state.layout = { items: records.map(r => ({ rec: r })) };
+
+  records.forEach((r, idx) => {
+    const card = el('button', 'lcard');
+    card.dataset.i = idx;
+
+    const who = el('div', 'lWho');
+    who.append(el('span', 'lEmoji', emojiFor(r)));
+    const demoWrap = el('div', 'lDemoWrap');
+    const demoChips = r.chips.filter(c => c.toLowerCase() !== 'not provided');
+    const demoText = r.origin === 'cocap_seed'
+      ? 'Host statement'
+      : (demoChips.length ? demoChips.map(titleCaseChip).join(', ') : 'Anonymous');
+    const demoTrack = el('span', 'lDemoTrack');
+    demoTrack.append(el('span', null, demoText));
+    demoWrap.append(demoTrack);
+    who.append(demoWrap);
+    card.append(who);
+
+    card.append(el('p', 'lText', '“' + r.text + '”'));
+
+    const labels = el('div', 'lBarLabels');
+    const { cls, icon, label } = pillInfoFor(r.vote);
+    const pill = el('div', 'who ' + cls);
+    const pillAv = el('span', 'av');
+    if (icon) pillAv.innerHTML = `<img src="${icon}" alt="">`;
+    pill.append(pillAv, el('span', 'txt', label));
+    labels.append(el('span', null, '<- Disagree (0%)'), pill, el('span', null, 'Agree (100%) ->'));
+    card.append(labels);
+    const barWrap = el('div', 'lBar');
+    const track = el('div', 'lBarTrack');
+    if (DATA.groups.length > 3) track.classList.add('tight');
+    const edgeLo = el('span', 'lBarEdge lo', '0%');
+    const edgeHi = el('span', 'lBarEdge hi', '100%');
+    const mid = el('div', 'lBarMid');
+    const line = el('div', 'lBarLine');
+    const groups = groupsOf(r.vote);
+    const squares = groups.map(g => el('div', 'lBarSq', g.key));
+    track.append(edgeLo, edgeHi, mid, line, ...squares);
+    barWrap.append(track);
+    card.append(barWrap);
+
+    card.onclick = () => open(idx);
+    lane.append(card);
+
+    const SQ = parseFloat(getComputedStyle(track).getPropertyValue('--sq')) || 26;
+    const HALF_SQ = SQ / 2;
+    const w = track.clientWidth;
+    const xFor = pct => HALF_SQ + (w - HALF_SQ * 2) * Math.max(0, Math.min(100, pct)) / 100;
+    const xs = groups.map(g => xFor(g.pct));
+    const placed = nudgeApart(xs, SQ + 2, HALF_SQ, w - HALF_SQ);
+    squares.forEach((sq, i) => sq.style.left = placed[i] + 'px');
+    line.style.left = Math.min(...xs) + 'px';
+    line.style.width = (Math.max(...xs) - Math.min(...xs)) + 'px';
+
+    if (!REDUCED && demoTrack.scrollWidth > demoWrap.clientWidth) {
+      const singleW = demoTrack.firstChild.getBoundingClientRect().width;
+      const dupe = el('span', null, demoText);
+      dupe.setAttribute('aria-hidden', 'true');
+      demoTrack.append(dupe);
+      const gapPx = parseFloat(getComputedStyle(demoTrack).columnGap) || 0;
+      const dist = singleW + gapPx;
+      demoTrack.style.setProperty('--marquee-dist', `-${dist}px`);
+      demoTrack.style.setProperty('--marquee-dur', Math.max(4, dist / 34) + 's');
+      demoTrack.classList.add('marquee');
+    }
+  });
 }
 
 /* ─── LEVEL 1 ─────────────────────────────────────────── */
@@ -780,9 +867,12 @@ function open(idx) {
   const r = it.rec;
 
   // a statement's card can appear twice on the page (once in its
-  // insight's carousel, once in All Statements) — mark every instance
-  document.querySelectorAll('.icard.sel').forEach(n => n.classList.remove('sel'));
+  // insight's carousel, once in All Statements) — mark every instance.
+  // .lcard is the Consensus page's card, indexed rather than id-keyed;
+  // neither class ever appears on the other's page, so both run safely.
+  document.querySelectorAll('.icard.sel, .lcard.sel').forEach(n => n.classList.remove('sel'));
   document.querySelectorAll(`.icard[data-rid="${r.id}"]`).forEach(n => n.classList.add('sel'));
+  document.querySelector(`.lcard[data-i="${idx}"]`)?.classList.add('sel');
 
   // consensus / difference / plain-agreement indicator — polls only,
   // quotes carry no vote data so the pill is hidden for those
@@ -906,6 +996,64 @@ function hideIntroPages() {
   INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = 'none'; });
 }
 
+/* ─── TOP PAGE BAR ────────────────────────────────────── */
+// One shared #pageBar (see index.template.html) rather than markup
+// duplicated per page. Label text per step; NAV_SEQUENCE (INTRO_PAGES'
+// own order, plus 'themes' tacked on the end) is what Back/Next walk —
+// 'title' is deliberately absent from the labels, since the bar doesn't
+// show there at all, but present in the sequence so Back from 'demogs'
+// still has somewhere to go.
+const NAV_BAR_LABELS = {
+  demogs: 'Who participated?',
+  groups: 'Opinion Groups',
+  consensus: 'Consensus',
+  themes: 'Data Explorer',
+};
+const NAV_SEQUENCE = INTRO_PAGES.map(p => p.key).concat('themes');
+// the X/Y step count and progress fill are against just the bar-visible
+// steps, not the full NAV_SEQUENCE (which also carries 'title')
+const NAV_BAR_STEPS = NAV_SEQUENCE.filter(k => NAV_BAR_LABELS[k]);
+let navBarShown = false, navBarRevealTimer = null;
+
+// Called from every route() branch with that branch's actual resolved page
+// key (not the raw, possibly-empty hash key) — a key with no label (title,
+// or any L2 theme key) hides the bar; the reveal is delayed and only ever
+// plays once per hidden→shown transition, matching "slides in once, then
+// stays" rather than re-animating on every step between bar pages.
+function updateNavBar(key) {
+  const bar = $('#pageBar');
+  const label = NAV_BAR_LABELS[key];
+  if (!label) {
+    bar.classList.remove('shown');
+    document.body.classList.remove('navBarOn');
+    bar.setAttribute('aria-hidden', 'true');
+    clearTimeout(navBarRevealTimer);
+    navBarShown = false;
+    return;
+  }
+  const stepNum = NAV_BAR_STEPS.indexOf(key) + 1;
+  $('#pageBarStep').textContent = stepNum + '/' + NAV_BAR_STEPS.length;
+  $('#pageBarLabel').textContent = label;
+  $('#pageBarProgressFill').style.width = (stepNum / NAV_BAR_STEPS.length * 100) + '%';
+  $('#pageBarNext').disabled = NAV_SEQUENCE.indexOf(key) === NAV_SEQUENCE.length - 1;
+  bar.setAttribute('aria-hidden', 'false');
+  if (!navBarShown) {
+    navBarShown = true;
+    clearTimeout(navBarRevealTimer);
+    navBarRevealTimer = setTimeout(() => {
+      bar.classList.add('shown');
+      document.body.classList.add('navBarOn');
+    }, 500);
+  }
+}
+
+function navBarStep(delta) {
+  const currentKey = location.hash.replace(/^#\/?/, '').split('/')[0] || 'title';
+  const idx = NAV_SEQUENCE.indexOf(currentKey);
+  const next = idx > -1 && NAV_SEQUENCE[idx + delta];
+  if (next) location.hash = '#/' + next;
+}
+
 /* ─── ROUTING ─────────────────────────────────────────── */
 // The homepage is the bare root ("" / "#/") — the theme grid moved to its
 // own named route, #/themes, rather than squatting on root the way it used
@@ -929,6 +1077,7 @@ function route() {
 
   if (key === 'themes') {
     close();
+    updateNavBar('themes');
     document.body.classList.remove('groups-page');
     const back = state.theme !== null;
     hideIntroPages();
@@ -946,6 +1095,7 @@ function route() {
   if (!t) {
     const intro = INTRO_PAGES.find(p => p.key === key) || INTRO_PAGES[0];
     close();
+    updateNavBar(intro.key);
     // only Groups is a white page — this is what keeps the desktop gutter
     // matched to whichever intro page is actually showing (see app.css)
     document.body.classList.toggle('groups-page', intro.key === 'groups');
@@ -954,10 +1104,22 @@ function route() {
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
     document.title = 'Bloom — A Conversation on AI in Central Oregon';
-    document.documentElement.style.setProperty('--c', 'var(--home)');
+    // consensus's L3-modal-via-buildConsensus() needs --c set to something
+    // other than the shared --home every other intro page uses — green,
+    // same token .who.consensus's own background already means "agreement"
+    document.documentElement.style.setProperty('--c', intro.key === 'consensus' ? 'var(--agree)' : 'var(--home)');
+    $('#l3').style.setProperty('--c', intro.key === 'consensus' ? 'var(--agree)' : 'var(--home)');
     state.theme = null;
+    // built lazily, on first arrival rather than at page load — buildConsensus()
+    // measures real layout (the demographic-chip marquee) which needs
+    // #l0-consensus to actually be visible, not the display:none it'd still be
+    // at WIRE UP time
+    if (intro.key === 'consensus') {
+      if (!$('#consensusLane').childElementCount) buildConsensus();
+    }
     return;
   }
+  updateNavBar(t.key);
   document.body.classList.remove('groups-page');
   const themeChanged = state.theme !== t;
   state.theme = t;
@@ -975,15 +1137,6 @@ function route() {
 initDemogMap();
 buildGroups();
 buildL1();
-// each .introNext just advances to whatever INTRO_PAGES says comes after
-// its own page — reordering/adding a page here needs no per-button wiring
-INTRO_PAGES.forEach((p, i) => {
-  const btn = document.querySelector(`#${p.id} .introNext`);
-  const next = INTRO_PAGES[i + 1];
-  // past the last intro page (Groups), "next" is the theme grid, at its own
-  // named route rather than root — root is the homepage now, not the grid
-  if (btn) btn.onclick = () => { location.hash = next ? '#/' + next.key : '#/themes'; };
-});
 $('#back').onclick = () => { location.hash = '#/themes'; };
 $('#closeb').onclick = close;
 $('#scrim').onclick = close;
@@ -997,6 +1150,9 @@ $('#demogLink').onclick = openDemog;
 $('#dCloseb').onclick = closeDemog;
 $('#dscrim').onclick = closeDemog;
 $('#demogReset').onclick = resetDemogMap;
+$('#diveIn').onclick = () => { location.hash = '#/demogs'; };
+$('#pageBarBack').onclick = () => navBarStep(-1);
+$('#pageBarNext').onclick = () => navBarStep(1);
 addEventListener('keydown', e => {
   if ($('#ddetail').classList.contains('on')) {
     if (e.key === 'Escape') { closeDemog(); e.preventDefault(); }

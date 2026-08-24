@@ -125,6 +125,17 @@ function checkGroupStatementIdsResolve(statements, file) {
   if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
 }
 
+// consensus-statements.json's ids reference bloom-data records by id, same
+// deal as group-statements.json's — a typo or a renumbered/removed record
+// would otherwise fail silently at runtime (a Consensus card that never
+// renders instead of an error at build time).
+function checkConsensusIdsResolve(consensus, file) {
+  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+  const knownIds = new Set(bloomData.records.map(r => r.id));
+  const bad = consensus.ids.filter(id => !knownIds.has(id));
+  if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
+}
+
 // participant-locations.json's per-city counts plus 'other' are meant to add up to
 // 'total' (every row in the source CSV, mapped or not) — catches a hand-edit to one
 // number that forgets the others, which the parse alone can't see.
@@ -186,6 +197,7 @@ const BLOCKS = {
   'bloom-insights': { file: 'data/bloom-insights.json', kind: 'json', check: checkInsightIdsResolve },
   'group-info': { file: 'data/group-info.json', kind: 'json', check: checkGroupInfoKeys },
   'group-statements': { file: 'data/group-statements.json', kind: 'json', check: checkGroupStatementIdsResolve },
+  'consensus-statements': { file: 'data/consensus-statements.json', kind: 'json', check: checkConsensusIdsResolve },
   'participant-locations': {
     file: 'data/participant-locations.json',
     kind: 'json',

@@ -22,21 +22,41 @@
 
 <div class="shell">
 
+  <!-- ══ TOP PAGE BAR ══
+       One shared fixed bar for all four post-title steps (demogs/groups/
+       consensus/themes) rather than markup duplicated per page — its label
+       and back/next targets are driven by NAV_BAR_LABELS/NAV_SEQUENCE in
+       src/app.js's route(), not by anything here. -->
+  <nav class="pageBar" id="pageBar" aria-hidden="true">
+    <div class="pageBarProgress"><div class="pageBarProgressFill" id="pageBarProgressFill"></div></div>
+    <div class="pageBarName">
+      <span class="pageBarStep" id="pageBarStep"></span>
+      <span class="pageBarLabel" id="pageBarLabel"></span>
+    </div>
+    <div class="pageBarNav">
+      <button class="pageBarBack" id="pageBarBack" type="button" aria-label="Back">
+        <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M25 7H1.6M7.4 1.4L1.2 7l6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="pageBarNext" id="pageBarNext" type="button">
+        NEXT
+        <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </nav>
+
   <!-- ══ LEVEL 0 — INTRO PAGES ══
-       Order (title → demogs → groups) is set by INTRO_PAGES in src/app.js,
-       not by this markup — that array drives routing and wires each
-       .introNext arrow to whatever page comes after its own. Adding a page
-       means adding a <main class="introPage" id="..."> here AND an entry
-       in INTRO_PAGES; either alone leaves the other half not working. -->
+       Order (title → demogs → groups → consensus) is set by INTRO_PAGES in
+       src/app.js, not by this markup — that array drives routing and wires
+       each .introNext arrow to whatever page comes after its own. Adding a
+       page means adding a <main class="introPage" id="..."> here AND an
+       entry in INTRO_PAGES; either alone leaves the other half not working. -->
   <main class="introPage" id="l0-title">
     <div class="masthead">
       <div class="eyebrow label">Central Oregon &amp; AI</div>
       <h1>What did Central Oregonians have to say about AI?</h1>
       <p>Along with other organizations, the Central Oregon Civic Action Project (COCAP) talked to 400+ real people to hear what they thought should be done about AI.</p>
+      <button class="diveIn" id="diveIn" type="button">Dive in</button>
     </div>
-    <button class="introNext" aria-label="Continue to demographics">
-      <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
   </main>
 
   <main class="introPage" id="l0-demogs">
@@ -54,9 +74,6 @@
       <p>People across the region participated in this conversation, both online and in person.</p>
       <button class="demogLink" id="demogLink" type="button">See full demographics…</button>
     </div>
-    <button class="introNext" aria-label="Continue to groups">
-      <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
   </main>
 
   <main class="introPage" id="l0-groups">
@@ -66,9 +83,15 @@
       <p>Click each to learn more about what distinguished them from the rest.</p>
     </div>
     <div class="groupBubbles" id="groupBubbles"></div>
-    <button class="introNext" aria-label="Continue to themes">
-      <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h23.4M18.6 1.4L24.8 7l-6.2 5.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
+  </main>
+
+  <main class="introPage" id="l0-consensus">
+    <div class="masthead">
+      <div class="eyebrow label">Bloom Project · COCAP · Central Oregon</div>
+      <h1>…but we found a lot of common ground.</h1>
+      <p>Despite their differences, everyone generally agreed on the importance of transparency and community involvement.</p>
+    </div>
+    <div class="lane listView" id="consensusLane"></div>
   </main>
 
   <!-- ══ LEVEL 1 ══ -->
@@ -139,8 +162,7 @@
     <div class="card">
       <div class="cardtop">
         <div class="gcHead">
-          <div class="gcName" id="gcName"></div>
-          <div class="gcSub label">Defining Statements</div>
+          <div class="ddTitle" id="gcName"></div>
         </div>
         <button class="closeb" id="gCloseb" aria-label="Close">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5l11 11M13.5 2.5l-11 11" stroke-linecap="round"/></svg>
@@ -180,6 +202,7 @@
 <script type="application/json" id="bloom-insights"><!--INJECT:bloom-insights--></script>
 <script type="application/json" id="group-info"><!--INJECT:group-info--></script>
 <script type="application/json" id="group-statements"><!--INJECT:group-statements--></script>
+<script type="application/json" id="consensus-statements"><!--INJECT:consensus-statements--></script>
 <script type="application/json" id="participant-locations"><!--INJECT:participant-locations--></script>
 <script type="application/json" id="demographics"><!--INJECT:demographics--></script>
 <script type="application/json" id="oregon-counties"><!--INJECT:oregon-counties--></script>
