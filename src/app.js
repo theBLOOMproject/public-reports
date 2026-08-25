@@ -24,7 +24,7 @@ const titleCaseChip = s => s.toLowerCase().replace(/\b\w+/g, (word, offset, str)
   return word.charAt(0).toUpperCase() + word.slice(1);
 });
 
-// experimental: represent each poll statement in the lane as a person
+// experimental: represent each statement in the lane as a person
 // matching who submitted it — gender + age bucket picks the base emoji,
 // race picks a Fitzpatrick skin-tone modifier. Non-participant (seeded)
 // statements aren't tied to any one person, so they get a seed emoji.
@@ -51,8 +51,25 @@ DATA.records.forEach(r => byId[r.id] = r);
 // A theme *is* the records carrying any of its tags — membership is derived, not
 // stored, so a statement that spans two subjects belongs to both themes.
 const recsOf = t => DATA.records.filter(r => r.tags.some(g => t.tags.includes(g)));
-const pollsOf = t => recsOf(t).filter(r => r.vote);
-const quotesOf = t => recsOf(t).filter(r => !r.vote);
+const statementsOf = t => recsOf(t).filter(r => r.kind === 'poll');
+const quotesOf = t => recsOf(t).filter(r => r.kind === 'quote');
+
+const themeView = t => {
+  const statements = statementsOf(t).sort((a, b) =>
+    b.vote.minAgree - a.vote.minAgree || b.vote.total - a.vote.total);
+  const seen = new Set(statements.map(r => r.id));
+  const items = statements.slice();
+  (INSIGHTS[t.key] || []).forEach(ins => ins.ids.forEach(id => {
+    const r = byId[id];
+    if (r && !seen.has(id)) { seen.add(id); items.push(r); }
+  }));
+  return Object.freeze({ items: Object.freeze(items), statements: Object.freeze(statements) });
+};
+
+const VIEWS = Object.freeze({
+  consensus: Object.freeze(CONSENSUS_STATEMENTS.ids.map(id => byId[id]).filter(Boolean)),
+  themes: Object.freeze(Object.fromEntries(DATA.themes.map(t => [t.key, themeView(t)]))),
+});
 // Opinion groups come from Polis's clustering, which re-runs as votes arrive: both
 // how many there are and which is which can change between refreshes. Nothing here
 // may assume two, or assume that "A" means what it meant last time — the labels are
@@ -135,7 +152,7 @@ const claimPhrase = (claim, direction) => {
   return { toc: 'People ' + (TOC_LEAD[direction] || TOC_LEAD.mixed) + ' ' + lead, head: HEAD[direction] || HEAD.mixed };
 };
 
-const state = { theme: null, sel: -1, layout: [] };
+const state = { theme: null };
 let scrollRaf = null, l1Scroll = 0;
 let carouselTimers = [];
 let demogSvg = null, demogWorld = null, demogMarkersG = null, demogProjection = null,
@@ -599,12 +616,11 @@ function nudgeApart(xs, minGap, lo, hi) {
 function buildConsensus() {
   const lane = $('#consensusLane');
   lane.innerHTML = '';
-  const records = CONSENSUS_STATEMENTS.ids.map(id => byId[id]).filter(Boolean);
-  state.layout = { items: records.map(r => ({ rec: r })) };
+  const records = VIEWS.consensus;
 
   records.forEach((r, idx) => {
     const card = el('button', 'lcard');
-    card.dataset.i = idx;
+    card.dataset.rid = r.id;
 
     const who = el('div', 'lWho');
     who.append(el('span', 'lEmoji', emojiFor(r)));
@@ -642,7 +658,7 @@ function buildConsensus() {
     barWrap.append(track);
     card.append(barWrap);
 
-    card.onclick = () => open(idx);
+    card.onclick = () => open(records, idx);
     lane.append(card);
 
     const SQ = parseFloat(getComputedStyle(track).getPropertyValue('--sq')) || 26;
@@ -674,7 +690,7 @@ function buildL1() {
   const wrap = $('#blocks');
   DATA.themes.forEach((t, ti) => {
     const b = el('button', 'theme-block');
-    const np = pollsOf(t).length, nq = quotesOf(t).length, n = np + nq;
+    const np = statementsOf(t).length, nq = quotesOf(t).length, n = np + nq;
     b.style.setProperty('--c', t.color);
     b.setAttribute('aria-label', `${t.short}: ${n} perspectives`);
     b.append(el('span', 'arrow', '→'));
@@ -703,8 +719,9 @@ function renderL2() {
   const mc = el('meta'); mc.name = 'theme-color'; mc.content = t.color; document.head.append(mc);
 
   $('#t-title').textContent = t.short;
-  const polls = pollsOf(t).sort((a, b) => b.vote.minAgree - a.vote.minAgree || b.vote.total - a.vote.total);
-  $('#t-count').textContent = polls.length + ' statement' + (polls.length === 1 ? '' : 's');
+  const view = VIEWS.themes[t.key];
+  const statements = view.statements;
+  $('#t-count').textContent = statements.length + ' statement' + (statements.length === 1 ? '' : 's');
   const d = (DESC.themes && DESC.themes[t.key]) || {};
   $('#t-desc').textContent = d.description || '';
 
@@ -713,33 +730,16 @@ function renderL2() {
   $('#nextT').innerHTML = 'Go to <b>' + esc(nx.short) + '</b> →';
   $('#nextT').onclick = () => { location.hash = '#/' + nx.key; };
 
-  // paging order for L3 = this theme's own polls, plus any insight-cited
-  // record that isn't (e.g. a statement cross-tagged elsewhere under the
-  // current tag model) — appended so its carousel card still opens/pages,
-  // without counting toward "All Statements"
-  const pollIdSet = new Set(polls.map(r => r.id));
   const insights = INSIGHTS[t.key] || [];
-  const layoutRecs = polls.slice();
-  const seen = new Set(pollIdSet);
-  insights.forEach(ins => ins.ids.forEach(id => {
-    const r = byId[id];
-    if (r && !seen.has(r.id)) { seen.add(r.id); layoutRecs.push(r); }
-  }));
-  state.layout = { items: layoutRecs.map(r => ({ rec: r })) };
 
-  buildToc(t, insights, polls.length);
-  buildInsights(t, insights);
-  buildAllStatements(t, pollIdSet);
-}
-
-function openRecord(r) {
-  const idx = state.layout.items.findIndex(it => it.rec.id === r.id);
-  if (idx > -1) open(idx);
+  buildToc(t, insights, statements.length);
+  buildInsights(t, insights, view.items);
+  buildAllStatements(view);
 }
 
 /* the statement card — used by both the insight carousels and the
    full All Statements stack */
-function buildCard(r) {
+function buildCard(r, items) {
   const card = el('button', 'icard');
   card.dataset.rid = r.id;
 
@@ -776,11 +776,11 @@ function buildCard(r) {
   });
   card.append(stats);
 
-  card.onclick = () => openRecord(r);
+  card.onclick = () => open(items, items.indexOf(r));
   return card;
 }
 
-function buildToc(t, insights, npolls) {
+function buildToc(t, insights, nstatements) {
   const toc = $('#toc');
   const list = $('#tocList');
   list.innerHTML = '';
@@ -796,7 +796,7 @@ function buildToc(t, insights, npolls) {
       ?.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
     list.append(item);
   });
-  const seeAll = el('button', 'tocSeeAll', `See all ${npolls} statement${npolls === 1 ? '' : 's'} →`);
+  const seeAll = el('button', 'tocSeeAll', `See all ${nstatements} statement${nstatements === 1 ? '' : 's'} →`);
   seeAll.onclick = () => $('#allStatements')
     ?.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
   list.append(seeAll);
@@ -831,7 +831,7 @@ function attachCarouselAutoplay(carousel) {
   ['pointerdown', 'wheel', 'touchstart'].forEach(e => carousel.addEventListener(e, stop, { passive: true }));
 }
 
-function buildInsights(t, insights) {
+function buildInsights(t, insights, items) {
   const wrap = $('#insightsWrap');
   stopCarouselAutoplay();
   wrap.innerHTML = '';
@@ -845,36 +845,53 @@ function buildInsights(t, insights) {
     h2.innerHTML = head;
     section.append(h2);
     const carousel = el('div', 'carousel');
-    records.forEach(r => carousel.append(buildCard(r)));
+    records.forEach(r => carousel.append(buildCard(r, items)));
     section.append(carousel);
     wrap.append(section);
     attachCarouselAutoplay(carousel);
   });
 }
 
-function buildAllStatements(t, pollIdSet) {
+function buildAllStatements(view) {
   const list = $('#allList');
   list.innerHTML = '';
-  const polls = state.layout.items.map(it => it.rec).filter(r => pollIdSet.has(r.id));
-  polls.forEach(r => list.append(buildCard(r)));
-  $('#laneEnd').textContent = polls.length + ' statement' + (polls.length === 1 ? '' : 's') + ' in this theme';
+  const statements = view.statements;
+  statements.forEach(r => list.append(buildCard(r, view.items)));
+  $('#laneEnd').textContent = statements.length + ' statement' + (statements.length === 1 ? '' : 's') + ' in this theme';
 }
 
 /* ─── LEVEL 3 ─────────────────────────────────────────── */
-function open(idx) {
-  state.sel = idx;
-  const it = state.layout.items[idx];
-  const r = it.rec;
+// #l3 is a single element in the template, so it has to remember which list
+// prev/next walk. open() rewrites this on every call
+const l3state = { view: null, idx: -1 };
 
-  // a statement's card can appear twice on the page (once in its
-  // insight's carousel, once in All Statements) — mark every instance.
-  // .lcard is the Consensus page's card, indexed rather than id-keyed;
-  // neither class ever appears on the other's page, so both run safely.
-  document.querySelectorAll('.icard.sel, .lcard.sel').forEach(n => n.classList.remove('sel'));
-  document.querySelectorAll(`.icard[data-rid="${r.id}"]`).forEach(n => n.classList.add('sel'));
-  document.querySelector(`.lcard[data-i="${idx}"]`)?.classList.add('sel');
+// Which card is "selected" is a fact about the record, not about the page or its
+// position in a list — so it's marked by id, the same way .gbubble does it. A
+// statement's card can appear more than once (an insight carousel and All
+// Statements, or a theme and the Consensus page), and every instance gets marked;
+// the ones on a page you aren't looking at sit inside a display:none subtree.
+// Clearing is scoped to the card classes rather than a bare `.sel` because
+// .gbubble uses the same class for the Group modal's own selection.
+const SELECTED_CARDS = '.icard.sel, .lcard.sel';
+const clearSelected = () =>
+  document.querySelectorAll(SELECTED_CARDS).forEach(n => n.classList.remove('sel'));
+const markSelected = id => {
+  clearSelected();
+  document.querySelectorAll(`.icard[data-rid="${id}"], .lcard[data-rid="${id}"]`)
+    .forEach(n => n.classList.add('sel'));
+};
 
-  // consensus / difference / plain-agreement indicator — polls only,
+function open(view, idx) {
+  // a card whose record isn't in its own page's list would arrive as -1 (the
+  // guard openRecord() used to carry) — nothing to show, so don't open
+  if (idx < 0 || idx >= view.length) return;
+  l3state.view = view;
+  l3state.idx = idx;
+  const r = view[idx];
+
+  markSelected(r.id);
+
+  // consensus / difference / plain-agreement indicator — statements only,
   // quotes carry no vote data so the pill is hidden for those
   const who = $('#who');
   who.hidden = !r.vote;
@@ -939,7 +956,7 @@ function open(idx) {
     m.append(s);
   }
 
-  const n = state.layout.items.length;
+  const n = view.length;
   $('#pos').innerHTML = (idx + 1) + ' <em>|</em> ' + n;
   $('#prev').disabled = idx === 0;
   $('#next').disabled = idx === n - 1;
@@ -982,14 +999,22 @@ function close() {
   document.body.classList.remove('reading');
   $('#l3').classList.remove('on');
   $('#l3').setAttribute('aria-hidden', 'true');
-  const s = document.querySelector('.icard.sel');
-  s?.classList.remove('sel');
-  s?.focus({ preventScroll: true });
-  state.sel = -1;
+  // focus goes back to the card you came from, so a keyboard user lands where
+  // they were rather than at the top of the document. A record can be marked on
+  // more than one page, so focus the instance that's actually on screen —
+  // offsetParent is null for anything inside a display:none page.
+  const focusTarget = [...document.querySelectorAll(SELECTED_CARDS)]
+    .find(n => n.offsetParent !== null);
+  clearSelected();
+  focusTarget?.focus({ preventScroll: true });
+  l3state.view = null;
+  l3state.idx = -1;
 }
 const page = d => {
-  const i = state.sel + d;
-  if (i >= 0 && i < state.layout.items.length) open(i);
+  const view = l3state.view;
+  if (!view) return;
+  const i = l3state.idx + d;
+  if (i >= 0 && i < view.length) open(view, i);
 };
 
 function hideIntroPages() {
@@ -1128,7 +1153,7 @@ function route() {
   $('#l2').classList.add('on');
   $('#l2').setAttribute('aria-hidden', 'false');
   document.title = t.short + ' — Bloom';
-  if (state.sel > -1) close();
+  if (l3state.idx > -1) close();
   renderL2();
   if (themeChanged) scrollTo({ top: 0, behavior: 'auto' });
 }

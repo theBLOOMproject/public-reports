@@ -288,15 +288,18 @@ function main(args, payload, snapshot) {
     });
   }
 
-  const missing = data.records.filter(r => r.vote && !seen.has(r.id));
+  const missing = data.records.filter(r => r.kind === 'poll' && !seen.has(r.id));
 
   // New statements slot into the poll block in tid order; the quote block that follows
   // is never touched. Existing records keep their positions either way.
+  // `rest` is everything that isn't a statement rather than everything that is a
+  // quote: these two arrays are reassembled into the whole file, so a record of
+  // some future third kind has to fall through here, not vanish.
   if (added.length) {
-    const polls = data.records.filter(r => r.vote);
-    const rest = data.records.filter(r => !r.vote);
+    const statements = data.records.filter(r => r.kind === 'poll');
+    const rest = data.records.filter(r => r.kind !== 'poll');
     const tid = r => Number(r.id.slice(1));
-    data.records = [...polls, ...added].sort((a, b) => tid(a) - tid(b)).concat(rest);
+    data.records = [...statements, ...added].sort((a, b) => tid(a) - tid(b)).concat(rest);
   }
 
   const regrouped = before.length !== keys.length;
