@@ -48,33 +48,40 @@ DATA.themes.forEach(t => byKey[t.key] = t);
 const THEME_COLORS = DATA.themes.map(t => t.color);
 const byId = {};
 DATA.records.forEach(r => byId[r.id] = r);
-// A theme *is* the records carrying any of its tags — membership is derived, not
-// stored, so a statement that spans two subjects belongs to both themes.
-const recsOf = t => DATA.records.filter(r => r.tags.some(g => t.tags.includes(g)));
-const statementsOf = t => recsOf(t).filter(r => r.kind === 'poll');
-const quotesOf = t => recsOf(t).filter(r => r.kind === 'quote');
 
-const themeView = t => {
-  const statements = statementsOf(t).sort((a, b) =>
-    b.vote.minAgree - a.vote.minAgree || b.vote.total - a.vote.total);
+const recsOf = theme => DATA.records.filter(record => record.tags.some(tag => theme.tags.includes(tag)));
+const statementsOf = theme => recsOf(theme).filter(record => record.kind === 'poll');
+const quotesOf = theme => recsOf(theme).filter(record => record.kind === 'quote');
+const groupsOf = vote => DATA.groups.map(group => ({ ...group, ...vote[group.key] }));
+
+const MIN_GROUP_VOTES = 10;
+const isLowData = vote => {
+    const groupVoteTotals = DATA.groups.map(group => vote[group.key].n );
+    return groupVoteTotals.some(n => n < MIN_GROUP_VOTES)
+}
+
+const themeView = theme => {
+  const statements = statementsOf(theme).sort((statementA, statementB) =>
+    (isLowData(statementA.vote) ? 1 : 0) - (isLowData(statementB.vote) ? 1 : 0) ||
+    statementB.vote.minAgree - statementA.vote.minAgree || statementB.vote.total - statementA.vote.total);
   const seen = new Set(statements.map(r => r.id));
   const items = statements.slice();
-  (INSIGHTS[t.key] || []).forEach(ins => ins.ids.forEach(id => {
+  (INSIGHTS[theme.key] || []).forEach(ins => ins.ids.forEach(id => {
     const r = byId[id];
     if (r && !seen.has(id)) { seen.add(id); items.push(r); }
   }));
   return Object.freeze({ items: Object.freeze(items), statements: Object.freeze(statements) });
 };
 
+// IMPORTANT: Computed once at load, so it has to sit below every helper its sort reaches
+// (groupsOf, isLowData) — hoisting it back above them is a load-time TDZ error.
+//
+// Clearly this is suboptimal and should be fixed. But hey, working outside of a framework is fun right?
 const VIEWS = Object.freeze({
   consensus: Object.freeze(CONSENSUS_STATEMENTS.ids.map(id => byId[id]).filter(Boolean)),
-  themes: Object.freeze(Object.fromEntries(DATA.themes.map(t => [t.key, themeView(t)]))),
+  themes: Object.freeze(Object.fromEntries(DATA.themes.map(theme => [theme.key, themeView(theme)]))),
 });
-// Opinion groups come from Polis's clustering, which re-runs as votes arrive: both
-// how many there are and which is which can change between refreshes. Nothing here
-// may assume two, or assume that "A" means what it meant last time — the labels are
-// data, reapplied editorially after each refresh. Order is DATA.groups' order.
-const groupsOf = v => DATA.groups.map(g => ({ ...g, ...v[g.key] }));
+
 // The List tab's key row expands each square's letter into what that group means.
 // Labels read "Group A · skeptic-leaning" and the letter is already on the square,
 // so show only the part that carries meaning. A refresh resets labels to a bare
@@ -114,15 +121,16 @@ const CONSENSUS_UNDER_AGREE = 33;
 const tierColorFor = pct => pct >= 67 ? 'var(--agree)' : pct >= 33 ? 'var(--amber)' : 'var(--disagree)';
 
 // shared by the statement modal's pill and the new statement card's pill
-const pillInfoFor = v => {
-  const maxAgree = v.minAgree + v.gap;   // gap is max − min, so the ceiling needs no field
-  if (v.gap > DIFFERENCE_OVER_GAP)
-    return { cls: 'difference', icon: 'static/difference.svg', label: 'DIFFERENCE (' + v.gap + ' PTS)' };
-  if (v.minAgree > CONSENSUS_OVER_AGREE)
-    return { cls: 'consensus', icon: 'static/consensus.svg', label: 'CONSENSUS (' + v.minAgree + '% AGREE)' };
+const pillInfoFor = vote => {
+  if (isLowData(vote)) return { cls: 'low-data', icon: null, label: 'NOT ENOUGH DATA' };
+  const maxAgree = vote.minAgree + vote.gap;   // gap is max − min, so the ceiling needs no field
+  if (vote.gap > DIFFERENCE_OVER_GAP)
+    return { cls: 'difference', icon: 'static/difference.svg', label: 'DIFFERENCE (' + vote.gap + ' PTS)' };
+  if (vote.minAgree > CONSENSUS_OVER_AGREE)
+    return { cls: 'consensus', icon: 'static/consensus.svg', label: 'CONSENSUS (' + vote.minAgree + '% AGREE)' };
   if (maxAgree < CONSENSUS_UNDER_AGREE)
     return { cls: 'consensus-against', icon: 'static/consensus.svg', label: 'CONSENSUS (' + maxAgree + '% AGREE)' };
-  return { cls: 'neutral', icon: null, label: v.minAgree + '% AGREE' };
+  return { cls: 'neutral', icon: null, label: vote.minAgree + '% AGREE' };
 };
 
 // turns a claim + hand-assigned direction into TOC/headline copy. Some
@@ -758,9 +766,10 @@ function buildCard(r, items) {
   card.append(who);
 
   const stats = el('div', 'icStats');
+  const lowData = isLowData(r.vote);
   groupsOf(r.vote).forEach(g => {
     const pct = Math.max(0, Math.min(100, g.pct));
-    const color = tierColorFor(pct);
+    const color = lowData ? 'var(--muted)' : tierColorFor(pct);
     const stat = el('div', 'icStat');
     const val = el('div', 'icVal', g.pct + '%');
     val.style.color = color;
@@ -920,7 +929,8 @@ function open(view, idx) {
   m.append(src);
 
   if (r.vote) {
-    const p = el('section');
+    // the tallies stay readable either way; the class only drops the color-coding
+    const p = el('section', isLowData(r.vote) ? 'lowdata' : null);
     p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
     groupsOf(r.vote).forEach(g => {
       const row = el('div', 'grow');

@@ -75,13 +75,14 @@ function checkVoteIntegrity(data, file) {
   }
 }
 
+const loadBloomData = () =>
+  JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+
 // bloom-insights' ids reference bloom-data records by id; a typo or a record
 // getting renumbered/removed would otherwise fail silently at runtime (a
 // dead carousel card, or — if it's the *only* id in an entry — a whole
-// insight vanishing). Cross-check against bloom-data.json directly since a
-// BLOCKS 'check' only sees its own file's parsed data.
-function checkInsightIdsResolve(insights, file) {
-  const bloomData = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/bloom-data.json'), 'utf8'));
+// insight vanishing).
+function checkInsightIdsResolve(insights, file, bloomData) {
   const knownIds = new Set(bloomData.records.map(r => r.id));
   const bad = [];
   for (const [theme, entries] of Object.entries(insights)) {
@@ -175,6 +176,37 @@ function checkOregonCountiesShape(geo, file) {
   }
 }
 
+// Keep in sync with MIN_GROUP_VOTES in src/app.js — there is no module boundary
+// between build.js and the app (app.js is inlined verbatim as a raw block), so the
+// constant is duplicated on purpose rather than parsed back out of the source.
+const MIN_GROUP_VOTES = 10;
+
+// An insight is an editorial claim citing specific statements as its evidence. When
+// a cited statement has a group too thin to report on, the app renders it "not enough
+// data" — so the carousel illustrating the claim quietly declines to support it. The
+// code can't tell whether the claim or the citation should change, so it names them
+// and leaves it to the editorial pass. Runs after checkInsightIdsResolve, which has
+// already established that every id resolves.
+function checkInsightVoteDepth(insights, file, bloomData) {
+  const keys = bloomData.groups.map(g => g.key);
+  const byId = new Map(bloomData.records.map(r => [r.id, r]));
+  const thin = [];
+  for (const [theme, entries] of Object.entries(insights)) {
+    if (theme.startsWith('_')) continue;
+    entries.forEach(e => e.ids.forEach(id => {
+      const r = byId.get(id);
+      if (!r || !r.vote) return;   // quotes carry no vote data
+      const ns = keys.map(k => r.vote[k].n);
+      if (Math.min(...ns) < MIN_GROUP_VOTES) thin.push(`${theme}: ${id} (groups ${ns.join('/')})`);
+    }));
+  }
+  if (thin.length) {
+    console.warn(`  WARNING ${file}: ${thin.length} insight-cited statement(s) have a group `
+      + `under ${MIN_GROUP_VOTES} votes and will render as "not enough data":\n    `
+      + thin.join('\n    '));
+  }
+}
+
 // Placeholder id -> { file, kind }. Every id needs a matching <!--INJECT:{id}-->
 // in index.template.html; for 'json' blocks the id is also the <script> element id
 // the app reads the data back out of.
@@ -194,7 +226,15 @@ const BLOCKS = {
     kind: 'json',
     check: (data, file) => { checkEveryRecordReachable(data, file); checkVoteIntegrity(data, file); },
   },
-  'bloom-insights': { file: 'data/bloom-insights.json', kind: 'json', check: checkInsightIdsResolve },
+  'bloom-insights': {
+    file: 'data/bloom-insights.json',
+    kind: 'json',
+    check: (insights, file) => {
+      const bloomData = loadBloomData();
+      checkInsightIdsResolve(insights, file, bloomData);
+      checkInsightVoteDepth(insights, file, bloomData);
+    },
+  },
   'group-info': { file: 'data/group-info.json', kind: 'json', check: checkGroupInfoKeys },
   'group-statements': { file: 'data/group-statements.json', kind: 'json', check: checkGroupStatementIdsResolve },
   'consensus-statements': { file: 'data/consensus-statements.json', kind: 'json', check: checkConsensusIdsResolve },
