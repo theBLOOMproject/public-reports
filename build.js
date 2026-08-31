@@ -179,14 +179,14 @@ function checkOregonCountiesShape(geo, file) {
 // Keep in sync with MIN_GROUP_VOTES in src/app.js — there is no module boundary
 // between build.js and the app (app.js is inlined verbatim as a raw block), so the
 // constant is duplicated on purpose rather than parsed back out of the source.
-const MIN_GROUP_VOTES = 10;
+const MIN_GROUP_VOTES = 8;
 
 // An insight is an editorial claim citing specific statements as its evidence. When
-// a cited statement has a group too thin to report on, the app renders it "not enough
-// data" — so the carousel illustrating the claim quietly declines to support it. The
-// code can't tell whether the claim or the citation should change, so it names them
-// and leaves it to the editorial pass. Runs after checkInsightIdsResolve, which has
-// already established that every id resolves.
+// a cited statement has a group too thin to report on, the app flags that group's
+// %-agree number with a low-data marker — so the carousel illustrating the claim
+// quietly leans on a thin group. The code can't tell whether the claim or the
+// citation should change, so it names them and leaves it to the editorial pass. Runs
+// after checkInsightIdsResolve, which has already established that every id resolves.
 function checkInsightVoteDepth(insights, file, bloomData) {
   const keys = bloomData.groups.map(g => g.key);
   const byId = new Map(bloomData.records.map(r => [r.id, r]));
@@ -202,7 +202,7 @@ function checkInsightVoteDepth(insights, file, bloomData) {
   }
   if (thin.length) {
     console.warn(`  WARNING ${file}: ${thin.length} insight-cited statement(s) have a group `
-      + `under ${MIN_GROUP_VOTES} votes and will render as "not enough data":\n    `
+      + `under ${MIN_GROUP_VOTES} votes and will show a low-data flag:\n    `
       + thin.join('\n    '));
   }
 }

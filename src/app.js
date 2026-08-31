@@ -54,7 +54,7 @@ const statementsOf = theme => recsOf(theme).filter(record => record.kind === 'po
 const quotesOf = theme => recsOf(theme).filter(record => record.kind === 'quote');
 const groupsOf = vote => DATA.groups.map(group => ({ ...group, ...vote[group.key] }));
 
-const MIN_GROUP_VOTES = 10;
+const MIN_GROUP_VOTES = 8;
 const isLowData = vote => {
     const groupVoteTotals = DATA.groups.map(group => vote[group.key].n );
     return groupVoteTotals.some(n => n < MIN_GROUP_VOTES)
@@ -120,9 +120,19 @@ const CONSENSUS_UNDER_AGREE = 33;
 // not by which group it belongs to: 0-33 red, 33-67 amber, 67-100 green
 const tierColorFor = pct => pct >= 67 ? 'var(--agree)' : pct >= 33 ? 'var(--amber)' : 'var(--disagree)';
 
+// a small inline marker next to a single group's %-agree readout when that
+// group has fewer than MIN_GROUP_VOTES votes behind it — the number stays
+// color-coded like any other, this just flags it as thin. Hover/focus shows
+// the vote count via a CSS tooltip (see .lowFlag in app.css).
+const lowDataFlag = n => {
+  const s = el('span', 'lowFlag', '⚠️');
+  s.dataset.tip = `Low data (${n} vote${n === 1 ? '' : 's'})`;
+  s.tabIndex = 0;
+  return s;
+};
+
 // shared by the statement modal's pill and the new statement card's pill
 const pillInfoFor = vote => {
-  if (isLowData(vote)) return { cls: 'low-data', icon: null, label: 'NOT ENOUGH DATA' };
   const maxAgree = vote.minAgree + vote.gap;   // gap is max − min, so the ceiling needs no field
   if (vote.gap > DIFFERENCE_OVER_GAP)
     return { cls: 'difference', icon: 'static/difference.svg', label: 'DIFFERENCE (' + vote.gap + ' PTS)' };
@@ -766,13 +776,13 @@ function buildCard(r, items) {
   card.append(who);
 
   const stats = el('div', 'icStats');
-  const lowData = isLowData(r.vote);
   groupsOf(r.vote).forEach(g => {
     const pct = Math.max(0, Math.min(100, g.pct));
-    const color = lowData ? 'var(--muted)' : tierColorFor(pct);
+    const color = tierColorFor(pct);
     const stat = el('div', 'icStat');
     const val = el('div', 'icVal', g.pct + '%');
     val.style.color = color;
+    if (g.n < MIN_GROUP_VOTES) val.append(lowDataFlag(g.n));
     stat.append(val);
     stat.append(el('div', 'icLabel', groupTag(g)));
     const track = el('div', 'icBarTrack');
@@ -929,14 +939,15 @@ function open(view, idx) {
   m.append(src);
 
   if (r.vote) {
-    // the tallies stay readable either way; the class only drops the color-coding
-    const p = el('section', isLowData(r.vote) ? 'lowdata' : null);
+    const p = el('section');
     p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
     groupsOf(r.vote).forEach(g => {
       const row = el('div', 'grow');
       const top = el('div', 'top');
       top.append(el('span', null, g.label));
-      const bb = el('b', null, g.pct + '% agree'); top.append(bb);
+      const bb = el('b', null, g.pct + '% agree');
+      if (g.n < MIN_GROUP_VOTES) bb.append(lowDataFlag(g.n));
+      top.append(bb);
       row.append(top);
       const bar = el('div', 'bar');
       const tot = Math.max(1, g.n);
