@@ -617,104 +617,17 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 
 /* ─── L0 — CONSENSUS card stack ───────────────────────────────────── */
-/* The List tab's card styles, kept when the tab system was removed because
-   #l0-consensus is now their only consumer (see buildConsensus() in app.js).
-   Deliberately distinct from the .icard used on theme pages: the point of
-   this page is the 0-100% axis with one lettered square per opinion group. */
+/* Renders the same .icard markup as the theme pages (see buildConsensus()
+   in app.js) — .lane.listView is just this page's own layout wrapper
+   (a plain vertical stack, unlike .allStatements' padding/heading). */
 .lane{
   position:relative;
   overflow:visible;
   display:flow-root;
 }
 .lane.listView{
-  display:flex;flex-direction:column;gap:12px;
+  display:flex;flex-direction:column;gap:14px;
   padding:6px 22px 46px;
-}
-
-.lcard{
-  display:block;width:100%;text-align:left;
-  background:#fff;border-radius:20px;
-  padding:16px 18px 0;
-  overflow:hidden;   /* so the bottom viz's bleed can meet the card's own rounded corners */
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .2s ease,box-shadow .2s ease;
-  box-shadow:0 1px 3px rgba(0,0,0,.12);
-}
-@media (hover:hover){
-  .lcard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
-}
-.lcard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.28)}
-
-/* eyebrow — the participant's emoji plus their demographic chips,
-   marqueeing sideways when the text is too long for the card */
-.lWho{
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:9px;
-  color:color-mix(in srgb,var(--c) 62%,#000);
-}
-.lWho .lEmoji{flex:none;font-size:15px;line-height:1}
-.lWho .lDemoWrap{flex:1;min-width:0;overflow:hidden}
-.lWho .lDemoTrack{
-  display:inline-flex;gap:2.4em;white-space:nowrap;
-  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-}
-.lWho .lDemoTrack.marquee{animation:lDemoScroll var(--marquee-dur,10s) linear infinite}
-@keyframes lDemoScroll{from{transform:translateX(0)}to{transform:translateX(var(--marquee-dist,-50%))}}
-
-.lText{
-  margin:0 0 16px;color:var(--ink);
-  font-family:var(--geom);font-weight:600;
-  font-size:23px;line-height:1.32;letter-spacing:-.012em;
-}
-
-/* bottom viz — where each group's agreement % lands on a disagree-to-
-   agree track. Labels sit in the card's normal (uncolored) flow; only
-   the track itself is tinted and bled flush to the card's edges (and
-   its bottom corners). */
-.lBarLabels{
-  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
-  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(0,0,0,.8);
-  margin-bottom:8px;
-}
-.lBarLabels .who{flex:none}
-.lBar{
-  margin:0 -18px;
-  padding:10px 18px 14px;
-  background:color-mix(in srgb,var(--c) 13%,transparent);
-}
-/* --sq is the group square's size, and the JS reads it back to compute the
-   track's usable width — change it here, not there. Polis can return more
-   clusters than the two this started with, so past three the squares shrink
-   to keep them all on the track. */
-.lBarTrack{position:relative;--sq:26px;height:var(--sq)}
-.lBarTrack.tight{--sq:20px}
-/* 0%/100% end labels — centered on the same half-square inset the group
-   squares use at their own extremes (HALF_SQ in the JS), so a square sitting
-   right on 0% or 100% lands directly on top of its label */
-.lBarEdge{
-  position:absolute;top:50%;
-  font-family:var(--geom);font-weight:700;font-size:14px;
-  color:var(--c);opacity:.65;
-}
-.lBarEdge.lo{left:calc(var(--sq) / 2);transform:translate(-50%,-50%)}
-.lBarEdge.hi{right:calc(var(--sq) / 2);transform:translate(50%,-50%)}
-.lBarMid{
-  position:absolute;left:50%;top:0;bottom:0;width:1px;
-  background:rgba(0,0,0,.18);
-  transform:translateX(-50%);
-}
-.lBarLine{
-  position:absolute;top:50%;height:2.5px;
-  background:var(--c);transform:translateY(-50%);
-}
-.lBarSq{
-  position:absolute;top:50%;width:var(--sq);height:var(--sq);
-  transform:translate(-50%,-50%);
-  background:var(--c);border-radius:6px;
-  display:grid;place-items:center;
-  font-family:var(--geom);font-weight:700;font-size:11px;color:#fff;
-  box-shadow:0 2px 6px rgba(0,0,0,.25);
 }
 
 /* ─────────────────────────────────────────────

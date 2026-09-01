@@ -595,94 +595,15 @@ function renderGroupPage() {
 }
 
 /* ─── L0 — CONSENSUS ──────────────────────────────────── */
-// nudgeApart() and the .lcard/.lBar* styles this page renders with were
-// the List tab's, removed along with the L2 tab system; the Consensus
-// page is now their only consumer, so they live here rather than in a
-// shared layer that no longer has a second caller.
-function nudgeApart(xs, minGap, lo, hi) {
-  const order = xs.map((x, i) => i).sort((a, b) => xs[a] - xs[b]);
-  const out = xs.slice();
-  order.forEach((i, n) => {
-    out[i] = n === 0 ? Math.max(lo, xs[i]) : Math.max(xs[i], out[order[n - 1]] + minGap);
-  });
-  for (let n = order.length - 1; n >= 0; n--) {
-    const i = order[n];
-    const limit = n === order.length - 1 ? hi : out[order[n + 1]] - minGap;
-    out[i] = Math.max(lo, Math.min(out[i], limit));
-  }
-  return out;
-}
-
+// Renders with the same .icard buildCard() used on theme pages (carousels
+// and All Statements) rather than a page-specific card style, so "common
+// ground" reads as the same kind of thing as everything on a theme page —
+// just a hand-picked list instead of one theme's own statements.
 function buildConsensus() {
   const lane = $('#consensusLane');
   lane.innerHTML = '';
   const records = VIEWS.consensus;
-
-  records.forEach((r, idx) => {
-    const card = el('button', 'lcard');
-    card.dataset.rid = r.id;
-
-    const who = el('div', 'lWho');
-    who.append(el('span', 'lEmoji', emojiFor(r)));
-    const demoWrap = el('div', 'lDemoWrap');
-    const demoChips = r.chips.filter(c => c.toLowerCase() !== 'not provided');
-    const demoText = r.origin === 'cocap_seed'
-      ? 'Host statement'
-      : (demoChips.length ? demoChips.map(titleCaseChip).join(', ') : 'Anonymous');
-    const demoTrack = el('span', 'lDemoTrack');
-    demoTrack.append(el('span', null, demoText));
-    demoWrap.append(demoTrack);
-    who.append(demoWrap);
-    card.append(who);
-
-    card.append(el('p', 'lText', '“' + r.text + '”'));
-
-    const labels = el('div', 'lBarLabels');
-    const { cls, icon, label } = pillInfoFor(r.vote);
-    const pill = el('div', 'who ' + cls);
-    const pillAv = el('span', 'av');
-    if (icon) pillAv.innerHTML = `<img src="${icon}" alt="">`;
-    pill.append(pillAv, el('span', 'txt', label));
-    labels.append(el('span', null, '<- Disagree (0%)'), pill, el('span', null, 'Agree (100%) ->'));
-    card.append(labels);
-    const barWrap = el('div', 'lBar');
-    const track = el('div', 'lBarTrack');
-    if (DATA.groups.length > 3) track.classList.add('tight');
-    const edgeLo = el('span', 'lBarEdge lo', '0%');
-    const edgeHi = el('span', 'lBarEdge hi', '100%');
-    const mid = el('div', 'lBarMid');
-    const line = el('div', 'lBarLine');
-    const groups = groupsOf(r.vote);
-    const squares = groups.map(g => el('div', 'lBarSq', g.key));
-    track.append(edgeLo, edgeHi, mid, line, ...squares);
-    barWrap.append(track);
-    card.append(barWrap);
-
-    card.onclick = () => open(records, idx);
-    lane.append(card);
-
-    const SQ = parseFloat(getComputedStyle(track).getPropertyValue('--sq')) || 26;
-    const HALF_SQ = SQ / 2;
-    const w = track.clientWidth;
-    const xFor = pct => HALF_SQ + (w - HALF_SQ * 2) * Math.max(0, Math.min(100, pct)) / 100;
-    const xs = groups.map(g => xFor(g.pct));
-    const placed = nudgeApart(xs, SQ + 2, HALF_SQ, w - HALF_SQ);
-    squares.forEach((sq, i) => sq.style.left = placed[i] + 'px');
-    line.style.left = Math.min(...xs) + 'px';
-    line.style.width = (Math.max(...xs) - Math.min(...xs)) + 'px';
-
-    if (!REDUCED && demoTrack.scrollWidth > demoWrap.clientWidth) {
-      const singleW = demoTrack.firstChild.getBoundingClientRect().width;
-      const dupe = el('span', null, demoText);
-      dupe.setAttribute('aria-hidden', 'true');
-      demoTrack.append(dupe);
-      const gapPx = parseFloat(getComputedStyle(demoTrack).columnGap) || 0;
-      const dist = singleW + gapPx;
-      demoTrack.style.setProperty('--marquee-dist', `-${dist}px`);
-      demoTrack.style.setProperty('--marquee-dur', Math.max(4, dist / 34) + 's');
-      demoTrack.classList.add('marquee');
-    }
-  });
+  records.forEach(r => lane.append(buildCard(r, records)));
 }
 
 /* ─── LEVEL 1 ─────────────────────────────────────────── */
@@ -870,14 +791,14 @@ const l3state = { view: null, idx: -1 };
 // statement's card can appear more than once (an insight carousel and All
 // Statements, or a theme and the Consensus page), and every instance gets marked;
 // the ones on a page you aren't looking at sit inside a display:none subtree.
-// Clearing is scoped to the card classes rather than a bare `.sel` because
-// .gbubble uses the same class for the Group modal's own selection.
-const SELECTED_CARDS = '.icard.sel, .lcard.sel';
+// Clearing is scoped to .icard rather than a bare `.sel` because .gbubble uses
+// the same class for the Group modal's own selection.
+const SELECTED_CARDS = '.icard.sel';
 const clearSelected = () =>
   document.querySelectorAll(SELECTED_CARDS).forEach(n => n.classList.remove('sel'));
 const markSelected = id => {
   clearSelected();
-  document.querySelectorAll(`.icard[data-rid="${id}"], .lcard[data-rid="${id}"]`)
+  document.querySelectorAll(`.icard[data-rid="${id}"]`)
     .forEach(n => n.classList.add('sel'));
 };
 
