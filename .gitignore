@@ -6,3 +6,7 @@ references/
 
 # macOS Finder metadata.
 .DS_Store
+
+# Review artifacts / working docs, not part of the site.
+*.docx
+*.xlsx
