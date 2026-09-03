@@ -218,11 +218,10 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 /* ...and, like the major pills, the mini labels drop away on the zoomed-out view */
 .demogMarkers.labelsHidden .demogMiniLabel{opacity:0}
 .demogMiniLabel{
-  font-family:var(--mono);font-weight:500;font-size:9px;letter-spacing:.03em;
-  fill:var(--home);
+  font-family:var(--mono);font-weight:500;font-size:9px;letter-spacing:.09em;
+  text-transform:uppercase;
+  fill:#fff;fill-opacity:.6;
   dominant-baseline:middle;
-  /* white halo so the bare text stays legible over county fills / borders */
-  paint-order:stroke;stroke:#fff;stroke-width:2.75px;stroke-linejoin:round;
   pointer-events:none;
 }
 
