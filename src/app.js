@@ -128,21 +128,22 @@ const pillInfoFor = v => {
 // turns a claim + hand-assigned direction into TOC/headline copy. Some
 // claims are already written as "People disagree about whether X" —
 // those are used verbatim (with the verb emphasized) rather than
-// double-wrapped in another "People X that…" template.
+// double-wrapped in another "People X that…" template. The TOC line is
+// phrased to match the headline's softened "generally agree" register.
 const CLAIM_VERB_RE = /^People (agree|disagree)\b/i;
 const claimPhrase = (claim, direction) => {
   const m = claim.match(CLAIM_VERB_RE);
   if (m) {
     const verb = m[1].toLowerCase(), rest = claim.slice(m[0].length);
     return {
-      toc: 'People ' + verb.toUpperCase() + rest,
+      toc: 'People ' + verb + rest,
       head: 'People <em class="ic-' + verb + '">' + verb + '</em>' + rest + '.',
     };
   }
   const firstWord = claim.match(/^\S+/)[0];
   const lead = /^[A-Z]{2,}$/.test(firstWord.replace(/[^A-Za-z]/g, ''))
     ? claim : claim.charAt(0).toLowerCase() + claim.slice(1);
-  const TOC_LEAD = { agree: 'AGREE that', disagree: 'DISAGREE that', divided: 'are DIVIDED on whether', mixed: 'are MIXED on whether' };
+  const TOC_LEAD = { agree: 'generally agree that', disagree: 'generally disagree that', divided: 'are divided on whether', mixed: 'are mixed on whether' };
   const HEAD = {
     agree: 'People generally <em class="ic-agree">agree</em> that ' + lead + '.',
     disagree: 'People generally <em class="ic-disagree">disagree</em> that ' + lead + '.',
@@ -458,8 +459,8 @@ function renderDemogTab() {
 
   const pctAnswered = Math.round(cat.answered / DEMOGRAPHICS.total * 100);
   const intro = el('p', 'ddIntro');
-  intro.innerHTML = `<b>${pctAnswered}%</b> of respondents provided this information. `
-    + `Of those <b>${cat.answered}</b> people that provided this information, here is the breakdown:`;
+  intro.innerHTML = `<b>${pctAnswered}%</b> of all respondents provided this information. `
+    + `Of the <b>${cat.answered}</b> people that provided this information, here is the breakdown:`;
   body.append(intro);
 
   const list = el('div', 'ddList');
