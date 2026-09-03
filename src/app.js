@@ -325,8 +325,9 @@ function fitDemogMap(w, h) {
   // for marker radius/labels at the fitted extent's edges; TOP_OFFSET pushes
   // the cluster down so it doesn't sit directly under the eyebrow text
   // overlaid at the top of the page.
-  const PAD = 100;   // bigger PAD = more surrounding context fit into view = more zoomed out
+  const PAD = 130;   // bigger PAD = more surrounding context fit into view = more zoomed out
   const TOP_OFFSET = h * 0.16;
+  const BOTTOM_OFFSET = 24;   // extra breathing room so the southernmost label (La Pine) clears the frame edge
   const cityPoints = {
     type: 'FeatureCollection',
     features: PARTICIPANT_LOCATIONS.cities.map(c => (
@@ -337,7 +338,7 @@ function fitDemogMap(w, h) {
   // fitSize, which wants a plain [width,height] — see the note this file
   // used to carry on that exact mixup) — used here specifically because it
   // lets the fitted extent be inset/offset, not just sized.
-  demogProjection.fitExtent([[PAD, PAD + TOP_OFFSET], [w - PAD, h - PAD]], cityPoints);
+  demogProjection.fitExtent([[PAD, PAD + TOP_OFFSET], [w - PAD, h - PAD - BOTTOM_OFFSET]], cityPoints);
   demogWorld.selectAll('path').attr('d', demogPath);
 
   demogMarkersG.selectAll('.demogCity').each(d => {
