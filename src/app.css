@@ -201,17 +201,30 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   pointer-events:none;
 }
 /* major-city labels fade out once you've zoomed out past DEMOG_LABEL_MIN_ZOOM,
-   so a wide view reads as dots-in-context rather than a wall of pills. The 7
-   smaller places (.minor) start hidden and only appear once you've zoomed in
-   past DEMOG_MINOR_LABEL_MIN_ZOOM — kept simple for now/deliberately equal in
-   every other way (size, color) rather than visually downweighting them. */
-.demogLabelBg,.demogDotLabel{transition:opacity .2s ease}
+   so a wide view reads as dots-in-context rather than a wall of pills.
+   The 7 smaller places (.minor) instead carry a compact mono text label
+   (.demogMiniLabel) at the home zoom, which is swapped for the same white
+   pill the major places use once you've zoomed in past
+   DEMOG_MINOR_LABEL_MIN_ZOOM. */
+.demogLabelBg,.demogDotLabel,.demogMiniLabel{transition:opacity .2s ease}
 .demogMarkers.labelsHidden .demogCity:not(.minor) .demogLabelBg,
 .demogMarkers.labelsHidden .demogCity:not(.minor) .demogDotLabel{opacity:0}
+/* minor: pill hidden until zoomed in, mini label shown until then */
 .demogCity.minor .demogLabelBg,
 .demogCity.minor .demogDotLabel{opacity:0}
 .demogMarkers.minorLabelsShown .demogCity.minor .demogLabelBg,
 .demogMarkers.minorLabelsShown .demogCity.minor .demogDotLabel{opacity:1}
+.demogMarkers.minorLabelsShown .demogMiniLabel{opacity:0}
+/* ...and, like the major pills, the mini labels drop away on the zoomed-out view */
+.demogMarkers.labelsHidden .demogMiniLabel{opacity:0}
+.demogMiniLabel{
+  font-family:var(--mono);font-weight:500;font-size:9px;letter-spacing:.03em;
+  fill:var(--home);
+  dominant-baseline:middle;
+  /* white halo so the bare text stays legible over county fills / borders */
+  paint-order:stroke;stroke:#fff;stroke-width:2.75px;stroke-linejoin:round;
+  pointer-events:none;
+}
 
 /* hover/tap info tooltip — sits in the same spot as the plain pill label
    (same overlap anchor, see DEMOG_LABEL_OVERLAP), just a taller two-line

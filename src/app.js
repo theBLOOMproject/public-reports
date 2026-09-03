@@ -233,6 +233,11 @@ function initDemogMap() {
   // paint order within a label = DOM order too: pill background, then text
   labelGroups.append('rect').attr('class', 'demogLabelBg');
   labelGroups.append('text').attr('class', 'demogDotLabel').attr('y', 4).text(d => d.name);
+  // non-major places also get a compact always-on mono label at the home zoom;
+  // it's swapped for the full pill above once you zoom past
+  // DEMOG_MINOR_LABEL_MIN_ZOOM (see the .demogMiniLabel rules in app.css)
+  labelGroups.filter(d => !d.major)
+    .append('text').attr('class', 'demogMiniLabel').text(d => d.name);
 
   // hover/tap info tooltip: name on top, count below — see updateDemogHoverLayout()
   const hoverGroups = hoverLayer.selectAll('g')
@@ -298,6 +303,9 @@ function updateDemogDotSizes() {
       .attr('width', box.width + DEMOG_LABEL_PAD_X * 2)
       .attr('height', box.height + DEMOG_LABEL_PAD_Y * 2)
       .attr('rx', box.height / 2 + DEMOG_LABEL_PAD_Y);
+    // mini label (non-major only): sits just past the dot's right edge,
+    // vertically centred on the dot via dominant-baseline in CSS
+    g.select('.demogMiniLabel').attr('x', d.r + 3);
   });
 }
 
