@@ -579,13 +579,19 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
 }
 
-.icStats{
-  display:flex;gap:10px;
+/* the bleed-to-edge footer band that holds the caption + the per-group row */
+.icStatsWrap{
   margin:16px -18px -18px;
   padding:12px 18px 14px;
   background:color-mix(in srgb,var(--c) 6%,#fff);
   border-radius:0 0 19px 19px;
 }
+.icStatsCap{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  margin-bottom:8px;
+}
+.icStats{display:flex;gap:10px}
 .icStat{flex:1;min-width:0}
 /* color is set inline per stat — it encodes the %-agree value itself
    (0-33 red · 33-67 amber · 67-100 green), not which group it is */

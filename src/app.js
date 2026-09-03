@@ -679,6 +679,8 @@ function buildCard(r, items) {
   who.append(el('span', 'icDemo', demoLineFor(r)));
   card.append(who);
 
+  const statsWrap = el('div', 'icStatsWrap');
+  statsWrap.append(el('div', 'icStatsCap', '% who agree, by opinion group'));
   const stats = el('div', 'icStats');
   groupsOf(r.vote).forEach(g => {
     const pct = Math.max(0, Math.min(100, g.pct));
@@ -696,7 +698,8 @@ function buildCard(r, items) {
     stat.append(track);
     stats.append(stat);
   });
-  card.append(stats);
+  statsWrap.append(stats);
+  card.append(statsWrap);
 
   card.onclick = () => open(items, items.indexOf(r));
   return card;
