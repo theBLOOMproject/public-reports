@@ -217,15 +217,24 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .demogCounty.inRegion{fill:var(--gold);fill-opacity:.16}
 .demogBg{fill:transparent}
+/* the map itself is pannable (d3-zoom's drag behavior) — a move cursor
+   signals that over the whole surface; .demogCity below overrides it back
+   to pointer on the actually-clickable dot/pill/tooltip hit areas. */
+.demogMap{cursor:move}
 .demogCity{cursor:pointer}
 
 .demogDot{fill:var(--gold);fill-opacity:.9}
-/* white pill behind each city name, tucked slightly under the dot's edge
-   (see DEMOG_LABEL_OVERLAP in app.js) so the two visibly overlap */
-.demogLabelBg{fill:#fff;pointer-events:none}
+/* dark pill behind each city name (white text on --home), tucked slightly
+   under the dot's edge (see DEMOG_LABEL_OVERLAP in app.js) so the two
+   visibly overlap. pointer-events left at its default (rather than none)
+   so hovering the pill itself — not just the dot — activates the
+   .demogCity pointerenter listener and opens the tooltip (see
+   initDemogMap() in app.js, which binds that listener on this same rect's
+   parent group). */
+.demogLabelBg{fill:var(--home)}
 .demogDotLabel{
   font-family:var(--geom);font-weight:600;font-size:16px;
-  fill:var(--home);
+  fill:#fff;
   pointer-events:none;
 }
 /* major-city labels fade out once you've zoomed out past DEMOG_LABEL_MIN_ZOOM,
@@ -321,6 +330,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   transition:transform .15s ease;
 }
 .demogLink:active{transform:scale(.96)}
+@media (hover:hover){
+  .demogLink:hover{transform:scale(1.04)}
+}
 
 
 .groupBubbles{
