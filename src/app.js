@@ -460,6 +460,16 @@ function closeDemog() {
   $('#ddetail').setAttribute('aria-hidden', 'true');
 }
 
+// cyclic, unlike L3/#gdetail's pageGroup()/page() — there's no natural
+// "last" demographic category, so wrapping (4 -> 1, not a disabled arrow at
+// 4/4) reads more like a dial than a stop-ended list
+function pageDemog(d) {
+  const cats = DEMOGRAPHICS.categories;
+  const i = cats.findIndex(c => c.key === dstate.key);
+  dstate.key = cats[(i + d + cats.length) % cats.length].key;
+  renderDemogTab();
+}
+
 function buildDemogTabs() {
   const wrap = $('#ddTabs');
   wrap.innerHTML = '';
@@ -475,10 +485,13 @@ function buildDemogTabs() {
 }
 
 function renderDemogTab() {
-  const cat = DEMOGRAPHICS.categories.find(c => c.key === dstate.key);
+  const cats = DEMOGRAPHICS.categories;
+  const idx = cats.findIndex(c => c.key === dstate.key);
+  const cat = cats[idx];
   document.querySelectorAll('#ddTabs button').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.key === dstate.key ? 'true' : 'false'));
   $('#dcName').textContent = cat.label;
+  $('#dPos').innerHTML = (idx + 1) + ' <em>|</em> ' + cats.length;
 
   const body = $('#dCardbody');
   body.innerHTML = '';
@@ -490,6 +503,17 @@ function renderDemogTab() {
     + `Of the <b>${cat.answered}</b> people that provided this information, here is the breakdown:`;
   body.append(intro);
 
+  // column headers over the two %-columns below — IN POLL is this report's
+  // own respondents (row.pct); ACTUAL is the real tri-county population's
+  // share for the same subgroup (row.actual, see demographics.json's
+  // _readme for its source), so a reader can spot who's over/under-
+  // represented at a glance rather than needing outside context.
+  const colHead = el('div', 'ddColHead');
+  colHead.append(el('span', 'ddColHeadLabel'));
+  colHead.append(el('span', 'ddColHeadCol', 'In Poll'));
+  colHead.append(el('span', 'ddColHeadCol', 'Actual'));
+  body.append(colHead);
+
   const list = el('div', 'ddList');
   cat.breakdown.forEach((row, i) => {
     const r = el('div', 'ddRow');
@@ -498,6 +522,7 @@ function renderDemogTab() {
     r.append(el('span', 'ddSwatch'));
     r.append(el('span', 'ddLabel', row.label));
     r.append(el('span', 'ddPct', row.pct + '%'));
+    r.append(el('span', 'ddPct ddPctActual', row.actual + '%'));
     list.append(r);
   });
   body.append(list);
@@ -1131,6 +1156,8 @@ $('#gNext').onclick = () => pageGroup(1);
 $('#demogLink').onclick = openDemog;
 $('#dCloseb').onclick = closeDemog;
 $('#dscrim').onclick = closeDemog;
+$('#dPrev').onclick = () => pageDemog(-1);
+$('#dNext').onclick = () => pageDemog(1);
 $('#demogReset').onclick = resetDemogMap;
 $('#diveIn').onclick = () => { location.hash = '#/demogs'; };
 $('#pageBarBack').onclick = () => navBarStep(-1);
@@ -1138,6 +1165,8 @@ $('#pageBarNext').onclick = () => navBarStep(1);
 addEventListener('keydown', e => {
   if ($('#ddetail').classList.contains('on')) {
     if (e.key === 'Escape') { closeDemog(); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { pageDemog(1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { pageDemog(-1); e.preventDefault(); }
     return;
   }
   if ($('#gdetail').classList.contains('on')) {

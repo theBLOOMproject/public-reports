@@ -963,7 +963,11 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 #gdetail{display:none;position:fixed;inset:0;z-index:60}
 #gdetail.on{display:block}
 
-.gcHead{display:flex;flex-direction:column;gap:2px;min-width:0}
+/* +8px over .cardtop's own 14px left padding, to line up with the 22px
+   left padding every content row below it (.ddIntro/.ddRow/.gdDesc) uses —
+   .cardtop itself stays untouched since L3 shares it too, and its .who
+   pill is positioned fine as-is */
+.gcHead{display:flex;flex-direction:column;gap:2px;min-width:0;padding-left:8px}
 .gdDesc{padding:28px 22px 26px}
 .gdText{
   margin:0;color:var(--ink);
@@ -973,22 +977,26 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 
 /* ─────────────────────────────────────────────
    DEMOGRAPHICS DETAIL MODAL
-   Shares .scrim/.card/.cardtop/.cardbody/.closeb/.gcHead with L3/#gdetail —
-   no .cardfoot, since navigation is by tab rather than prev/next paging.
+   Shares .scrim/.card/.cardtop/.cardbody/.closeb/.gcHead/.cardfoot/.pos with
+   L3/#gdetail — .cardfoot's prev/pos/next now double as this modal's own
+   category paging (pageDemog() in app.js, cyclic rather than stop-ended),
+   with .ddTabs — the direct-jump pill row — sitting just above it, so both
+   ways to change category live at the bottom of the card together instead
+   of the pills alone up top.
    ───────────────────────────────────────────── */
 #ddetail{display:none;position:fixed;inset:0;z-index:60;--c:var(--ink)}
 #ddetail.on{display:block}
 
 .ddTitle{
-  font-family:var(--geom);font-weight:700;font-size:32px;color:var(--ink);
+  font-family:var(--geom);font-weight:700;font-size:32px;color:var(--home);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
 .ddTabs{
   display:flex;flex-wrap:nowrap;gap:6px;
-  padding:0 16px 14px;flex:none;
+  padding:14px 16px;flex:none;
   overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
-  border-bottom:1px solid color-mix(in srgb,var(--c) 16%,#fff);
+  border-top:1px solid color-mix(in srgb,var(--c) 16%,#fff);
 }
 .ddTabs button{
   flex:none;
@@ -1002,7 +1010,21 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .ddIntro{margin:0;padding:20px 22px 4px;font-size:17px;line-height:1.5;color:var(--ink)}
 .ddIntro b{font-weight:700;color:var(--agree)}
 
-.ddList{padding:6px 0 0}
+/* column headers over the IN POLL / ACTUAL numbers below — plain body
+   font throughout this modal's numbers (per design call), not the mono
+   .grow/.meta convention used for small-caps labels elsewhere. .ddColHeadCol
+   shares .ddPct's own width so header and row numbers land in the same
+   two columns regardless of digit count. */
+.ddColHead{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 22px 2px;
+  font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ddColHeadLabel{flex:1 1 auto}
+.ddColHeadCol{width:48px;flex:none;text-align:right}
+
+.ddList{padding:0}
 .ddRow{
   position:relative;isolation:isolate;
   display:flex;align-items:center;gap:10px;
@@ -1018,7 +1040,10 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .ddSwatch{width:11px;height:11px;border-radius:3px;flex:none;background:var(--rc)}
 .ddLabel{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
-.ddPct{font-family:var(--mono);font-weight:600;color:var(--ink);flex:none}
+.ddPct{width:48px;flex:none;text-align:right;font-weight:600;color:var(--ink)}
+/* the reference/comparison number, muted a step below the poll's own
+   headline figure so the eye lands on IN POLL first */
+.ddPctActual{font-weight:500;color:color-mix(in srgb,var(--ink) 55%,transparent)}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
