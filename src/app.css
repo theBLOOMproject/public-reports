@@ -8,6 +8,7 @@
   --disagree:#D8362F;
   --pass:#C4C4C4;
   --home:#0D1B3E;
+  --theme-blue:#17348C;  /* the Governance theme's blue — the title cover page's accent, not the darker --home navy */
   --amber:#DE8A2E;  /* mid tier for the card's %-agree readout (0-33 red · 33-67 amber · 67-100 green) */
   --gold:#E9A23C;  /* accent for the Demographics intro page, per its mock */
 
@@ -19,6 +20,14 @@
   --bar-blue:#00216F;   /* top page-nav bar — deliberately distinct from --home */
   --bar-pink:#BE00C1;
   --bar-h:70px;
+
+  /* faint hairline grid, shared by the title page's #l0-title (mobile —
+     it fills the viewport) and body.title-page (the desktop gutter outside
+     .shell) so the pattern is defined once and can't drift between the two */
+  --grid-bg:
+    linear-gradient(color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px);
+  --grid-size:28px 28px;
 }
 
 *{box-sizing:border-box}
@@ -142,8 +151,19 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .introPage{
   position:relative;min-height:100vh;min-height:100dvh;padding-bottom:100px;
 }
-#l0-title,#l0-demogs{background:var(--home);color:#fff}
+#l0-demogs{background:var(--home);color:#fff}
 #l0-groups{background:var(--paper);color:var(--ink)}
+/* title cover page — white, with a faint grid (--grid-bg, TOKENS above) so
+   the page doesn't read as bare. Two 1px hairline gradients rather than an
+   SVG/pattern asset, so it scales with the color tokens and needs no extra
+   file. body.title-page (below, near .groups-page) repeats the same
+   pattern on the desktop gutter outside .shell, so the whole page — not
+   just the column — reads white-and-gridded. */
+#l0-title{
+  background-color:var(--paper);color:var(--ink);
+  background-image:var(--grid-bg);
+  background-size:var(--grid-size);
+}
 /* darker at the very top, settling into the flat --agree green (same token
    .who.consensus's pill already uses — "consensus" and "agree" are the
    same color throughout the report) by ~20% down the page */
@@ -151,12 +171,20 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   background:linear-gradient(180deg,color-mix(in srgb,var(--agree) 60%,#000) 0%,var(--agree) 20%);
   color:#fff;
 }
-/* title's only child (.masthead) both axes centered on the page — the
-   other intro pages keep normal top-down flow, this one doesn't. Zeroing
-   the shared .introPage bottom padding (reserved on other pages for
-   #demogReset/general breathing room) so the centering is true, not
-   skewed upward by leftover bottom space title has no use for. */
-#l0-title{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:0}
+/* title is its own top-to-bottom flex column rather than sharing .masthead
+   with the other intro pages: .titleMain (head copy + mountain image) is
+   flex:1 and centers its own content vertically within whatever space is
+   left, while .titleBottom — description/CTA/subtitle — takes only the
+   height it needs and is always the last flex child, so on mobile it stays
+   flush to the bottom of the screen no matter how tall .titleMain's content
+   is, instead of just trailing after it mid-page. On desktop (below,
+   min-width:660px) .titleMain gives up the flex:1 grow so .titleBottom
+   just follows it in normal flow instead of being pinned to the viewport
+   bottom — "up with the rest of the content", per design call. Zeroing the
+   shared .introPage bottom padding (reserved on other pages for
+   #demogReset/general breathing room), title has no use for it. */
+#l0-title{display:flex;flex-direction:column;padding-bottom:0}
+.titleMain{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
 
 /* the shared .masthead h1/p sizing (above, under LEVEL 1) already reads as
    a cover page rather than a grid caption; intro pages only need the width
@@ -337,28 +365,67 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .introNext svg{width:22px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
 
-/* the title page's primary CTA — a white pill matching .demogLink's
-   established look, centered with the rest of the (otherwise left-aligned)
-   masthead copy rather than sharing its alignment. h1/p carry their own
-   max-width (16em/32em) for line length, which narrows their own box but
-   doesn't center that box — text-align:center only centers text *within*
-   a box, so without margin:auto here they'd sit flush-left inside the
-   wider, truly-centered .masthead despite reading centered internally. */
-#l0-title .masthead{text-align:center}
-#l0-title .masthead h1{margin-left:auto;margin-right:auto}
-#l0-title .masthead p{color:#fff;font-size:19px;margin-left:auto;margin-right:auto}
+/* title head — eyebrow + headline, centered, sitting on the plain white/grid
+   background rather than inside .masthead (whose light-on-dark defaults are
+   wrong here). Larger and in --theme-blue (the Governance theme's blue, not
+   the darker --home navy the rest of L0 uses) per the redesign. */
+.titleHead{padding:30px 22px 18px;text-align:center}
+.titleHead .eyebrow{color:color-mix(in srgb,var(--theme-blue) 70%,transparent)}
+.titleHead h1{
+  font-family:var(--geom);font-weight:700;
+  font-size:clamp(36px,10.5vw,52px);line-height:1.05;
+  letter-spacing:-.02em;color:var(--theme-blue);
+  margin:10px auto 0;max-width:13em;
+}
+
+/* the Sisters mountain skyline — full width, height-clamped so it can't
+   take over the page on a tall/wide viewport. object-position anchors on
+   the peaks (the source image fades to transparent above them) so cropping
+   for the height clamp trims empty sky, never the mountains themselves. */
+.titleImg{
+  display:block;width:100%;
+  height:clamp(220px,52vw,400px);
+  object-fit:cover;object-position:center bottom;
+}
+
+/* description + CTA + subtitle — always the last thing on the page. On
+   mobile, .titleMain above is flex:1, so this (the flex column's other
+   child) is pushed to the bottom of the viewport regardless of how much or
+   little sits in .titleMain, rather than floating mid-page on a short
+   head/image; the desktop override below (min-width:660px) cancels that
+   grow so this just follows in normal flow instead. */
+.titleBottom{
+  padding:22px 22px 34px;text-align:center;
+}
+.titleBottom p{
+  font-size:17px;line-height:1.5;font-weight:500;
+  color:var(--theme-blue);
+  margin:0 auto 20px;max-width:30em;
+}
+.titleHighlight{color:#E76E50}
 .diveIn{
-  display:inline-block;margin-top:18px;
-  background:#fff;color:var(--home);
-  padding:12px 26px;border-radius:999px;
-  font-family:var(--geom);font-weight:600;font-size:19px;
-  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  display:block;width:100%;max-width:420px;margin:0 auto;
+  background:var(--theme-blue);color:#fff;
+  padding:19px 26px;border-radius:999px;
+  font-family:var(--geom);font-weight:700;font-size:21px;
+  box-shadow:0 10px 26px color-mix(in srgb,var(--theme-blue) 45%,transparent);
   transition:transform .15s ease;
 }
-.diveIn:active{transform:scale(.96)}
+.diveIn:active{transform:scale(.97)}
+.diveSub{
+  display:inline-block;margin-top:14px;font-size:14.5px;
+  color:var(--theme-blue);text-decoration:underline;
+}
 @media (min-width:660px){
-  #l0-title .masthead p{font-size:21px}
-  .diveIn{font-size:21px}
+  /* mobile pins .titleBottom to the viewport bottom via .titleMain's
+     flex:1 grow; desktop instead centers the whole stack (.titleMain +
+     .titleBottom together) as a group in the viewport — flex:none stops
+     .titleMain from eating the extra space, and justify-content:center on
+     the column centers what's left of it. */
+  #l0-title{justify-content:center}
+  .titleMain{flex:none}
+  .titleBottom p{font-size:19px}
+  .diveIn{font-size:22px;padding:21px 26px}
 }
 
 /* ─────────────────────────────────────────────
@@ -432,9 +499,13 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   .gCount{font-size:14px}
   .gTagline{font-size:19px}
   /* the desktop gutter otherwise tints navy (body's --c fallback, correct
-     for title/demogs) while Groups' own content is white — keep them
-     matched only there */
+     for demogs) while Groups' own content is white — keep them matched
+     only there */
   body.groups-page{background:var(--paper)}
+  /* same deal for the title cover page, but gridded like #l0-title itself
+     (above, under LEVEL 0) rather than flat white, so the gutter reads as
+     more of the same page instead of a plain border around it */
+  body.title-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
 }
 
 /* ─────────────────────────────────────────────

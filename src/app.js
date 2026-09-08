@@ -1076,9 +1076,11 @@ function route() {
     const intro = INTRO_PAGES.find(p => p.key === key) || INTRO_PAGES[0];
     close();
     updateNavBar(intro.key);
-    // only Groups is a white page — this is what keeps the desktop gutter
-    // matched to whichever intro page is actually showing (see app.css)
+    // Groups and Title are the two light intro pages — this is what keeps
+    // the desktop gutter matched to whichever intro page is actually
+    // showing (see body.groups-page/.title-page in app.css)
     document.body.classList.toggle('groups-page', intro.key === 'groups');
+    document.body.classList.toggle('title-page', intro.key === 'title');
     INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = p === intro ? '' : 'none'; });
     $('#l1').style.display = 'none';
     $('#l2').classList.remove('on');
