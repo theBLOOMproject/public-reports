@@ -606,10 +606,13 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .icStats{display:flex;gap:10px}
 .icStat{flex:1;min-width:0}
 /* color is set inline per stat — it encodes the %-agree value itself
-   (0-33 red · 33-67 amber · 67-100 green), not which group it is */
+   (0-33 red · 33-67 amber · 67-100 green), not which group it is. A group
+   under MIN_GROUP_VOTES still gets a real color, just a .lowFlag marker
+   appended next to the number (see LOW-DATA FLAG below). */
 .icStat .icVal{
   font-family:var(--geom);font-weight:700;font-size:19px;
   margin-bottom:1px;
+  display:inline-flex;align-items:center;gap:4px;
 }
 .icStat .icLabel{
   font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
@@ -618,6 +621,36 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .icStat .icBarTrack{height:3px;border-radius:2px;background:color-mix(in srgb,var(--ink) 10%,transparent)}
 .icStat .icBarFill{height:100%;border-radius:2px}
+
+/* ─── LOW-DATA FLAG ────────────────────────────────────────────────
+   Sits inline next to one group's %-agree number — the card's .icVal or
+   the L3 modal's .grow .top b — when that group has fewer than
+   MIN_GROUP_VOTES votes. The number stays fully color-coded; this just
+   flags it as thin. Hover/focus reveals the exact vote count. */
+.lowFlag{
+  position:relative;
+  display:inline-flex;
+  font-size:12px;line-height:1;
+  cursor:default;
+}
+.lowFlag::after{
+  content:attr(data-tip);
+  position:absolute;
+  bottom:calc(100% + 7px);
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--home);
+  color:#fff;
+  font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.03em;
+  white-space:nowrap;
+  padding:5px 9px;
+  border-radius:6px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .15s ease;
+  z-index:30;
+}
+.lowFlag:hover::after,.lowFlag:focus-visible::after{opacity:1}
 
 /* ─── All Statements ──────────────────────────────────────────────── */
 .allStatements{padding:38px 22px 4px}
