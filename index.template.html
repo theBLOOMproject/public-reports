@@ -100,6 +100,40 @@
     <div class="lane listView" id="consensusLane"></div>
   </main>
 
+  <main class="introPage" id="l0-cta">
+    <img class="ctaImg" src="static/sisters_bg.png" alt="" aria-hidden="true">
+    <div class="masthead">
+      <div class="eyebrow label">Central Oregon &amp; AI</div>
+      <h1>Now, it's time to act for the future of our communities.</h1>
+      <p>We're organizing a "civic assembly" in December, where 40 residents will develop policies to make sure the public has a meaningful role in AI-related decisions. <span class="ctaHighlight">You are invited to participate</span>, here or in other upcoming forums.</p>
+    </div>
+    <div class="ctaActions">
+      <a class="ctaPrimary" id="ctaSignup" href="https://bloomproject.typeform.com/to/C1N3LI7g?utm_source=report" target="_blank" rel="noopener">Sign up for the Assembly</a>
+      <button class="ctaSecondary" id="ctaShare" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 10.3L17 2.7l-4.3 14.7-2.9-6-7.3-1.1z"/></svg>
+        Share this with a friend
+      </button>
+      <button class="ctaSecondary" id="ctaExplore" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="11" width="4" height="7" rx="1"/><rect x="8" y="6" width="4" height="12" rx="1"/><rect x="14" y="2" width="4" height="16" rx="1"/></svg>
+        Explore the Data
+      </button>
+    </div>
+  </main>
+
+  <!-- ══ SHARE MODAL ══ -->
+  <div id="sharedetail" role="dialog" aria-modal="true" aria-label="Share this report" aria-hidden="true">
+    <div class="scrim" id="shareScrim"></div>
+    <div class="shareCard">
+      <button class="closeb" id="shareCloseb" aria-label="Close">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5l11 11M13.5 2.5l-11 11" stroke-linecap="round"/></svg>
+      </button>
+      <h2>Share this with a friend</h2>
+      <p>Copy the link below and pass it along.</p>
+      <input class="shareUrl" id="shareUrl" type="text" value="https://report.bloomproject.us/central-oregon-ai" readonly aria-label="Report URL">
+      <button class="shareCopy" id="shareCopyBtn" type="button">Copy Link</button>
+    </div>
+  </div>
+
   <!-- ══ LEVEL 1 ══ -->
   <main id="l1">
     <div class="masthead">

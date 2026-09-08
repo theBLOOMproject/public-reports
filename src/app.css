@@ -178,6 +178,12 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   background:linear-gradient(180deg,color-mix(in srgb,var(--agree) 60%,#000) 0%,var(--agree) 20%);
   color:#fff;
 }
+/* Call to Action — the lighter --theme-blue (matching CTA.jpg's own
+   background, sampled at #1a3d8f — close kin to --theme-blue, not the
+   darker --home every other dark intro page uses), with .ctaImg (below)
+   pinned across the bottom of it. position:relative so .ctaImg's
+   position:absolute has this as its containing block on mobile. */
+#l0-cta{position:relative;overflow:hidden;background:var(--theme-blue);color:#fff}
 /* title is its own top-to-bottom flex column rather than sharing .masthead
    with the other intro pages: .titleMain (head copy + mountain image) is
    flex:1 and centers its own content vertically within whatever space is
@@ -207,6 +213,120 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    26em cap above so the (now longer, two-sentence) subtitle runs the full
    width of the column instead of wrapping narrow. */
 #l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink);max-width:none}
+
+/* the shared .masthead p is dimmed (rgba(255,255,255,.5)) for the other
+   dark intro pages — CTA.jpg's own body copy is full-opacity white, so
+   this is the one dark page that needs it turned back up. .ctaHighlight
+   wraps "You are invited to participate" per the mock's one accented
+   clause — --gold rather than a new one-off yellow, matching the
+   Demographics page's own accent token. */
+#l0-cta .masthead p{color:#fff}
+.ctaHighlight{color:var(--gold);font-weight:600}
+/* centered both axes — display:flex column + justify-content:center
+   handles vertical (within whatever space .masthead's own flex:1 grow,
+   below, gives it); text-align:center plus centering h1/p's own boxes
+   (not just the text inside them) handles horizontal */
+#l0-cta .masthead{
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+}
+#l0-cta .masthead h1{max-width:15em;margin-left:auto;margin-right:auto}
+#l0-cta .masthead p{max-width:30em;margin-left:auto;margin-right:auto}
+
+/* the Sisters mountain skyline, pinned across the bottom of the page —
+   position:fixed at the desktop breakpoint below is the same "full
+   viewport width regardless of .shell's 800px cap" trick .demogMap uses.
+   mix-blend-mode:luminosity is what actually produces "dark texture on
+   the blue background": it composites the image's own light/dark
+   structure against whatever's behind it (this page's --theme-blue)
+   rather than showing the photo's real colors, so the peaks/treeline read
+   as a duotone texture in the page's own blue instead of a bright photo
+   competing with the buttons above it. The brightness/contrast filter
+   before that blend keeps the result from washing out too light where the
+   snow is. The top mask fades the whole thing into the flat --theme-blue
+   above it rather than ending on a hard rectangular edge. */
+.ctaImg{
+  position:absolute;left:0;right:0;bottom:0;z-index:0;
+  width:100%;height:clamp(220px,55vw,420px);
+  object-fit:cover;object-position:center bottom;
+  filter:brightness(.55) contrast(1.15) saturate(1.4);
+  mix-blend-mode:luminosity;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 40%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 40%);
+  pointer-events:none;
+}
+/* desktop gets a different crop, not just the mobile one stretched wider:
+   a short box + object-position:top keeps only the source's peaks (which
+   sit near the top of the image — see the comment on .titleImg, the same
+   source file, for why) rather than the treeline/foreground .ctaImg's
+   mobile "center bottom" crop shows — so what's pinned to the page's
+   bottom edge is a thin sliver of peaks poking up, not a tall photo. Width
+   is capped (centered via left:50%/translateX) rather than stretched the
+   full, sometimes 1500px+, viewport — the source is a 430px-wide asset,
+   so a full-bleed stretch on a wide monitor was visibly soft; capping
+   keeps the upscale mild. */
+@media (min-width:660px){
+  .ctaImg{
+    position:fixed;
+    left:50%;right:auto;transform:translateX(-50%);
+    width:min(100%,1000px);
+    height:clamp(50px,8vw,110px);
+    object-position:center top;
+    mask-image:none;-webkit-mask-image:none;
+  }
+}
+
+/* copy + buttons sit above .ctaImg (z-index:0) — both need their own
+   stacking position since .ctaImg going position:fixed on desktop still
+   paints in DOM order otherwise. .ctaActions gets the same bottom-of-
+   viewport pin on mobile that .titleBottom uses, for the same reason
+   (buttons flush to the bottom regardless of how tall the copy above them
+   runs), and gives it up on desktop the same way (see the min-width:660px
+   override, mirroring .titleMain's own). */
+#l0-cta .masthead,.ctaActions{position:relative;z-index:1}
+#l0-cta{display:flex;flex-direction:column;padding-bottom:0}
+#l0-cta .masthead{flex:1}
+@media (min-width:660px){
+  #l0-cta .masthead{flex:none}
+}
+
+.ctaActions{
+  display:flex;flex-direction:column;gap:12px;
+  padding:0 22px 34px;
+}
+.ctaPrimary{
+  display:block;width:100%;text-align:center;text-decoration:none;
+  background:#EA8066;color:#fff;
+  padding:19px 26px;border-radius:999px;
+  font-family:var(--geom);font-weight:700;font-size:19px;
+  box-shadow:0 10px 26px rgba(0,0,0,.28);
+  transition:transform .15s ease;
+}
+.ctaPrimary:active{transform:scale(.97)}
+@media (hover:hover){
+  .ctaPrimary:hover{transform:translateY(-1px)}
+}
+.ctaSecondary{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  width:100%;
+  background:rgba(9,20,52,.82);color:#fff;
+  padding:16px 22px;border-radius:999px;
+  font-family:var(--geom);font-weight:700;font-size:16.5px;
+  box-shadow:0 4px 14px rgba(0,0,0,.22);
+  backdrop-filter:blur(6px);
+  transition:background .2s ease;
+}
+.ctaSecondary svg{width:18px;height:18px;fill:currentColor;flex:none}
+@media (hover:hover){
+  .ctaSecondary:hover{background:rgba(9,20,52,.95)}
+}
+@media (min-width:660px){
+  .ctaPrimary{font-size:21px}
+  .ctaSecondary{font-size:18px}
+  /* the pills stop stretching the full 800px column on desktop and
+     center as a narrower stack instead, "with the rest of it" */
+  .ctaPrimary,.ctaSecondary{max-width:440px;margin-left:auto;margin-right:auto}
+}
 
 /* the county map — a sibling of .masthead, not inside it. Full-bleed behind
    the whole page: real Oregon county geometry (data/oregon-counties.json)
@@ -547,6 +667,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
      (above, under LEVEL 0), so the gutter reads as more of the same page
      instead of a plain border around it */
   body.title-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
+  /* CTA's gutter matches its own --theme-blue rather than the --home the
+     body fallback would otherwise paint there */
+  body.cta-page{background:var(--theme-blue)}
 }
 
 /* ─────────────────────────────────────────────
@@ -1070,6 +1193,61 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 /* the reference/comparison number, muted a step below the poll's own
    headline figure so the eye lands on IN POLL first */
 .ddPctActual{font-weight:500;color:color-mix(in srgb,var(--ink) 55%,transparent)}
+
+/* ─────────────────────────────────────────────
+   SHARE MODAL
+   Opened from the Call to Action page's "Share this with a friend" button
+   (openShare()/closeShare()/copyShareLink() in app.js). A one-off small
+   dark-blue sheet rather than the .card/.cardtop/.cardbody shell L3/
+   #gdetail/#ddetail share — there's no paging or tabs here, just a fixed
+   URL and a copy button, so the heavier shared shell would be more
+   structure than the content needs.
+   ───────────────────────────────────────────── */
+#sharedetail{display:none;position:fixed;inset:0;z-index:60}
+#sharedetail.on{display:block}
+.shareCard{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:calc(100% - 44px);max-width:420px;
+  background:var(--home);color:#fff;
+  border-radius:22px;
+  padding:26px 24px 24px;
+  box-shadow:0 22px 60px rgba(0,0,0,.4);
+  animation:cardIn .34s cubic-bezier(.2,.85,.3,1) both;
+}
+.shareCard h2{
+  font-family:var(--geom);font-weight:700;font-size:22px;
+  margin:0 0 6px;padding-right:30px;
+}
+.shareCard p{
+  color:rgba(255,255,255,.7);
+  font-size:14.5px;line-height:1.4;
+  margin:0 0 18px;
+}
+.shareCard .closeb{position:absolute;top:16px;right:16px;color:#fff}
+.shareCard .closeb:hover{background:rgba(255,255,255,.14)}
+/* readonly, not disabled — still focusable/selectable (for a manual
+   select-and-copy fallback) even though its value can't be edited */
+.shareUrl{
+  display:block;width:100%;
+  background:rgba(255,255,255,.1);color:#fff;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:12px;
+  padding:13px 14px;
+  font-family:var(--mono);font-size:13.5px;
+  margin-bottom:14px;
+}
+.shareUrl:focus{outline:2px solid rgba(255,255,255,.6);outline-offset:1px}
+.shareCopy{
+  display:block;width:100%;text-align:center;
+  background:var(--gold);color:var(--home);
+  padding:14px 22px;border-radius:999px;
+  font-family:var(--geom);font-weight:700;font-size:16px;
+  transition:transform .15s ease;
+}
+.shareCopy:active{transform:scale(.97)}
+@media (hover:hover){
+  .shareCopy:hover{transform:translateY(-1px)}
+}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}

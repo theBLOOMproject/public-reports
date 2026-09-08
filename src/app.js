@@ -189,6 +189,7 @@ const INTRO_PAGES = [
   { key: 'demogs', id: 'l0-demogs' },
   { key: 'groups', id: 'l0-groups' },
   { key: 'consensus', id: 'l0-consensus' },
+  { key: 'cta', id: 'l0-cta' },
 ];
 
 // participant-locations.json's cities become clickable markers over real
@@ -526,6 +527,44 @@ function renderDemogTab() {
     list.append(r);
   });
   body.append(list);
+}
+
+/* ─── SHARE MODAL ─────────────────────────────────────── */
+// Opened from the Call to Action page's "Share this with a friend" button.
+// The URL is a fixed constant (the report's own published address), not
+// derived from location.href — the report can be viewed from a preview
+// deploy or a local build, and what's meant to be shared is always the
+// canonical published URL regardless of where this particular load came
+// from.
+const SHARE_URL = 'https://report.bloomproject.us/central-oregon-ai';
+let shareCopyResetTimer = null;
+
+function openShare() {
+  $('#sharedetail').classList.add('on');
+  $('#sharedetail').setAttribute('aria-hidden', 'false');
+  $('#shareCloseb').focus({ preventScroll: true });
+}
+
+function closeShare() {
+  $('#sharedetail').classList.remove('on');
+  $('#sharedetail').setAttribute('aria-hidden', 'true');
+}
+
+// navigator.clipboard is unavailable over plain http (some local previews);
+// selecting the (read-only, but still selectable) text field and falling
+// back to execCommand covers that case so the button still does something.
+async function copyShareLink() {
+  try {
+    await navigator.clipboard.writeText(SHARE_URL);
+  } catch {
+    const input = $('#shareUrl');
+    input.select();
+    try { document.execCommand('copy'); } catch { /* nothing more to try */ }
+  }
+  const btn = $('#shareCopyBtn');
+  btn.textContent = 'Copied!';
+  clearTimeout(shareCopyResetTimer);
+  shareCopyResetTimer = setTimeout(() => { btn.textContent = 'Copy Link'; }, 1800);
 }
 
 // group-info.json is a hand-maintained snapshot (see its own _readme for
@@ -1012,6 +1051,7 @@ const NAV_BAR_LABELS = {
   demogs: 'Who participated?',
   groups: 'Opinion Groups',
   consensus: 'Consensus',
+  cta: 'Call to Action',
   themes: 'Data Explorer',
 };
 const NAV_SEQUENCE = INTRO_PAGES.map(p => p.key).concat('themes');
@@ -1065,15 +1105,17 @@ function navBarStep(delta) {
 // to. "" resolves to INTRO_PAGES[0] (title) below, same as any unrecognized
 // key: an unknown link falls back to the actual homepage, not the grid.
 function route() {
-  // #gdetail/#ddetail are floating overlays independent of whichever page
-  // opened them (unlike #l3, which route() already closes per-branch below)
-  // — without this they'd stay visibly open over whatever page you navigate
-  // to next, since nothing else ever closes them. The demog hover tooltip
-  // doesn't need this — it's nested inside #l0-demogs, so hideIntroPages()
-  // already hides it along with the rest of that page — but clearing its
-  // state too avoids it appearing "already open" if you navigate back.
+  // #gdetail/#ddetail/#sharedetail are floating overlays independent of
+  // whichever page opened them (unlike #l3, which route() already closes
+  // per-branch below) — without this they'd stay visibly open over
+  // whatever page you navigate to next, since nothing else ever closes
+  // them. The demog hover tooltip doesn't need this — it's nested inside
+  // #l0-demogs, so hideIntroPages() already hides it along with the rest
+  // of that page — but clearing its state too avoids it appearing
+  // "already open" if you navigate back.
   closeGroup();
   closeDemog();
+  closeShare();
   demogHoverShow(null);
   // no mode segment anymore — split()[0] also means an old bookmarked
   // #/{themeKey}/map (or /list, /quotes) link still lands on the right
@@ -1083,7 +1125,7 @@ function route() {
   if (key === 'themes') {
     close();
     updateNavBar('themes');
-    document.body.classList.remove('groups-page');
+    document.body.classList.remove('groups-page', 'title-page', 'cta-page');
     const back = state.theme !== null;
     hideIntroPages();
     $('#l2').classList.remove('on');
@@ -1101,11 +1143,13 @@ function route() {
     const intro = INTRO_PAGES.find(p => p.key === key) || INTRO_PAGES[0];
     close();
     updateNavBar(intro.key);
-    // Groups and Title are the two light intro pages — this is what keeps
-    // the desktop gutter matched to whichever intro page is actually
-    // showing (see body.groups-page/.title-page in app.css)
+    // Groups and Title are the two light intro pages, and CTA is the one
+    // on --theme-blue rather than --home — this is what keeps the desktop
+    // gutter matched to whichever intro page is actually showing (see
+    // body.groups-page/.title-page/.cta-page in app.css)
     document.body.classList.toggle('groups-page', intro.key === 'groups');
     document.body.classList.toggle('title-page', intro.key === 'title');
+    document.body.classList.toggle('cta-page', intro.key === 'cta');
     INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = p === intro ? '' : 'none'; });
     $('#l1').style.display = 'none';
     $('#l2').classList.remove('on');
@@ -1160,9 +1204,18 @@ $('#dPrev').onclick = () => pageDemog(-1);
 $('#dNext').onclick = () => pageDemog(1);
 $('#demogReset').onclick = resetDemogMap;
 $('#diveIn').onclick = () => { location.hash = '#/demogs'; };
+$('#ctaExplore').onclick = () => { location.hash = '#/themes'; };
+$('#ctaShare').onclick = openShare;
+$('#shareCloseb').onclick = closeShare;
+$('#shareScrim').onclick = closeShare;
+$('#shareCopyBtn').onclick = copyShareLink;
 $('#pageBarBack').onclick = () => navBarStep(-1);
 $('#pageBarNext').onclick = () => navBarStep(1);
 addEventListener('keydown', e => {
+  if ($('#sharedetail').classList.contains('on')) {
+    if (e.key === 'Escape') { closeShare(); e.preventDefault(); }
+    return;
+  }
   if ($('#ddetail').classList.contains('on')) {
     if (e.key === 'Escape') { closeDemog(); e.preventDefault(); }
     if (e.key === 'ArrowRight') { pageDemog(1); e.preventDefault(); }
