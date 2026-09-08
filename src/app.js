@@ -602,6 +602,7 @@ function renderGroupPage() {
 
   if (gstate.page === 0) {
     const wrap = el('div', 'gdDesc');
+    wrap.append(el('h4', 'gdDescHead', 'Brief Description'));
     wrap.append(el('p', 'gdText', g.description || ''));
     body.append(wrap);
   } else {
@@ -617,15 +618,14 @@ function renderGroupPage() {
     // rather than sitting wherever DATA.groups' own A/B/C order puts it.
     const m = el('div', 'meta');
     const p = el('section');
-    p.append(el('h4', null, 'Open Poll Responses'));
-    p.append(el('div', 'gdVoteCount', r.vote.total + ' votes'));
+    p.append(el('h4', null, 'Open Poll Responses (' + r.vote.total + ' votes)'));
     const rows = groupsOf(r.vote);
     rows.sort((a, b) => (a.key === gstate.key) === (b.key === gstate.key) ? 0 : a.key === gstate.key ? -1 : 1);
     rows.forEach(gr => {
       const row = el('div', gr.key === gstate.key ? 'grow current' : 'grow');
       const top = el('div', 'top');
-      top.append(el('span', null, groupTag(gr)));
-      top.append(el('b', null, gr.pct + '% agree'));
+      top.append(el('span', null, groupTag(gr) + ': '));
+      top.append(el('b', null, gr.pct + '% AGREE'));
       row.append(top);
       const bar = el('div', 'bar');
       const tot = Math.max(1, gr.n);

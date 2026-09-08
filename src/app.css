@@ -152,7 +152,14 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   position:relative;min-height:100vh;min-height:100dvh;padding-bottom:100px;
 }
 #l0-demogs{background:var(--home);color:#fff}
-#l0-groups{background:var(--paper);color:var(--ink)}
+/* white with the same faint hairline grid #l0-title uses (--grid-bg,
+   TOKENS above) — the group cards' own solid gradients sit on top of it,
+   same as #l0-title's content sits on top of its grid */
+#l0-groups{
+  background-color:var(--paper);color:var(--ink);
+  background-image:var(--grid-bg);
+  background-size:var(--grid-size);
+}
 /* title cover page — white, with a faint grid (--grid-bg, TOKENS above) so
    the page doesn't read as bare. Two 1px hairline gradients rather than an
    SVG/pattern asset, so it scales with the color tokens and needs no extra
@@ -193,10 +200,13 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .introPage .masthead p{max-width:26em}
 
 #l0-groups .masthead .eyebrow{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+#l0-groups .masthead h1{color:var(--home)}
 /* Geom + solid ink per design call — the shared .masthead p rule (light,
    body-font) is right for a dark background but reads as unreadable here,
-   the one .introPage that isn't dark */
-#l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink)}
+   the one .introPage that isn't dark. max-width:none overrides the shared
+   26em cap above so the (now longer, two-sentence) subtitle runs the full
+   width of the column instead of wrapping narrow. */
+#l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink);max-width:none}
 
 /* the county map — a sibling of .masthead, not inside it. Full-bleed behind
    the whole page: real Oregon county geometry (data/oregon-counties.json)
@@ -352,26 +362,32 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   padding:14px 22px 20px;
   display:flex;flex-direction:column;gap:14px;
 }
-/* a plain bordered card per group — the outline is the only thing carrying
-   the group's color; everything else on the card is black/gray so the
-   name (the one colored line) is what actually draws the eye */
+/* a solid gradient card per group, per the OpinionGroups.jpg redesign — top
+   to bottom, and barely darker at the top than the group's own --c (a
+   sheen, not a trip through --home navy), so the card still reads as
+   "this group's color" rather than a different color entirely. Everything
+   on the card is white/translucent-white now that the fill itself carries
+   the group's color, rather than a plain-white card with just a colored
+   outline/name. */
 .gbubble{
   display:block;width:100%;text-align:left;
-  background:none;
-  border:1.5px solid color-mix(in srgb,var(--c,var(--home)) 55%,#fff);
-  border-radius:16px;
-  padding:16px 18px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c,var(--home)) 82%,#000) 0%,var(--c,var(--home)) 100%);
+  border-radius:22px;
+  padding:22px 24px 24px;
+  box-shadow:0 10px 26px rgba(0,0,0,.22);
   animation:tallyIn .5s cubic-bezier(.2,.8,.3,1) both;
 }
-.gName{font-family:var(--geom);font-weight:700;font-size:21px;color:var(--c,var(--home))}
+.gName{font-family:var(--geom);font-weight:700;font-size:26px;color:#fff}
 .gCount{
-  font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(0,0,0,.5);margin-top:4px;
+  display:inline-block;margin-top:9px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#fff;background:rgba(255,255,255,.22);
+  padding:5px 12px;border-radius:999px;
 }
 .gTagline{
-  font-style:italic;color:rgba(0,0,0,.65);
-  font-size:17px;line-height:1.4;
-  margin:10px 0 0;
+  color:rgba(255,255,255,.92);
+  font-size:16.5px;line-height:1.45;
+  margin:14px 0 0;
 }
 
 /* the "continue to the next intro page" bubble — same position/style on
@@ -520,16 +536,16 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 
 @media (min-width:660px){
   .groupBubbles{padding:20px 22px 30px;gap:16px}
-  .gName{font-size:24px}
+  .gName{font-size:30px}
   .gCount{font-size:14px}
   .gTagline{font-size:19px}
   /* the desktop gutter otherwise tints navy (body's --c fallback, correct
-     for demogs) while Groups' own content is white — keep them matched
-     only there */
-  body.groups-page{background:var(--paper)}
-  /* same deal for the title cover page, but gridded like #l0-title itself
-     (above, under LEVEL 0) rather than flat white, so the gutter reads as
-     more of the same page instead of a plain border around it */
+     for demogs) while Groups' own content is white and gridded — keep them
+     matched only there, same treatment title's own gutter gets below */
+  body.groups-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
+  /* same deal for the title cover page, gridded like #l0-title itself
+     (above, under LEVEL 0), so the gutter reads as more of the same page
+     instead of a plain border around it */
   body.title-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
 }
 
@@ -901,21 +917,24 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   font-family:var(--geom);font-weight:700;font-size:16px;letter-spacing:0;text-transform:none;
   color:var(--ink);
 }
-#gdetail .gdVoteCount{
-  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(0,0,0,.55);
-  margin:2px 0 14px;
-}
-#gdetail .grow .top{align-items:center}
+/* the label and its %agree read as one line — "Optimists: 4% AGREE" —
+   rather than the shared .grow .top's space-between layout (label left,
+   number pinned right), so the group name and its number sit together */
+#gdetail .grow .top{align-items:center;justify-content:flex-start;gap:0}
 #gdetail .grow .top span{color:var(--ink)}
 #gdetail .grow .top b{color:var(--ink)}
-/* the current group's label is a small solid badge (white on theme color)
-   instead of plain colored text, and a touch larger than the others */
-#gdetail .grow.current .top span{
+/* the current group's whole line — not just the name — is a small solid
+   badge (white on theme color) instead of plain colored text, so
+   "Optimists: 4% AGREE" reads as one pill rather than a badge next to
+   plain trailing text */
+#gdetail .grow.current .top{
+  display:inline-flex;
   color:#fff;background:var(--c);
-  padding:3px 9px;border-radius:999px;
+  padding:4px 11px;border-radius:999px;
   font-size:11.5px;
 }
+#gdetail .grow.current .top span,
+#gdetail .grow.current .top b{color:#fff}
 #gdetail .ddTitle{color:var(--c)}
 #gdetail .quotewrap blockquote{color:var(--ink)}
 #gdetail .bar{height:8px}
@@ -953,12 +972,14 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    only the bits specific to this modal (header, description page, and the
    clickable bubble it opens from) get their own rules.
    ───────────────────────────────────────────── */
-.gbubble{cursor:pointer;transition:background .2s ease,transform .15s ease}
+.gbubble{cursor:pointer;transition:transform .15s ease,box-shadow .2s ease}
 @media (hover:hover){
-  .gbubble:hover{background:color-mix(in srgb,var(--c,var(--home)) 6%,transparent)}
+  .gbubble:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,0,0,.3)}
 }
 .gbubble:active{transform:scale(.98)}
-.gbubble.sel{background:color-mix(in srgb,var(--c,var(--home)) 10%,transparent)}
+/* a white ring instead of a background tint, since the background is now
+   the group's own gradient rather than plain white */
+.gbubble.sel{box-shadow:0 0 0 3px rgba(255,255,255,.65),0 14px 32px rgba(0,0,0,.3)}
 
 #gdetail{display:none;position:fixed;inset:0;z-index:60}
 #gdetail.on{display:block}
@@ -969,6 +990,11 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    pill is positioned fine as-is */
 .gcHead{display:flex;flex-direction:column;gap:2px;min-width:0;padding-left:8px}
 .gdDesc{padding:28px 22px 26px}
+.gdDescHead{
+  font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--c) 65%,transparent);
+  margin:0 0 10px;
+}
 .gdText{
   margin:0;color:var(--ink);
   font-family:var(--geom);font-weight:600;
