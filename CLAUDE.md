@@ -9,11 +9,16 @@ has both code and data; the data is for the Oregon COCAP engagement - six listen
 one open Polis-style poll. It is published as a static GitHub Pages site — `main` deploys on push via
 `.github/workflows/pages.yml`.
 
+It is served from `report.bloomproject.us`: the report at `/central-oregon-ai/`, with the
+site root and any unmatched path redirecting to bloom-project.org. The custom domain is a
+repo Settings value — a workflow-published Pages site ignores a `CNAME` file, so nothing in
+the repo configures it.
+
 ## Commands
 
 ```sh
 node build.js                                  # build dist/
-node build.js && (cd dist && python3 -m http.server 8000)   # local preview at :8000
+node build.js && (cd dist && python3 -m http.server 8000)   # preview at :8000/central-oregon-ai/
 
 node scripts/refresh-poll.js --help                   # options, and what it will/won't touch
 node scripts/refresh-poll.js --step <uuid>            # pull fresh votes from Polis

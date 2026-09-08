@@ -4,16 +4,21 @@
 //   node build.js
 //
 // Inlines src/app.css, src/app.js and data/*.json into index.template.html to
-// produce a single self-contained dist/index.html, and copies the static assets
-// alongside it. dist/ is gitignored and rebuilt on every deploy; only what lands
-// in dist/ is published, so repo sources stay out of the public site.
+// produce a single self-contained index.html under dist/<SITE_PATH>/, and copies the
+// static assets alongside it. The dist/ root gets a redirect stub instead, since the
+// published site's root belongs to the main Bloom site, not to this report.
+// dist/ is gitignored and rebuilt on every deploy; only what lands in dist/ is
+// published, so repo sources stay out of the public site.
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = __dirname;
 const TEMPLATE = path.join(ROOT, 'index.template.html');
 const DIST = path.join(ROOT, 'dist');
-const OUTPUT = path.join(DIST, 'index.html');
+const SITE_PATH = 'central-oregon-ai';
+const SITE_DIR = path.join(DIST, SITE_PATH);
+const OUTPUT = path.join(SITE_DIR, 'index.html');
+const REDIRECT_TO = 'https://bloom-project.org/';
 
 // Theme membership is derived: a record belongs to every theme that lists one of its
 // tags. A record carrying no tag any theme claims does not land somewhere wrong — it
@@ -294,6 +299,25 @@ function renderBlock({ file, kind, check }) {
   return escapeJsonForScriptTag(JSON.stringify(data));
 }
 
+// Pages serves static files only — it cannot issue a 301 — so the site root and every
+// unmatched path get this stub instead. location.replace rather than an href assignment:
+// it leaves no history entry, so Back does not land the visitor right back on the redirect.
+function redirectStub() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bloom Project</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="${REDIRECT_TO}">
+<meta http-equiv="refresh" content="0; url=${REDIRECT_TO}">
+<script>location.replace(${JSON.stringify(REDIRECT_TO)});</script>
+</head>
+<body><p>Redirecting to <a href="${REDIRECT_TO}">bloom-project.org</a>.</p></body>
+</html>
+`;
+}
+
 function build() {
   let html = fs.readFileSync(TEMPLATE, 'utf8');
 
@@ -311,14 +335,19 @@ function build() {
   if (leftover) throw new Error(`unreplaced placeholder ${leftover[0]}`);
 
   fs.rmSync(DIST, { recursive: true, force: true });
-  fs.mkdirSync(DIST, { recursive: true });
+  fs.mkdirSync(SITE_DIR, { recursive: true });
   fs.writeFileSync(OUTPUT, html);
-  fs.cpSync(path.join(ROOT, 'static'), path.join(DIST, 'static'), { recursive: true });
+  fs.cpSync(path.join(ROOT, 'static'), path.join(SITE_DIR, 'static'), { recursive: true });
   // Belt and braces: dist/ is published via the Actions artifact, which does not
   // run Jekyll, but this keeps the output correct if the source ever changes back.
   fs.writeFileSync(path.join(DIST, '.nojekyll'), '');
 
-  console.log(`built dist/index.html (${Buffer.byteLength(html)} bytes)`);
+  const stub = redirectStub();
+  fs.writeFileSync(path.join(DIST, 'index.html'), stub);
+  fs.writeFileSync(path.join(DIST, '404.html'), stub);
+
+  console.log(`built dist/${SITE_PATH}/index.html (${Buffer.byteLength(html)} bytes)`);
+  console.log(`  dist/{index,404}.html -> ${REDIRECT_TO}`);
 }
 
 try {
