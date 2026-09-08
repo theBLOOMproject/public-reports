@@ -205,6 +205,19 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    cheap defensive insurance on top of d3-zoom's own translateExtent clamp. */
 .demogMap{position:absolute;inset:0;overflow:hidden;z-index:1}
 .demogMap > svg{display:block;width:100%;height:100%}
+@media (min-width:660px){
+  /* on the roomier desktop layout the map breaks out of .shell's 800px cap
+     to fill the actual browser window: position:fixed's containing block is
+     the viewport, not the nearest positioned ancestor (#l0-demogs), so
+     inset:0 here means the full window instead of the 800px column. The
+     masthead eyebrow band and the 400+ stat block stay put, still centered
+     in the column, layered on top via their own z-index:2 (below) — that
+     comparison still resolves correctly since nothing between here and the
+     document root establishes a new stacking context. fitDemogMap()'s
+     ResizeObserver already refits the projection to whatever box this
+     resolves to, so no JS change is needed for the wider box. */
+  .demogMap{position:fixed}
+}
 
 /* county fill/stroke — vector-effect:non-scaling-stroke keeps the boundary
    lines a constant screen width across zoom levels, the CSS-only half of
