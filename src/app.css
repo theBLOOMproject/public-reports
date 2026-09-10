@@ -304,8 +304,10 @@ body.demogs-page .shell{padding-bottom:0}
    bottom — "up with the rest of the content", per design call. Zeroing the
    shared .introPage bottom padding (general breathing room on other
    pages), title has no use for it. */
-#l0-title{display:flex;flex-direction:column;padding-bottom:0}
-.titleMain{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+/* head + image + description stack tightly and centre as one group in the
+   viewport — same at every width now */
+#l0-title{display:flex;flex-direction:column;justify-content:center;padding-bottom:0}
+.titleMain{flex:none;display:flex;flex-direction:column;min-height:0}
 
 /* the shared .masthead h1/p sizing (above, under LEVEL 1) already reads as
    a cover page rather than a grid caption; intro pages only need the width
@@ -612,7 +614,7 @@ body.demogs-page .shell{padding-bottom:0}
    background rather than inside .masthead (whose light-on-dark defaults are
    wrong here). Larger and in --theme-blue (the Governance theme's blue, not
    the darker --home navy the rest of L0 uses) per the redesign. */
-.titleHead{padding:30px 22px 18px;text-align:center}
+.titleHead{padding:24px 22px 0;text-align:center}
 .titleHead h1{
   font-family:var(--geom);font-weight:700;
   font-size:clamp(36px,10.5vw,52px);line-height:1.05;
@@ -626,33 +628,32 @@ body.demogs-page .shell{padding-bottom:0}
    + height:auto), so it is never cropped in either direction — only its
    width changes between breakpoints. */
 .titleImg{
-  display:block;
+  display:block;flex:none;   /* a flex child of .titleMain — must not let
+                                flexbox shrink its height and squish it */
   width:100%;margin-inline:auto;
   aspect-ratio:1800/849;height:auto;
+  object-fit:cover;   /* crop, never stretch, if ever size-constrained */
 }
+.titleImg{margin-top:24px}
 @media (max-width:659px){
   /* oversized so it bleeds ~16% past each edge */
   .titleImg{width:132%;margin-inline:-16%}
 }
 @media (min-width:660px){
   /* contained and centred on desktop */
-  .titleImg{width:min(68%,620px);margin-top:26px}
+  .titleImg{width:min(68%,620px)}
 }
 .titleMain{overflow-x:clip}
 
-/* description + CTA + subtitle — always the last thing on the page. On
-   mobile, .titleMain above is flex:1, so this (the flex column's other
-   child) is pushed to the bottom of the viewport regardless of how much or
-   little sits in .titleMain, rather than floating mid-page on a short
-   head/image; the desktop override below (min-width:660px) cancels that
-   grow so this just follows in normal flow instead. */
+/* description + CTA — follows the image in the centred stack, with a
+   comfortable gap above it */
 .titleBottom{
-  padding:14px 22px 22px;text-align:center;
+  padding:34px 22px 24px;text-align:center;
 }
 .titleBottom p{
-  font-size:17px;line-height:1.45;font-weight:400;
+  font-size:17.5px;line-height:1.5;font-weight:400;
   color:var(--theme-blue);
-  margin:0 auto 14px;max-width:30em;
+  margin:0 auto 18px;max-width:32em;
 }
 .titleHighlight{color:#E76E50}
 .diveIn{
@@ -669,17 +670,8 @@ body.demogs-page .shell{padding-bottom:0}
   color:var(--theme-blue);text-decoration:underline;
 }
 @media (min-width:660px){
-  /* mobile pins .titleBottom to the viewport bottom via .titleMain's
-     flex:1 grow; desktop drops that so head + image + description stack
-     tightly together and centre as one group in the viewport (flex:none
-     stops .titleMain eating the slack; justify-content:center on the
-     column places the group). Everything is sized to clear the fold on a
-     laptop-height screen. */
-  #l0-title{justify-content:center}
-  .titleMain{flex:none}
-  .titleHead{padding:0 22px}
-  .titleBottom{padding:34px 22px 0;text-align:center}
-  .titleBottom p{font-size:19px;line-height:1.5;margin:0 auto 22px;max-width:34em}
+  /* the same centred stack, just larger type */
+  .titleBottom p{font-size:19px;margin-bottom:22px;max-width:34em}
   .diveIn{font-size:22px;padding:21px 26px}
   .diveSub{margin-top:14px}
 }
