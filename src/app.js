@@ -771,7 +771,10 @@ function buildCard(r, items) {
   card.append(who);
 
   const statsWrap = el('div', 'icStatsWrap');
-  statsWrap.append(el('div', 'icStatsCap', '% who agree, by opinion group'));
+  const statsCap = el('div', 'icStatsCap');
+  statsCap.append(el('span', 'capKey', '% who agree'));
+  statsCap.append(document.createTextNode(', by opinion group'));
+  statsWrap.append(statsCap);
   const stats = el('div', 'icStats');
   groupsOf(r.vote).forEach(g => {
     const pct = Math.max(0, Math.min(100, g.pct));
@@ -921,7 +924,7 @@ function open(view, idx) {
 
   const q = $('#s-text');
   q.textContent = '“' + r.text + '”';
-  q.style.setProperty('--qs', '30px');
+  q.style.setProperty('--qs', '28px');
 
   // meta panel
   const m = $('#s-meta');
@@ -937,13 +940,14 @@ function open(view, idx) {
   m.append(src);
 
   if (r.vote) {
-    const p = el('section');
+    const p = el('section', 'poll');
     p.append(el('h4', null, 'Open poll responses · ' + r.vote.total + ' votes'));
     groupsOf(r.vote).forEach(g => {
       const row = el('div', 'grow');
       const top = el('div', 'top');
-      top.append(el('span', null, g.label));
+      top.append(el('span', null, groupTag(g)));
       const bb = el('b', null, g.pct + '% agree');
+      bb.style.color = tierColorFor(g.pct);
       if (g.n < MIN_GROUP_VOTES) bb.append(lowDataFlag(g.n));
       top.append(bb);
       row.append(top);
@@ -958,21 +962,7 @@ function open(view, idx) {
       row.append(bar);
       p.append(row);
     });
-    const key = el('div', 'barkey');
-    [['d', 'Disagree'], ['p', 'Pass'], ['a', 'Agree']].forEach(([c, l]) => {
-      const s = el('span'); s.append(el('i', c)); s.append(document.createTextNode(l)); key.append(s);
-    });
-    p.append(key);
     m.append(p);
-  }
-
-  if (r.tags.length) {
-    const s = el('section');
-    s.append(el('h4', null, 'Tags'));
-    const w = el('div', 'tags');
-    r.tags.forEach(tg => w.append(el('i', null, tg)));
-    s.append(w);
-    m.append(s);
   }
 
   const n = view.length;
