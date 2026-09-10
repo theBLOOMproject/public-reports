@@ -1130,6 +1130,11 @@ function route() {
   closeDemog();
   closeShare();
   demogHoverShow(null);
+  // every navigation lands at the top of the destination page. The one
+  // exception — returning to the theme grid from a theme, which restores
+  // your scroll position in the grid — overrides this in the 'themes'
+  // branch below.
+  scrollTo({ top: 0, behavior: 'auto' });
   // no mode segment anymore — split()[0] also means an old bookmarked
   // #/{themeKey}/map (or /list, /quotes) link still lands on the right
   // theme; the trailing segment is simply ignored.
@@ -1189,7 +1194,6 @@ function route() {
   }
   updateNavBar(t.key);
   document.body.classList.remove('groups-page', 'themes-page', 'demogs-page');
-  const themeChanged = state.theme !== t;
   state.theme = t;
   hideIntroPages();
   $('#l1').style.display = 'none';
@@ -1198,7 +1202,10 @@ function route() {
   document.title = t.short + ' — Bloom';
   if (l3state.idx > -1) close();
   renderL2();
-  if (themeChanged) scrollTo({ top: 0, behavior: 'auto' });
+  // renderL2() has just rebuilt the page taller — make sure we're still
+  // pinned to the top after that (the scroll at the top of route() ran
+  // against the previous, shorter content)
+  scrollTo({ top: 0, behavior: 'auto' });
 }
 
 /* ─── WIRE UP ─────────────────────────────────────────── */
