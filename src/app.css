@@ -306,7 +306,10 @@ body.demogs-page .shell{padding-bottom:0}
    pages), title has no use for it. */
 /* head + image + description stack tightly and centre as one group in the
    viewport — same at every width now */
-#l0-title{display:flex;flex-direction:column;justify-content:center;padding-bottom:0}
+/* "safe center" so that when the stacked content is taller than a short
+   viewport it falls back to top-aligned (and stays fully scrollable)
+   rather than centering and clipping the Dive In button off the bottom */
+#l0-title{display:flex;flex-direction:column;justify-content:safe center;padding-bottom:24px}
 .titleMain{flex:none;display:flex;flex-direction:column;min-height:0}
 
 /* the shared .masthead h1/p sizing (above, under LEVEL 1) already reads as
@@ -632,12 +635,20 @@ body.demogs-page .shell{padding-bottom:0}
    background rather than inside .masthead (whose light-on-dark defaults are
    wrong here). Larger and in --theme-blue (the Governance theme's blue, not
    the darker --home navy the rest of L0 uses) per the redesign. */
-.titleHead{padding:24px 22px 0;text-align:center}
+.titleHead{padding:16px 22px 0;text-align:center;position:relative;z-index:2}
 .titleHead h1{
   font-family:var(--geom);font-weight:700;
-  font-size:clamp(36px,10.5vw,52px);line-height:1.05;
+  font-size:clamp(36px,10.5vw,52px);line-height:1.12;
   letter-spacing:-.02em;color:var(--theme-blue);
   margin:10px auto 0;max-width:13em;
+}
+/* rounded blue chip behind "AI" — blue fill, white text (the h1 is
+   otherwise all --theme-blue). box-decoration-break:clone keeps the
+   pill intact if it ever wraps across two lines. */
+.titleAI{
+  background:var(--theme-blue);color:#fff;
+  border-radius:.18em;padding:0 .18em;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;
 }
 
 /* the Sisters mountain skyline (static/sisters_title.webp — a ~2.1:1
@@ -652,10 +663,12 @@ body.demogs-page .shell{padding-bottom:0}
   aspect-ratio:1800/849;height:auto;
   object-fit:cover;   /* crop, never stretch, if ever size-constrained */
 }
-.titleImg{margin-top:24px}
+.titleImg{margin-top:4px}
 @media (max-width:659px){
-  /* oversized so it bleeds ~16% past each edge */
-  .titleImg{width:132%;margin-inline:-16%}
+  /* oversized so it bleeds ~16% past each edge; pulled up tight under the
+     headline (the silhouette's own transparent margin sits above the peaks,
+     so a small negative closes the visual gap without touching the ridge) */
+  .titleImg{width:132%;margin-inline:-16%;margin-top:-6px}
 }
 @media (min-width:660px){
   /* contained and centred on desktop */
@@ -666,7 +679,7 @@ body.demogs-page .shell{padding-bottom:0}
 /* description + CTA — follows the image in the centred stack, with a
    comfortable gap above it */
 .titleBottom{
-  padding:34px 22px 24px;text-align:center;
+  padding:18px 22px 8px;text-align:center;
 }
 .titleBottom p{
   font-size:17.5px;line-height:1.5;font-weight:400;
