@@ -548,7 +548,6 @@ function openShare() {
   $('#sharedetail').classList.add('on');
   $('#sharedetail').setAttribute('aria-hidden', 'false');
   $('#shareCloseb').focus({ preventScroll: true });
-  trackEvent('share-open');
 }
 
 function closeShare() {
@@ -1202,9 +1201,13 @@ $('#dCloseb').onclick = closeDemog;
 $('#dscrim').onclick = closeDemog;
 $('#dPrev').onclick = () => pageDemog(-1);
 $('#dNext').onclick = () => pageDemog(1);
-$('#diveIn').onclick = () => { location.hash = '#/demogs'; };
-$('#ctaExplore').onclick = () => { location.hash = '#/themes'; };
-$('#ctaShare').onclick = openShare;
+$('#diveIn').onclick = () => { trackEvent('dive-in'); location.hash = '#/demogs'; };
+// Call to Action page buttons — each click its own event. #ctaSignup is a
+// plain <a target="_blank"> to the Typeform (the conversion), so the click
+// handler only needs to fire the event; the browser follows the link.
+$('#ctaSignup').onclick = () => trackEvent('cta-signup');
+$('#ctaExplore').onclick = () => { trackEvent('cta-explore'); location.hash = '#/themes'; };
+$('#ctaShare').onclick = () => { trackEvent('cta-share'); openShare(); };
 $('#shareCloseb').onclick = closeShare;
 $('#shareScrim').onclick = closeShare;
 $('#shareCopyBtn').onclick = copyShareLink;
