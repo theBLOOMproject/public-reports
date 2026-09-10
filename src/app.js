@@ -1150,7 +1150,7 @@ function route() {
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
     $('#l1').style.display = '';
-    document.title = 'Bloom — A Conversation on AI in Central Oregon';
+    document.title = 'Public Report on AI & Central Oregon';
     document.documentElement.style.setProperty('--c', 'var(--home)');
     state.theme = null;
     if (back) scrollTo({ top: l1Scroll, behavior: 'auto' });
@@ -1176,7 +1176,7 @@ function route() {
     $('#l1').style.display = 'none';
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
-    document.title = 'Bloom — A Conversation on AI in Central Oregon';
+    document.title = 'Public Report on AI & Central Oregon';
     // consensus's L3-modal-via-buildConsensus() needs --c set to something
     // other than the shared --home every other intro page uses — green,
     // same token .who.consensus's own background already means "agreement"
@@ -1199,7 +1199,7 @@ function route() {
   $('#l1').style.display = 'none';
   $('#l2').classList.add('on');
   $('#l2').setAttribute('aria-hidden', 'false');
-  document.title = t.short + ' — Bloom';
+  document.title = t.short + ' — Public Report on AI & Central Oregon';
   if (l3state.idx > -1) close();
   renderL2();
   // renderL2() has just rebuilt the page taller — make sure we're still
