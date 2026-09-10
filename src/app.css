@@ -620,15 +620,23 @@ body.demogs-page .shell{padding-bottom:0}
   margin:10px auto 0;max-width:13em;
 }
 
-/* the Sisters mountain skyline — full width, height-clamped so it can't
-   take over the page on a tall/wide viewport. object-position anchors on
-   the peaks (the source image fades to transparent above them) so cropping
-   for the height clamp trims empty sky, never the mountains themselves. */
+/* the Sisters mountain skyline (static/sisters_title.webp — a silhouette
+   that fades out top and bottom). Height-clamped so it can't take over on
+   a tall/wide viewport; object-position:center keeps the band centred
+   within the clamp. On mobile it runs slightly oversized, bleeding a
+   little past the left and right edges. */
 .titleImg{
   display:block;width:100%;
-  height:clamp(220px,52vw,400px);
-  object-fit:cover;object-position:center bottom;
+  /* tall enough that object-fit:cover barely has to crop this ~1.65:1
+     source — so the whole silhouette (peaks and base, both of which fade
+     out on their own) stays in frame */
+  height:clamp(240px,64vw,440px);
+  object-fit:cover;object-position:center 58%;
 }
+@media (max-width:659px){
+  .titleImg{width:112%;margin-inline:-6%}
+}
+.titleMain{overflow-x:clip}
 
 /* description + CTA + subtitle — always the last thing on the page. On
    mobile, .titleMain above is flex:1, so this (the flex column's other
