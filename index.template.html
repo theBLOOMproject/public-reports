@@ -2,14 +2,16 @@
 <!--
   Markup only. The styles, the app code, and the data all live in their own
   files and get inlined here at build time at the INJECT markers below; the
-  BLOCKS map in build.js says which file feeds which marker.
+  BLOCKS map in build.js says which file feeds which marker. Report-specific
+  copy comes from data/<slug>/report.json, filled in at the double-brace
+  placeholders by dotted path.
   Run `node build.js` after any edit.
 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Public Report on AI &amp; Central Oregon</title>
+<title>{{siteTitle}}</title>
 <!-- Umami analytics (privacy-friendly, cookieless) — the one external
      request the page makes; everything else is self-contained.
      data-auto-track is off: this is a hash-routed SPA, so src/app.js
@@ -26,14 +28,14 @@
 
 <div class="shell">
 
-  <!-- ══ TOP BAR ══ a thin fixed COCAP strip; on every page except L2, which
-       folds the COCAP link into its own .l2nav instead -->
+  <!-- ══ TOP BAR ══ a thin fixed strip with the report's learn-more link; on every
+       page except L2, which folds that link into its own .l2nav instead -->
   <div class="topBar" id="topBar">
     <a class="topBarBrand" href="#/" aria-label="Home">
       <svg class="topBarHome" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span class="topBarBrandText">AI &amp; Central Oregon</span>
+      <span class="topBarBrandText">{{brand}}</span>
     </a>
-    <a class="topBarLink" href="https://cocap.us/ai" target="_blank" rel="noopener">Learn more at COCAP.US<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M5.5 4.5H11.5V10.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="topBarLink" href="{{learnMore.href}}" target="_blank" rel="noopener">{{learnMore.label}}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M5.5 4.5H11.5V10.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
 
   <!-- ══ BOTTOM PAGE BAR ══
@@ -67,12 +69,12 @@
   <main class="introPage" id="l0-title">
     <div class="titleMain">
       <div class="titleHead">
-        <h1>What did Central Oregonians have to say about <span class="titleAI">AI?</span></h1>
+        <h1>{{pages.title.headingHtml}}</h1>
       </div>
-      <img class="titleImg" src="static/sisters_title.webp" alt="" aria-hidden="true">
+      <img class="titleImg" src="static/{{pages.title.image.file}}" style="aspect-ratio:{{pages.title.image.aspect}}" alt="" aria-hidden="true">
     </div>
     <div class="titleBottom">
-      <p>Central Oregon Civic Action Project and its partners talked to <span class="titleHighlight">over 400 residents</span> from around the region to hear what they thought should be done about AI.</p>
+      <p>{{pages.title.bodyHtml}}</p>
       <button class="diveIn" id="diveIn" type="button">Dive In</button>
       <!-- <a class="diveSub" href="static/report.pdf">Or, download the report.</a> -->
     </div>
@@ -83,36 +85,36 @@
       <svg id="demogSvg" aria-hidden="true"></svg>
     </div>
     <div class="demogStat">
-      <h1>400+</h1>
-      <p>People across the region participated in this conversation, both through our Open Poll and live conversations.</p>
+      <h1>{{pages.demogs.stat}}</h1>
+      <p>{{pages.demogs.body}}</p>
       <button class="demogLink" id="demogLink" type="button">See full demographics…</button>
     </div>
   </main>
 
   <main class="introPage" id="l0-groups">
     <div class="masthead">
-      <h1>Participants represented a range of perspectives on AI…</h1>
-      <p>We found three opinion groups based on our analysis of people's voting patterns. Click each group to learn about what distinguished them from the rest.</p>
+      <h1>{{pages.groups.heading}}</h1>
+      <p>{{pages.groups.body}}</p>
     </div>
     <div class="groupBubbles" id="groupBubbles"></div>
   </main>
 
   <main class="introPage" id="l0-consensus">
     <div class="masthead">
-      <h1>…but we found a lot of common ground.</h1>
-      <p>Despite their differences, almost everyone agreed on the importance of transparency and community involvement in AI-related decision-making.</p>
+      <h1>{{pages.consensus.heading}}</h1>
+      <p>{{pages.consensus.body}}</p>
     </div>
     <div class="lane listView" id="consensusLane"></div>
   </main>
 
   <main class="introPage" id="l0-cta">
-    <img class="ctaImg" src="static/sisters_bg.webp" alt="" aria-hidden="true">
+    <img class="ctaImg" src="static/{{pages.cta.image.file}}" alt="" aria-hidden="true">
     <div class="masthead">
-      <h1>Now is the time to act for the future of our communities.</h1>
-      <p>We're organizing a Civic Assembly in December 2026, where 30-40 residents will develop policies to make sure the public has a meaningful role in the government's AI-related decisions. <span class="ctaHighlight">You are invited to participate;</span> selected delegates will receive a $250 stipend.</p>
+      <h1>{{pages.cta.heading}}</h1>
+      <p>{{pages.cta.bodyHtml}}</p>
     </div>
     <div class="ctaActions">
-      <a class="ctaPrimary" id="ctaSignup" href="https://bloomproject.typeform.com/to/C1N3LI7g?utm_source=report" target="_blank" rel="noopener">Register here</a>
+      <a class="ctaPrimary" id="ctaSignup" href="{{pages.cta.signupUrl}}" target="_blank" rel="noopener">{{pages.cta.signupLabel}}</a>
       <button class="ctaSecondary" id="ctaShare" type="button">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 10.3L17 2.7l-4.3 14.7-2.9-6-7.3-1.1z"/></svg>
         Share this with a friend
@@ -133,7 +135,7 @@
       </button>
       <h2>Share this with a friend</h2>
       <p>Copy the link below and pass it along.</p>
-      <input class="shareUrl" id="shareUrl" type="text" value="https://report.bloomproject.us/central-oregon-ai" readonly aria-label="Report URL">
+      <input class="shareUrl" id="shareUrl" type="text" value="{{shareUrl}}" readonly aria-label="Report URL">
       <button class="shareCopy" id="shareCopyBtn" type="button">Copy Link</button>
     </div>
   </div>
@@ -141,8 +143,8 @@
   <!-- ══ LEVEL 1 ══ -->
   <main id="l1">
     <div class="masthead">
-      <h1>What 400+ people had to say about AI in Central Oregon</h1>
-      <p>Responses gathered in six listening sessions around the region and one open poll, sorted into seven themes. Each square below is one poll statement or one comment from a live session.</p>
+      <h1>{{pages.themes.heading}}</h1>
+      <p>{{pages.themes.body}}</p>
     </div>
     <div class="legend label">
       <span><i></i> Poll statement</span>
@@ -155,7 +157,7 @@
   <section id="l2" aria-hidden="true">
     <div class="l2nav">
       <button id="back">← Back</button>
-      <a class="nextT" id="nextT" href="https://cocap.us/ai" target="_blank" rel="noopener">Learn more at COCAP.US<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M5.5 4.5H11.5V10.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="nextT" id="nextT" href="{{learnMore.href}}" target="_blank" rel="noopener">{{learnMore.label}}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M5.5 4.5H11.5V10.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
     <div class="hero">
       <h1 id="t-title"></h1>
@@ -244,7 +246,8 @@
 
 </div>
 
-<!-- ═══ DATA — from data/*.json, minified. Read back by id, in src/app.js. ═══ -->
+<!-- ═══ DATA — from data/<slug>/*.json, minified. Read back by id, in src/app.js. ═══ -->
+<script type="application/json" id="report"><!--INJECT:report--></script>
 <script type="application/json" id="theme-descriptions"><!--INJECT:theme-descriptions--></script>
 <script type="application/json" id="bloom-data"><!--INJECT:bloom-data--></script>
 <script type="application/json" id="bloom-insights"><!--INJECT:bloom-insights--></script>
@@ -253,7 +256,7 @@
 <script type="application/json" id="consensus-statements"><!--INJECT:consensus-statements--></script>
 <script type="application/json" id="participant-locations"><!--INJECT:participant-locations--></script>
 <script type="application/json" id="demographics"><!--INJECT:demographics--></script>
-<script type="application/json" id="oregon-counties"><!--INJECT:oregon-counties--></script>
+<script type="application/json" id="counties"><!--INJECT:counties--></script>
 
 <!-- ═══ VENDOR — d3-custom.min.js (11 core D3 v3.x modules, concatenated). ═══ -->
 <script>
