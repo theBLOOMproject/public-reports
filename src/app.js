@@ -199,8 +199,8 @@ const INTRO_PAGES = [
 ];
 
 // participant-locations.json's cities become clickable markers over real
-// county geometry (the report's counties.json, sourced from the U.S.
-// Census Bureau — see its own _readme), rendered and panned/zoomed by
+// county geometry (the report's counties.json, from the U.S. Census
+// Bureau), rendered and panned/zoomed by
 // vendored D3 (vendor/d3-custom.min.js — d3-geo for the projection/path
 // generator, d3-zoom for the gesture engine; see that file's own header for
 // exactly which modules and why). Marker radius is scaled by sqrt of count
@@ -391,7 +391,7 @@ function fitDemogMap(w, h) {
 
   demogMarkersG.selectAll('.demogCity').each(d => {
     // d3-geo takes points as [lng, lat] — the reverse of these field names'
-    // own reading order (see participant-locations.json's _readme)
+    // own reading order
     d.projected = demogProjection([d.lng, d.lat]);
   });
 
@@ -470,9 +470,9 @@ function demogHoverHide(city) {
 }
 
 /* ─── DEMOGRAPHICS DETAIL MODAL ───────────────────────── */
-// data/demographics.json's own _readme has the derivation: each category's
-// breakdown is a share of only the respondents who answered that question,
-// not of everyone — the modal's copy spells that denominator out per tab.
+// Each category's breakdown in demographics.json is a share of only the
+// respondents who answered that question, not of everyone — the modal's copy
+// spells that denominator out per tab.
 const dstate = { key: DEMOGRAPHICS.categories[0].key };
 
 function openDemog() {
@@ -535,9 +535,8 @@ function renderDemogTab() {
 
   // column headers over the two %-columns below — IN POLL is this report's
   // own respondents (row.pct); ACTUAL is the real tri-county population's
-  // share for the same subgroup (row.actual, see demographics.json's
-  // _readme for its source), so a reader can spot who's over/under-
-  // represented at a glance rather than needing outside context.
+  // share for the same subgroup (row.actual), so a reader can spot who's
+  // over/under-represented at a glance rather than needing outside context.
   const colHead = el('div', 'ddColHead');
   colHead.append(el('span', 'ddColHeadLabel'));
   colHead.append(el('span', 'ddColHeadCol', 'In Poll'));
@@ -597,10 +596,10 @@ async function copyShareLink() {
   trackEvent('share-copy');
 }
 
-// group-info.json is a hand-maintained snapshot (see its own _readme for
-// provenance and staleness caveats) — bloom-data.json's own groups[] never
-// carries participant counts, since refresh-poll.js deliberately avoids
-// storing cluster sizes that go stale the moment Polis reclusters.
+// group-info.json is a hand-maintained snapshot — bloom-data.json's own
+// groups[] never carries participant counts, since refresh-poll.js
+// deliberately avoids storing cluster sizes that go stale the moment Polis
+// reclusters.
 const groupByKey = {};
 DATA.groups.forEach(g => groupByKey[g.key] = g);
 // group-info's per-key extras (participants/color/description) merged onto
@@ -626,7 +625,7 @@ function buildGroups() {
 }
 
 /* ─── GROUP DETAIL MODAL ──────────────────────────────── */
-// Page 0 is the hand-written description (see group-info.json's _readme);
+// Page 0 is group-info.json's hand-written description;
 // pages 1..N are group-statements.json's defining statements, most
 // representative first. Deliberately its own small state/open/close/page
 // set rather than reusing L3's — the content shape (a generated blurb vs.

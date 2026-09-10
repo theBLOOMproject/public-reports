@@ -119,8 +119,6 @@ takes points as `[lng, lat]` — the reverse of these fields' reading order.
 `us-atlas`. The map's zoomed-out bound is this whole file, so it should hold more than the
 home counties — Central Oregon's keeps all 36 Oregon counties to get the real state outline.
 
-Each of these carries its own `_readme` recording where its numbers came from.
-
 ### Themes are derived from tags
 
 A record has no `theme` field. It belongs to **every** theme listing one of its tags, so

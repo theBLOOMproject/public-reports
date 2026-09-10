@@ -1,5 +1,4 @@
 {
-  "_readme": "PLACEHOLDER: every file in this directory is a copy of data/central-oregon-ai/, with only siteTitle/brand here and the group-info.json taglines marked as Utah, so the multi-report plumbing can be seen working. Replace wholesale with the real Utah data and copy before this reaches main. Otherwise as data/central-oregon-ai/report.json: the slug is this directory's name; strings are taken by dotted path and HTML-escaped unless the key ends in Html; map.homeCounties is the Demographics map's home region; images live in this directory's static/.",
   "siteTitle": "Utah Common Ground (test copy)",
   "brand": "Utah Common Ground (test copy)",
   "learnMore": {

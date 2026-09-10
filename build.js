@@ -92,7 +92,6 @@ function checkInsightIdsResolve(insights, file, bloomData) {
   const knownIds = new Set(bloomData.records.map(r => r.id));
   const bad = [];
   for (const [theme, entries] of Object.entries(insights)) {
-    if (theme.startsWith('_')) continue;
     entries.forEach(e => e.ids.forEach(id => { if (!knownIds.has(id)) bad.push(`${theme}: ${id}`); }));
   }
   if (bad.length) throw new Error(`${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
@@ -105,7 +104,7 @@ function checkInsightIdsResolve(insights, file, bloomData) {
 // this file stale in a way nothing here can detect; it can only catch a key mismatch.
 function checkGroupInfoKeys(info, file, { bloomData }) {
   const groupKeys = bloomData.groups.map(g => g.key);
-  const infoKeys = Object.keys(info).filter(k => !k.startsWith('_'));
+  const infoKeys = Object.keys(info);
   const missing = groupKeys.filter(k => !infoKeys.includes(k));
   const extra = infoKeys.filter(k => !groupKeys.includes(k));
   if (missing.length || extra.length) {
@@ -123,7 +122,6 @@ function checkGroupStatementIdsResolve(statements, file, { bloomData }) {
   const knownIds = new Set(bloomData.records.map(r => r.id));
   const bad = [];
   for (const [group, entries] of Object.entries(statements)) {
-    if (group.startsWith('_')) continue;
     entries.forEach(e => { if (!knownIds.has(e.id)) bad.push(`${group}: ${e.id}`); });
   }
   if (bad.length) console.warn(`  WARNING ${file}: id(s) not found in bloom-data.json: ${bad.join(', ')}`);
@@ -194,7 +192,6 @@ function checkInsightVoteDepth(insights, file, bloomData) {
   const byId = new Map(bloomData.records.map(r => [r.id, r]));
   const thin = [];
   for (const [theme, entries] of Object.entries(insights)) {
-    if (theme.startsWith('_')) continue;
     entries.forEach(e => e.ids.forEach(id => {
       const r = byId.get(id);
       if (!r || !r.vote) return;   // quotes carry no vote data
@@ -309,10 +306,8 @@ function renderBlock({ file, kind, check }, ctx) {
   return escapeJsonForScriptTag(JSON.stringify(data));
 }
 
-const leafPaths = (obj, prefix = '') => Object.entries(obj).flatMap(([k, v]) => {
-  if (k.startsWith('_')) return [];
-  return v && typeof v === 'object' ? leafPaths(v, `${prefix}${k}.`) : [`${prefix}${k}`];
-});
+const leafPaths = (obj, prefix = '') => Object.entries(obj).flatMap(([k, v]) =>
+  v && typeof v === 'object' ? leafPaths(v, `${prefix}${k}.`) : [`${prefix}${k}`]);
 
 // The report's copy lands in the template at {{dotted.path}} placeholders into
 // report.json, plus the build's own derived slug and shareUrl. Values are HTML-escaped,

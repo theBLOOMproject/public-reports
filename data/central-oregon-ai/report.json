@@ -1,5 +1,4 @@
 {
-  "_readme": "Per-report copy and config. The report's slug (its URL path) is this directory's name, not a field here. index.template.html takes these strings by dotted path at build time; values are HTML-escaped, except under keys ending in Html, which go in verbatim and so may carry inline markup. map.homeCounties (county FIPS id -> the county name participant-locations.json uses) is the Demographics map's home region: those counties are tinted, and on mobile the home view fits only the cities inside them. Image files named here live in this directory's static/.",
   "siteTitle": "Public Report on AI & Central Oregon",
   "brand": "AI & Central Oregon",
   "learnMore": {
