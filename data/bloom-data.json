@@ -751,47 +751,6 @@
       "inReport": false
     },
     {
-      "id": "p42",
-      "kind": "poll",
-      "text": "The Confederated Tribes of Warm Springs should have a formal seat at the table when Central Oregon leaders make decisions about AI.",
-      "origin": "cocap_seed",
-      "place": null,
-      "chips": [
-        "SEED STATEMENT"
-      ],
-      "vote": {
-        "total": 221,
-        "A": {
-          "a": 37,
-          "d": 2,
-          "p": 3,
-          "n": 42,
-          "pct": 88
-        },
-        "B": {
-          "a": 82,
-          "d": 2,
-          "p": 6,
-          "n": 90,
-          "pct": 91
-        },
-        "C": {
-          "a": 81,
-          "d": 3,
-          "p": 5,
-          "n": 89,
-          "pct": 91
-        },
-        "gap": 3,
-        "minAgree": 88
-      },
-      "source": "Open Poll",
-      "tags": [
-        "Governance & Decision-making"
-      ],
-      "inReport": false
-    },
-    {
       "id": "p43",
       "kind": "poll",
       "text": "AI tools are already helping ordinary people do things that used to require expensive professionals.",
