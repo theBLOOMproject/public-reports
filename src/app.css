@@ -1,4 +1,28 @@
 /* ─────────────────────────────────────────────
+   FONTS — Geomanist, self-hosted (checked into static/fonts/, copied to
+   dist/ by build.js). Only three cuts exist: Book, Book Italic, Medium.
+   Book covers weight 400; Medium answers every request for 500+, so
+   anything the design marks bold lands on Medium. Italic is Book Italic
+   at any weight. Self-hosting keeps the published page free of the
+   Google Fonts request the <link> in the template used to make.
+   ───────────────────────────────────────────── */
+@font-face{
+  font-family:'Geomanist';
+  src:url('static/fonts/Geomanist-Book.otf') format('opentype');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Geomanist';
+  src:url('static/fonts/Geomanist-Book-Italic.otf') format('opentype');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Geomanist';
+  src:url('static/fonts/Geomanist-Medium.otf') format('opentype');
+  font-weight:500 900;font-style:normal;font-display:swap;
+}
+
+/* ─────────────────────────────────────────────
    TOKENS
    ───────────────────────────────────────────── */
 :root{
@@ -12,9 +36,13 @@
   --amber:#DE8A2E;  /* mid tier for the card's %-agree readout (0-33 red · 33-67 amber · 67-100 green) */
   --gold:#E9A23C;  /* accent for the Demographics intro page, per its mock */
 
-  --geom:'Geom','Futura',system-ui,sans-serif;
-  --body:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
-  --mono:'DM Mono',ui-monospace,'SF Mono',monospace;
+  /* All three now resolve to Geomanist — the report runs on a single family.
+     --mono keeps its name (and its callers' letter-spacing / uppercasing) but
+     is no longer monospaced; its fallback stays sans so a load failure doesn't
+     jump to a typewriter face. */
+  --geom:'Geomanist','Futura',system-ui,sans-serif;
+  --body:'Geomanist',system-ui,-apple-system,sans-serif;
+  --mono:'Geomanist',system-ui,-apple-system,sans-serif;
 
   --nav-h:46px;
   --bar-blue:#00216F;   /* top page-nav bar — deliberately distinct from --home */
@@ -86,7 +114,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .masthead p{
   font-size:16.5px;line-height:1.5;color:rgba(255,255,255,.5);
-  margin:12px 0 0;max-width:32em;
+  margin:12px 0 0;max-width:none;
 }
 
 .theme-block{
@@ -104,9 +132,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   letter-spacing:-.02em;margin:0 0 11px;
   max-width:13em;
 }
-.theme-block .count{color:rgba(255,255,255,.78);margin-bottom:16px}
+.theme-block .count{color:rgba(255,255,255,.82);margin-bottom:16px;font-size:13px}
 .theme-block .arrow{
-  position:absolute;top:24px;right:20px;font-size:17px;
+  position:absolute;top:22px;right:20px;font-size:23px;
   opacity:.45;transition:transform .3s ease,opacity .3s ease;
 }
 @media (hover:hover){
@@ -203,7 +231,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    a cover page rather than a grid caption; intro pages only need the width
    constraints relaxed, since L1's are tuned for its own shorter copy */
 .introPage .masthead h1{max-width:none}
-.introPage .masthead p{max-width:26em}
+.introPage .masthead p{max-width:none}
 
 #l0-groups .masthead .eyebrow{color:color-mix(in srgb,var(--ink) 55%,transparent)}
 #l0-groups .masthead h1{color:var(--home)}
@@ -212,7 +240,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    the one .introPage that isn't dark. max-width:none overrides the shared
    26em cap above so the (now longer, two-sentence) subtitle runs the full
    width of the column instead of wrapping narrow. */
-#l0-groups .masthead p{font-family:var(--geom);font-weight:500;color:var(--ink);max-width:none}
+#l0-groups .masthead p{font-family:var(--geom);font-weight:400;color:var(--ink);max-width:none}
 
 /* the shared .masthead p is dimmed (rgba(255,255,255,.5)) for the other
    dark intro pages — CTA.jpg's own body copy is full-opacity white, so
@@ -221,6 +249,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    clause — --gold rather than a new one-off yellow, matching the
    Demographics page's own accent token. */
 #l0-cta .masthead p{color:#fff}
+/* the common-ground page's subtitle is full-opacity white per design call —
+   the shared .masthead p dimming (.5 alpha) reads as washed-out on the green */
+#l0-consensus .masthead p{color:#fff}
 .ctaHighlight{color:var(--gold);font-weight:600}
 /* centered both axes — display:flex column + justify-content:center
    handles vertical (within whatever space .masthead's own flex:1 grow,
@@ -559,7 +590,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   padding:22px 22px 34px;text-align:center;
 }
 .titleBottom p{
-  font-size:17px;line-height:1.5;font-weight:500;
+  font-size:17px;line-height:1.5;font-weight:400;
   color:var(--theme-blue);
   margin:0 auto 20px;max-width:30em;
 }
@@ -719,8 +750,8 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 @media (min-width:660px){
   /* placed after the base rules above so it actually wins the cascade —
      an earlier attempt put this override before them and silently lost */
-  .masthead p{font-size:18.5px}
-  .hero .desc{font-size:18.5px}
+  .masthead p{font-size:20.5px}
+  .hero .desc{font-size:20.5px}
 }
 
 /* ─── "What we learned" — table of contents ──────────────────────── */
@@ -808,13 +839,16 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .icText{
   margin:14px 0 16px;color:var(--ink);
   font-family:var(--geom);font-weight:600;
-  font-size:19px;line-height:1.32;letter-spacing:-.01em;
+  font-size:20px;line-height:1.32;letter-spacing:-.01em;
+}
+@media (min-width:660px){
+  .icText{font-size:23px;line-height:1.3}
 }
 
 .icWho{
   display:flex;align-items:center;gap:9px;
   margin-bottom:2px;
-  color:color-mix(in srgb,var(--c) 62%,#000);
+  color:color-mix(in srgb,var(--c) 74%,#000);
 }
 .icWho .icAv{
   flex:none;width:24px;height:24px;border-radius:50%;
@@ -822,8 +856,12 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   display:grid;place-items:center;font-size:13px;line-height:1;
 }
 .icWho .icDemo{
-  font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
   overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+@media (min-width:660px){
+  .icWho .icDemo{font-size:13px}
+  .icWho .icAv{width:26px;height:26px;font-size:14px}
 }
 
 /* the bleed-to-edge footer band that holds the caption + the per-group row */
@@ -1026,6 +1064,27 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .barkey span{display:inline-flex;align-items:center;gap:5px}
 .barkey i{width:9px;height:3px;border-radius:2px;flex:none}
+
+/* ─── L3 modal label + %-agree sizing ──────────────────────────────
+   The shared .meta/.grow/.barkey rules above are tuned small and light;
+   inside the statement pop-up they run bigger and darker so the source,
+   the per-group labels and — on desktop especially — the %-agree numbers
+   carry real weight. Scoped to #l3 so #gdetail / #ddetail keep their own
+   tighter treatment. */
+#l3 .who .txt{font-size:11.5px}
+#l3 .meta h4{font-size:12px;color:color-mix(in srgb,var(--c) 72%,#000)}
+#l3 .meta .src{font-size:15px}
+#l3 .meta .src small{font-size:13px}
+#l3 .grow .top{font-size:11.5px;color:color-mix(in srgb,var(--c) 68%,#000)}
+#l3 .grow .top b{font-size:15px;font-weight:700}
+#l3 .barkey{font-size:10px;color:color-mix(in srgb,var(--c) 60%,#000)}
+@media (min-width:660px){
+  #l3 .who .txt{font-size:12.5px}
+  #l3 .meta h4{font-size:13px}
+  #l3 .grow .top{font-size:13px}
+  #l3 .grow .top b{font-size:23px}
+  #l3 .barkey{font-size:11px}
+}
 
 /* #gdetail's own take on the shared .meta/.grow/.bar block above (L3 keeps
    the plain mono/dimmed version) — a real Geom heading instead of a small
