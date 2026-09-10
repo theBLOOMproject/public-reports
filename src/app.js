@@ -458,6 +458,7 @@ function openDemog() {
   $('#ddetail').classList.add('on');
   $('#ddetail').setAttribute('aria-hidden', 'false');
   $('#dCloseb').focus({ preventScroll: true });
+  trackEvent('demographics-open');
 }
 
 function closeDemog() {
@@ -547,6 +548,7 @@ function openShare() {
   $('#sharedetail').classList.add('on');
   $('#sharedetail').setAttribute('aria-hidden', 'false');
   $('#shareCloseb').focus({ preventScroll: true });
+  trackEvent('share-open');
 }
 
 function closeShare() {
@@ -569,6 +571,7 @@ async function copyShareLink() {
   btn.textContent = 'Copied!';
   clearTimeout(shareCopyResetTimer);
   shareCopyResetTimer = setTimeout(() => { btn.textContent = 'Copy Link'; }, 1800);
+  trackEvent('share-copy');
 }
 
 // group-info.json is a hand-maintained snapshot (see its own _readme for
@@ -620,6 +623,7 @@ function openGroup(key) {
   $('#gdetail').classList.add('on');
   $('#gdetail').setAttribute('aria-hidden', 'false');
   $('#gCloseb').focus({ preventScroll: true });
+  trackEvent('opinion-group-open', { group: groupTag(g) });
 }
 
 function closeGroup() {
@@ -977,6 +981,7 @@ function open(view, idx) {
   $('#cardbody').scrollTop = 0;
   autoScroll();
   $('#closeb').focus({ preventScroll: true });
+  trackEvent('statement-open', { id: r.id, kind: r.kind });
 }
 
 function autoScroll() {
@@ -1227,7 +1232,27 @@ addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') { page(1); e.preventDefault(); }
   if (e.key === 'ArrowLeft') { page(-1); e.preventDefault(); }
 });
-addEventListener('hashchange', route);
+/* ─── ANALYTICS ───────────────────────────────────────
+   Umami's auto-tracking follows the History API, but this app navigates
+   by location.hash — so data-auto-track is off (see index.template.html)
+   and every view is reported here. All calls funnel through track(),
+   which no-ops silently if the Umami script is blocked or not yet loaded
+   (defer means it may not be ready for the very first paint — the 'load'
+   listener below covers the initial view). Analytics must never be able
+   to break navigation, hence the try/catch. */
+function trackView() {
+  try {
+    window.umami && window.umami.track(props => ({ ...props, url: location.pathname + location.hash }));
+  } catch { /* ignore */ }
+}
+function trackEvent(name, data) {
+  try {
+    window.umami && window.umami.track(name, data);
+  } catch { /* ignore */ }
+}
+
+addEventListener('hashchange', () => { route(); trackView(); });
+addEventListener('load', trackView, { once: true });
 
 // no rewrite needed on a fresh visit — route() already resolves an empty
 // hash to the homepage (the first intro page) on its own
