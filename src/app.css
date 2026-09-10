@@ -255,7 +255,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 /* the common-ground page's subtitle is full-opacity white per design call —
    the shared .masthead p dimming (.5 alpha) reads as washed-out on the green */
 #l0-consensus .masthead p{color:#fff}
-.ctaHighlight{color:var(--gold);font-weight:600}
+.ctaHighlight{color:#FFD85A;font-weight:600}
 /* centered both axes — display:flex column + justify-content:center
    handles vertical (within whatever space .masthead's own flex:1 grow,
    below, gives it); text-align:center plus centering h1/p's own boxes
@@ -267,47 +267,32 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 #l0-cta .masthead h1{max-width:15em;margin-left:auto;margin-right:auto}
 #l0-cta .masthead p{max-width:30em;margin-left:auto;margin-right:auto}
 
-/* the Sisters mountain skyline, pinned across the bottom of the page —
-   position:fixed at the desktop breakpoint below is the same "full
-   viewport width regardless of .shell's 800px cap" trick .demogMap uses.
-   mix-blend-mode:luminosity is what actually produces "dark texture on
-   the blue background": it composites the image's own light/dark
-   structure against whatever's behind it (this page's --theme-blue)
-   rather than showing the photo's real colors, so the peaks/treeline read
-   as a duotone texture in the page's own blue instead of a bright photo
-   competing with the buttons above it. The brightness/contrast filter
-   before that blend keeps the result from washing out too light where the
-   snow is. The top mask fades the whole thing into the flat --theme-blue
-   above it rather than ending on a hard rectangular edge. */
+/* the Sisters mountain skyline (static/sisters_bg.webp — a 2000px-wide
+   alpha cut-out, sky already transparent), pinned across the bottom and
+   rising to about the middle of the viewport. Spans the full width;
+   capped on ultra-wide monitors so the 2000px source isn't stretched too
+   far. object-position:center bottom keeps the mountain body in frame on
+   the wide/short desktop crop. mix-blend-mode:luminosity composites its
+   light/dark structure against the page's --theme-blue rather than
+   showing the photo's real colours, so it reads as a duotone texture the
+   copy/buttons stay legible over; the brightness/contrast/saturate filter
+   keeps that from washing out. The image renders at its natural aspect
+   (height:auto — no object-fit crop, so no hard cut edge; the sky at the
+   top is transparent and just shows the page blue through it), and
+   translateY(30%) drops it so ~30% of its height sits below the fold and
+   only ~70% shows. position:fixed on desktop is the same "full viewport
+   width regardless of .shell's cap" trick .demogMap uses, and holds the
+   image to the viewport bottom while the centred copy/buttons scroll
+   above it. */
 .ctaImg{
-  position:absolute;left:0;right:0;bottom:0;z-index:0;
-  width:100%;height:clamp(220px,55vw,420px);
-  object-fit:cover;object-position:center bottom;
+  position:absolute;left:50%;bottom:0;transform:translate(-50%,30%);z-index:0;
+  width:100%;height:auto;
   filter:brightness(.55) contrast(1.15) saturate(1.4);
   mix-blend-mode:luminosity;
-  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 40%);
-  mask-image:linear-gradient(180deg,transparent 0%,#000 40%);
   pointer-events:none;
 }
-/* desktop gets a different crop, not just the mobile one stretched wider:
-   a short box + object-position:top keeps only the source's peaks (which
-   sit near the top of the image — see the comment on .titleImg, the same
-   source file, for why) rather than the treeline/foreground .ctaImg's
-   mobile "center bottom" crop shows — so what's pinned to the page's
-   bottom edge is a thin sliver of peaks poking up, not a tall photo. Width
-   is capped (centered via left:50%/translateX) rather than stretched the
-   full, sometimes 1500px+, viewport — the source is a 430px-wide asset,
-   so a full-bleed stretch on a wide monitor was visibly soft; capping
-   keeps the upscale mild. */
 @media (min-width:660px){
-  .ctaImg{
-    position:fixed;
-    left:50%;right:auto;transform:translateX(-50%);
-    width:min(100%,1000px);
-    height:clamp(50px,8vw,110px);
-    object-position:center top;
-    mask-image:none;-webkit-mask-image:none;
-  }
+  .ctaImg{position:fixed;width:min(100%,1400px)}
 }
 
 /* copy + buttons sit above .ctaImg (z-index:0) — both need their own
@@ -321,18 +306,27 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 #l0-cta{display:flex;flex-direction:column;padding-bottom:0}
 #l0-cta .masthead{flex:1}
 @media (min-width:660px){
+  /* copy + buttons ride together, vertically centered in the space above
+     the fixed page bar, with a wide gap between the two */
+  #l0-cta{justify-content:center;padding-bottom:var(--bar-h)}
   #l0-cta .masthead{flex:none}
+  .ctaActions{margin-top:52px}
 }
 
 .ctaActions{
   display:flex;flex-direction:column;gap:12px;
-  padding:0 22px 34px;
+  /* the extra --bar-h clears the fixed page bar on mobile, where the
+     buttons are pinned to the bottom of the viewport */
+  padding:0 22px calc(28px + var(--bar-h));
+}
+.ctaPrimary,.ctaSecondary{
+  font-family:var(--geom);font-weight:700;font-size:19px;
+  border-radius:999px;width:100%;
 }
 .ctaPrimary{
-  display:block;width:100%;text-align:center;text-decoration:none;
-  background:#EA8066;color:#fff;
-  padding:19px 26px;border-radius:999px;
-  font-family:var(--geom);font-weight:700;font-size:19px;
+  display:block;text-align:center;text-decoration:none;
+  background:#E25D3B;color:#fff;
+  padding:19px 26px;
   box-shadow:0 10px 26px rgba(0,0,0,.28);
   transition:transform .15s ease;
 }
@@ -342,10 +336,8 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .ctaSecondary{
   display:flex;align-items:center;justify-content:center;gap:9px;
-  width:100%;
   background:rgba(9,20,52,.82);color:#fff;
-  padding:16px 22px;border-radius:999px;
-  font-family:var(--geom);font-weight:700;font-size:16.5px;
+  padding:17px 22px;
   box-shadow:0 4px 14px rgba(0,0,0,.22);
   backdrop-filter:blur(6px);
   transition:background .2s ease;
@@ -355,11 +347,12 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   .ctaSecondary:hover{background:rgba(9,20,52,.95)}
 }
 @media (min-width:660px){
-  .ctaPrimary{font-size:21px}
-  .ctaSecondary{font-size:18px}
-  /* the pills stop stretching the full 800px column on desktop and
-     center as a narrower stack instead, "with the rest of it" */
-  .ctaPrimary,.ctaSecondary{max-width:440px;margin-left:auto;margin-right:auto}
+  .ctaPrimary,.ctaSecondary{
+    font-size:21px;
+    /* stop stretching the full 800px column — center as a narrower stack */
+    max-width:440px;margin-left:auto;margin-right:auto;
+  }
+  .ctaActions{padding-bottom:0}
 }
 
 /* the county map — a sibling of .masthead, not inside it. Full-bleed behind
