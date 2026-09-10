@@ -73,17 +73,20 @@ html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
    .pageBar reserves) shows the current page's colour rather than a slab
    of --ink. Each page's own element still paints the same colour behind
    its content; body just guarantees the reserved gutters match. The
-   desktop gutter outside the column falls out of this for free. */
+   desktop gutter outside the column falls out of this for free.
+   --page-bg is the single source of truth for that colour — .topBar
+   reads it too, so its solid fill always matches the page. */
 body{
-  background:var(--c,var(--home));
+  --page-bg:var(--c,var(--home));
+  background:var(--page-bg);
   color:#fff;
   font-family:var(--body);
   -webkit-font-smoothing:antialiased;
 }
-body.title-page,body.groups-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
-body.cta-page{background:var(--theme-blue)}
-body.consensus-page{background:color-mix(in srgb,var(--agree) 60%,#000)}
-body:has(#l2.on){background:var(--paper)}
+body.title-page,body.groups-page{--page-bg:var(--paper);background-color:var(--page-bg);background-image:var(--grid-bg);background-size:var(--grid-size)}
+body.cta-page{--page-bg:var(--theme-blue);background:var(--page-bg)}
+body.consensus-page{--page-bg:color-mix(in srgb,var(--agree) 60%,#000);background:var(--page-bg)}
+body:has(#l2.on){--page-bg:var(--paper);background:var(--page-bg)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 :focus-visible{outline:2.5px solid currentColor;outline-offset:3px;border-radius:3px}
 
@@ -103,52 +106,54 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* reserves room at the bottom to clear #pageBar, kept in sync with its own
    slide-in/out (see updateNavBar() in app.js) rather than snapping instantly */
 body.navBarOn .shell{padding-bottom:var(--bar-h)}
+/* L2 has no .topBar — its own .l2nav is the single bar — so no top reserve */
+body:has(#l2.on) .shell{padding-top:0}
 @media (min-width:660px){
   .shell{max-width:800px}
   :root{--bar-h:96px;--topbar-h:52px}
 }
 
 /* ─────────────────────────────────────────────
-   TOP BAR — a thin strip fixed to the top of the column on every page
-   (column-width-matched to .shell, like .pageBar). Transparent: it reads
-   as part of whatever page is behind it. Its text flips per page — white
-   on the dark intro pages, the page's own dark accent on the light ones
-   (title / groups) and the active theme colour on L2 — and the hairline
-   bottom border follows that colour at low opacity via currentColor.
-   .shell's padding-top reserves its height; each page header adds its own
-   breathing room below that. ─────────────────────────────────────────*/
+   TOP BAR — a thin strip fixed to the top of the column, on every page
+   except L2 (which folds the COCAP link into its own .l2nav). Solid fill
+   in the page's own colour (--page-bg), so content scrolling past it is
+   never visible through it; the hairline bottom border (currentColor, low
+   opacity) is the only divider. Text flips per page — white on the dark
+   intro pages, the page's own dark accent on the light ones. Font sized
+   to match .l2nav. .shell's padding-top reserves its height. ──────────*/
 .topBar{
   position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:45;
   width:100%;max-width:600px;height:var(--topbar-h);
   display:flex;align-items:center;justify-content:flex-end;gap:14px;
   padding:0 16px;
-  color:#fff;
+  color:#fff;background:var(--page-bg);
   border-bottom:1px solid color-mix(in srgb,currentColor 22%,transparent);
 }
 body.title-page .topBar{color:var(--theme-blue)}
 body.groups-page .topBar{color:var(--home)}
-body:has(#l2.on) .topBar{color:var(--c)}
+body:has(#l2.on) .topBar{display:none}
 .topBarBrand{
   display:none;
-  font-family:var(--mono);font-size:12.5px;font-weight:600;
-  letter-spacing:.07em;text-transform:uppercase;
-  color:color-mix(in srgb,currentColor 68%,transparent);
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:color-mix(in srgb,currentColor 66%,transparent);
+  text-decoration:none;transition:opacity .2s ease;
 }
 .topBarLink{
   display:inline-flex;align-items:center;gap:6px;
-  font-family:var(--mono);font-size:12.5px;font-weight:600;
-  letter-spacing:.05em;text-transform:uppercase;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
   color:inherit;text-decoration:none;
   transition:opacity .2s ease;
 }
-.topBarLink svg{width:13px;height:13px;flex:none;stroke:currentColor;stroke-width:1.7;fill:none}
+.topBarLink svg{width:12px;height:12px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none}
 @media (hover:hover){
-  .topBarLink:hover{opacity:.62}
+  .topBarLink:hover,.topBarBrand:hover{opacity:.62}
 }
 @media (min-width:660px){
   .topBar{max-width:800px;justify-content:space-between;padding:0 24px}
   .topBarBrand{display:block}
-  .topBarBrand,.topBarLink{font-size:13.5px}
+  .topBarBrand,.topBarLink{font-size:14px;letter-spacing:.09em}
 }
 
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
@@ -746,14 +751,13 @@ body:has(#l2.on) .topBar{color:var(--c)}
    ───────────────────────────────────────────── */
 #l2{
   display:none;background:var(--paper);color:var(--ink);
-  min-height:calc(100vh - var(--topbar-h));
-  min-height:calc(100dvh - var(--topbar-h));
+  min-height:100vh;min-height:100dvh;
   position:relative;
 }
 #l2.on{display:block}
 
 .l2nav{
-  position:sticky;top:var(--topbar-h);z-index:30;
+  position:sticky;top:0;z-index:30;
   height:var(--nav-h);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 18px;
@@ -761,17 +765,17 @@ body:has(#l2.on) .topBar{color:var(--c)}
   border-top:4px solid var(--c);
   box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--c) 16%,#fff);
 }
-.l2nav button{
+.l2nav button,.l2nav .nextT{
   font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--c);padding:6px 0;
+  color:var(--c);padding:6px 0;text-decoration:none;
   transition:opacity .2s ease;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.l2nav button:hover{opacity:.7}
-.l2nav .nextT{max-width:62%;text-align:right}
-.l2nav .nextT b{font-weight:600}
+.l2nav button:hover,.l2nav .nextT:hover{opacity:.7}
+.l2nav .nextT{max-width:70%;text-align:right;display:inline-flex;align-items:center;gap:5px}
+.l2nav .nextT svg{width:11px;height:11px;flex:none;stroke:currentColor;stroke-width:1.9;fill:none}
 @media (min-width:660px){
-  .l2nav button{font-size:14px;letter-spacing:.09em}
+  .l2nav button,.l2nav .nextT{font-size:14px;letter-spacing:.09em}
 }
 
 .hero{padding:28px 22px 8px}

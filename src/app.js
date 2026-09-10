@@ -15,7 +15,6 @@ const OREGON_COUNTIES = J('oregon-counties');
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
 const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
-const esc = s => s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
 // title-cases a raw ALL-CAPS chip (e.g. demographic tags), with one special
 // case: a bare "or" stays uppercase right after a comma — that's the Oregon
 // abbreviation ("Bend, OR"), not the conjunction ("White or Caucasian").
@@ -737,11 +736,6 @@ function renderL2() {
   $('#t-count').textContent = statements.length + ' statement' + (statements.length === 1 ? '' : 's');
   const d = (DESC.themes && DESC.themes[t.key]) || {};
   $('#t-desc').textContent = d.description || '';
-
-  const i = DATA.themes.indexOf(t);
-  const nx = DATA.themes[(i + 1) % DATA.themes.length];
-  $('#nextT').innerHTML = 'Go to <b>' + esc(nx.short) + '</b> →';
-  $('#nextT').onclick = () => { location.hash = '#/' + nx.key; };
 
   const insights = INSIGHTS[t.key] || [];
 
