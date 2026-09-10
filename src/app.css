@@ -479,7 +479,7 @@ body.demogs-page .shell{padding-bottom:0}
 .demogMap{cursor:move}
 .demogCity{cursor:pointer}
 
-.demogDot{fill:var(--gold);fill-opacity:.9}
+.demogDot{fill:var(--gold);fill-opacity:1}
 /* dark pill behind each city name (white text on --home), tucked slightly
    under the dot's edge (see DEMOG_LABEL_OVERLAP in app.js) so the two
    visibly overlap. pointer-events left at its default (rather than none)
@@ -510,6 +510,18 @@ body.demogs-page .shell{padding-bottom:0}
 .demogMarkers.minorLabelsShown .demogMiniLabel{opacity:0}
 /* ...and, like the major pills, the mini labels drop away on the zoomed-out view */
 .demogMarkers.labelsHidden .demogMiniLabel{opacity:0}
+/* the major places carry a mini label too, but by default (desktop, and
+   mobile once zoomed in) it stays hidden — their pill is what shows */
+.demogCity:not(.minor) .demogMiniLabel{opacity:0}
+/* mobile: at the starting / mid zoom the major places drop the dark pill
+   for the same small white mini label the minor places use — everything
+   is a light label, nothing is a pill, until you zoom past the "all
+   pills" threshold (demogZoomed() lowers it on mobile too) */
+@media (max-width:659px){
+  .demogMarkers:not(.minorLabelsShown) .demogCity:not(.minor) .demogLabelBg,
+  .demogMarkers:not(.minorLabelsShown) .demogCity:not(.minor) .demogDotLabel{opacity:0}
+  .demogMarkers:not(.minorLabelsShown):not(.labelsHidden) .demogCity:not(.minor) .demogMiniLabel{opacity:1}
+}
 .demogMiniLabel{
   font-family:var(--mono);font-weight:500;font-size:9px;letter-spacing:.09em;
   text-transform:uppercase;
@@ -563,6 +575,12 @@ body.demogs-page .shell{padding-bottom:0}
 .demogStat p{font-size:18px;line-height:1.5;margin:8px auto 0;max-width:26em}
 @media (min-width:660px){
   .demogStat p{font-size:20px}
+}
+/* on mobile the whole block is squeezed tight so the map gets the room */
+@media (max-width:659px){
+  .demogStat{padding:12px 22px 14px}
+  .demogStat p{line-height:1.3;margin-top:3px}
+  .demogLink{margin-top:9px}
 }
 .demogLink{
   display:inline-block;margin-top:16px;

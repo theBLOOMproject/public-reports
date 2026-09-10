@@ -252,11 +252,15 @@ function initDemogMap() {
   // paint order within a label = DOM order too: pill background, then text
   labelGroups.append('rect').attr('class', 'demogLabelBg');
   labelGroups.append('text').attr('class', 'demogDotLabel').attr('y', 4).text(d => d.name);
-  // non-major places also get a compact always-on mono label at the home zoom;
-  // it's swapped for the full pill above once you zoom past
-  // DEMOG_MINOR_LABEL_MIN_ZOOM (see the .demogMiniLabel rules in app.css)
-  labelGroups.filter(d => !d.major)
-    .append('text').attr('class', 'demogMiniLabel').text(d => d.name);
+  // every place also gets a compact mono mini label. The minor places show
+  // theirs at the home zoom (their pill only appears once you zoom past
+  // the "all pills" threshold); the major places normally show their pill
+  // instead, and only fall back to the mini label on mobile at the mid
+  // zoom (see the .demogMiniLabel rules in app.css).
+  labelGroups.append('text').attr('class', 'demogMiniLabel').text(d => d.name);
+  // paint every dark --home major-city pill above the translucent white
+  // minor-city mini-labels, whatever order the data put them in
+  labelsLayer.selectAll('g.demogCity:not(.minor)').raise();
 
   // hover/tap info tooltip: name on top, count below — see updateDemogHoverLayout()
   const hoverGroups = hoverLayer.selectAll('g')
@@ -298,7 +302,6 @@ function initDemogMap() {
 // Linear: radius is a straight ratio of count to the largest city's count
 // (Bend), not compressed toward the top the way sqrt would — settled on
 // after live A/B'ing both against the base size via a since-removed dev panel.
-const DEMOG_LABEL_OVERLAP = 10;   // px the label pill tucks into the dot's edge
 const DEMOG_LABEL_PAD_X = 9, DEMOG_LABEL_PAD_Y = 5;   // pill padding around the text
 
 function updateDemogDotSizes() {
@@ -311,15 +314,16 @@ function updateDemogDotSizes() {
   demogMarkersG.selectAll('.demogDotsLayer .demogDot').attr('r', d => d.r.toFixed(1));
   demogMarkersG.selectAll('.demogLabelsLayer .demogCity').each(function (d) {
     const g = d3.select(this);
-    // text sits one PAD_X clear of the dot's right edge, so the visible
-    // left padding matches the right; the pill still tucks OVERLAP px back
-    // under the dot for the intended overlap.
+    // the text sits exactly PAD_X clear of the dot's right edge, and the
+    // pill ends exactly PAD_X past the text — so the *visible* padding is
+    // PAD_X on both sides. The pill's left end runs a few px back under
+    // the (opaque) dot only so there's no seam between the two.
     const text = g.select('.demogDotLabel').attr('x', d.r + DEMOG_LABEL_PAD_X);
     // getBBox() reads the text's own rendered geometry, independent of the
     // svg's current viewBox/zoom transform, so this is safe to call before
     // fitDemogMap() has ever run
     const box = text.node().getBBox();
-    const pillLeft = d.r - DEMOG_LABEL_OVERLAP;
+    const pillLeft = d.r - 3;
     g.select('.demogLabelBg')
       .attr('x', pillLeft)
       .attr('y', box.y - DEMOG_LABEL_PAD_Y)
@@ -348,18 +352,27 @@ function fitDemogMap(w, h) {
   // is bounded by what actually overlays the map: the "400+" stat block at
   // the top and the fixed bottom page-bar. Side insets fit the dot CENTERS;
   // the right one runs wider because every label extends right of its dot
-  // and the easternmost (Prineville) would otherwise clip. Both smaller
-  // than the old symmetric 130, so the home view sits more zoomed in.
-  const PAD_L = 44, PAD_R = 92;
+  // and the easternmost (Prineville) would otherwise clip. On mobile the
+  // insets are tighter (the otherwise-cramped home view zooms in) and the
+  // fit is limited to the tri-county cluster so Madras sits right under the
+  // stat block — Antelope (the lone Wasco-county place) still renders, just
+  // above the frame, behind the block.
+  const mobile = w < 660;
+  const PAD_L = mobile ? 18 : 44;
+  const PAD_R = mobile ? 76 : 92;
   const statBox = document.querySelector('.demogStat');
-  const topInset = (statBox ? statBox.offsetHeight : h * 0.28) + 14;
+  const topInset = (statBox ? statBox.offsetHeight : h * 0.28) + (mobile ? 26 : 14);
   // the demographics page always carries the bottom page-bar (its reveal is
   // delayed, so read the token, not the not-yet-set body.navBarOn class)
   const barH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-h')) || 70;
   const bottomInset = barH + 16;   // La Pine (southernmost) lands just above the bar
+  const TRI_COUNTY = new Set(['Deschutes', 'Crook', 'Jefferson']);
+  const fitCities = mobile
+    ? PARTICIPANT_LOCATIONS.cities.filter(c => TRI_COUNTY.has(c.county))
+    : PARTICIPANT_LOCATIONS.cities;
   const cityPoints = {
     type: 'FeatureCollection',
-    features: PARTICIPANT_LOCATIONS.cities.map(c => (
+    features: fitCities.map(c => (
       { type: 'Feature', geometry: { type: 'Point', coordinates: [c.lng, c.lat] } }
     )),
   };
@@ -389,14 +402,19 @@ function fitDemogMap(w, h) {
 // out so a zoomed-out view reads as dots-in-context rather than a wall of
 // overlapping pill labels — tunable
 const DEMOG_LABEL_MIN_ZOOM = 0.6;
-// the 7 smaller places (data/participant-locations.json's non-major cities)
-// stay label-less until you've zoomed in past this — tunable
+// The "all places get a pill" threshold. Below it, the 7 smaller places
+// (data/participant-locations.json's non-major cities) carry only a mini
+// label — and on mobile (see the @media rule in app.css) the major
+// places carry nothing either, so the crowded starting view is just
+// dots. Lower on mobile so it doesn't take much zooming to get there.
 const DEMOG_MINOR_LABEL_MIN_ZOOM = 1.8;
+const DEMOG_MINOR_LABEL_MIN_ZOOM_MOBILE = 1.35;
 
 function demogZoomed(event) {
   demogWorld.attr('transform', event.transform);
+  const pillZoom = innerWidth < 660 ? DEMOG_MINOR_LABEL_MIN_ZOOM_MOBILE : DEMOG_MINOR_LABEL_MIN_ZOOM;
   demogMarkersG.classed('labelsHidden', event.transform.k < DEMOG_LABEL_MIN_ZOOM);
-  demogMarkersG.classed('minorLabelsShown', event.transform.k >= DEMOG_MINOR_LABEL_MIN_ZOOM);
+  demogMarkersG.classed('minorLabelsShown', event.transform.k >= pillZoom);
   // markers are repositioned individually, never given the group transform
   // itself — that's what keeps .demogDot's radius and .demogDotLabel's
   // font-size a fixed screen size at every zoom level, unlike a plain
@@ -409,15 +427,15 @@ function demogZoomed(event) {
 
 /* ─── DEMOGRAPHICS MAP — hover/tap info tooltip ───────── */
 // Positions each city's two-line tooltip (name + count) at the same anchor
-// the plain label pill uses (see DEMOG_LABEL_OVERLAP), just taller since
-// it's two lines. Unions the two text lines' own bboxes rather than reading
+// the plain label pill uses (d.r + PAD_X), just taller since it's two
+// lines. Unions the two text lines' own bboxes rather than reading
 // the group's bbox — the group also contains .demogHoverBg, which starts at
 // a phantom 0×0 at the origin before this runs and would otherwise skew
 // the union on the very first layout pass.
 function updateDemogHoverLayout() {
   demogMarkersG.selectAll('.demogHoverLayer .demogCity').each(function (d) {
     const g = d3.select(this);
-    const x = d.r - DEMOG_LABEL_OVERLAP;
+    const x = d.r + DEMOG_LABEL_PAD_X;
     const nameBox = g.select('.demogHoverName').attr('x', x).attr('y', 0).node().getBBox();
     const countBox = g.select('.demogHoverCount').attr('x', x).attr('y', 21).node().getBBox();
     const bx = Math.min(nameBox.x, countBox.x);
