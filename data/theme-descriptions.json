@@ -1,36 +1,32 @@
 {
   "themes": {
     "governance": {
-      "description": "People talked about who belongs at the table when AI decisions get made, and about independent oversight of government's use of AI. Bringing in rural, lower-income, and tribal communities has wide support, but whether AI should be publicly or privately owned splits the room.",
+      "description": "People talked about who belongs at the table when AI decisions get made, and about independent oversight of government's use of AI. Bringing in rural and lower-income communities has wide support, but whether AI should be publicly or privately owned splits the room.",
       "note": "Largest theme in the poll (24 statements) and the one where procedural consensus most clearly outruns substantive agreement."
     },
     "datacenters": {
-      "description": "Most of the talk was about the bargain: environmental review, reporting on power and water use, and tax breaks for the companies. Almost everyone wants strict oversight, but Optimists find the jobs-and-revenue case persuasive where Skeptics flatly don't.",
+      "description": "Most of the statements were about environmental review, reporting on power and water use, and tax breaks for the companies. Almost everyone wants more transparency, and there is a lot of uncertainty about the real risks and benefits.",
       "note": "The only theme where a single statement — the jobs-and-tax-revenue framing — is rejected almost absolutely by one group."
     },
     "education": {
-      "description": "The talk was about rules for schools: student use, teacher transparency, and guardrails before kids use AI. Everyone wants the rules, and only Skeptics are convinced AI is already dulling how children think.",
+      "description": "The discussions centered around rules for schools, such as transparency around use in the classroom, guardrails before kids use AI, and parental controls. There is some disagreement about whether or not AI use dampens children's critical thinking skills.",
       "note": "Second-richest theme in the conversation record — five starred session quotes alongside twelve poll statements."
     },
     "mentalhealth": {
-      "description": "This came up mostly in the live sessions, around whether leaning on AI isolates people or helps them connect. Skeptics are the most worried it pulls us apart, but every group draws the line at chatbots standing in for therapy.",
+      "description": "All the groups had different opinions on whether or not AI pulls communities apart, but every group agreed that chatbots are not appropriate stand-ins for therapy.",
       "note": "Read this theme through the quotes, not the poll. The vote sample is too small to carry much weight on its own."
     },
     "workforce": {
-      "description": "People talked about worker protections: knowing when AI is judging you, and who pays to retrain the people it replaces. The right to know is widely shared, while Optimists are the ones most sure that moving slowly on AI costs jobs.",
+      "description": "People talked about protections against surveillance by AI and worker displacement. There is some disagreement about who (between the public and private sectors) should foot the bill for preparing the workforce for these economic changes.",
       "note": "The competitiveness argument is the single most group-defining framing in the theme."
     },
     "agency": {
-      "description": "People talked about keeping humans in charge, and about making powerful systems prove they are safe before release. Both draw wide support, and what's left to argue is whether AI's spread is simply inevitable, as Optimists tend to see it, or still worth resisting.",
+      "description": "People talked about keeping humans in charge, and about making powerful systems prove they are safe before release.",
       "note": "Useful counterweight to the framing that existential-risk concern maps onto AI skepticism. It doesn't, cleanly."
     },
     "access": {
-      "description": "The talk was about trustworthy information: a nonpartisan evidence base, and knowing when an algorithm is choosing your political content. People broadly want both, but Optimists are far more convinced than others that AI is actually widening access to things like legal and medical help.",
+      "description": "The statements here are largely about access to trustworthy information. This comes in a few ways: both access to good information about AI (to support better public decisions), and concern about how AI could provide false information about other things.",
       "note": "Highest-participation statement in the whole poll sits here (243 votes) and it is a divergent one."
-    },
-    "privacy": {
-      "description": "The main question was whether parents should be able to see what kids tell AI companion apps. Of everything discussed, it's the topic the groups divide on least.",
-      "note": "Claude-added theme, not editorial. Worth deciding whether it survives into a published version."
     }
   }
 }

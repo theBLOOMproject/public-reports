@@ -65,8 +65,8 @@
     },
     {
       "key": "access",
-      "short": "Access & Accuracy",
-      "full": "Access, Information & Accuracy",
+      "short": "Access to Quality Information",
+      "full": "Access to Quality Information",
       "color": "#0E6FA6",
       "tags": [
         "Access",
@@ -75,15 +75,6 @@
         "AI Literacy",
         "News & (mis)information",
         "Inequality"
-      ]
-    },
-    {
-      "key": "privacy",
-      "short": "Privacy & Personal Data",
-      "full": "Privacy & Personal Data",
-      "color": "#6B5C1E",
-      "tags": [
-        "Privacy"
       ]
     }
   ],
@@ -251,7 +242,7 @@
       "source": "Open Poll",
       "tags": [
         "Youth",
-        "Privacy"
+        "Children"
       ],
       "inReport": false
     },
@@ -1285,7 +1276,7 @@
       "source": "Open Poll",
       "tags": [
         "Youth",
-        "Privacy"
+        "Children"
       ],
       "inReport": false
     },
@@ -2615,7 +2606,7 @@
       "source": "Open Poll",
       "tags": [
         "Youth",
-        "Privacy"
+        "Children"
       ],
       "inReport": false
     },
@@ -3377,7 +3368,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Privacy"
+        "Human Agency"
       ],
       "inReport": false
     },
