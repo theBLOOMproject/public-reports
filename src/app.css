@@ -638,7 +638,7 @@ body.demogs-page .shell{padding-bottom:0}
 .titleHead{padding:16px 22px 0;text-align:center;position:relative;z-index:2}
 .titleHead h1{
   font-family:var(--geom);font-weight:700;
-  font-size:clamp(36px,10.5vw,52px);line-height:1.12;
+  font-size:clamp(36px,10.5vw,52px);line-height:1.16;
   letter-spacing:-.02em;color:var(--theme-blue);
   margin:10px auto 0;max-width:13em;
 }
@@ -647,7 +647,7 @@ body.demogs-page .shell{padding-bottom:0}
    pill intact if it ever wraps across two lines. */
 .titleAI{
   background:var(--theme-blue);color:#fff;
-  border-radius:.18em;padding:0 .18em;
+  border-radius:.18em;padding:.1em .18em .04em;
   -webkit-box-decoration-break:clone;box-decoration-break:clone;
 }
 
