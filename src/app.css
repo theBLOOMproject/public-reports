@@ -762,15 +762,16 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .toc h2{
   font-family:var(--geom);font-weight:700;color:var(--c);
-  font-size:22px;letter-spacing:-.014em;margin:0 0 14px;
+  /* same size as the insight claim headlines (.insightHead) */
+  font-size:21px;letter-spacing:-.014em;margin:0 0 16px;
 }
 .tocList{display:flex;flex-direction:column;gap:2px}
 .tocItem{
   display:flex;align-items:baseline;gap:8px;
   width:100%;text-align:left;
-  padding:10px 2px;
+  padding:13px 2px;
   border-bottom:1px solid color-mix(in srgb,var(--c) 12%,#fff);
-  font-size:14.5px;line-height:1.4;color:var(--ink);
+  font-size:17px;line-height:1.4;color:var(--ink);
   transition:opacity .15s ease;
 }
 .tocItem:hover{opacity:.65}
@@ -779,9 +780,14 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .tocSeeAll{
   display:flex;align-items:center;gap:6px;
   width:100%;text-align:left;
-  margin-top:12px;padding:4px 2px;
-  font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;
+  margin-top:14px;padding:5px 2px;
+  font-family:var(--mono);font-size:14px;letter-spacing:.04em;text-transform:uppercase;
   font-weight:600;color:var(--c);
+}
+@media (min-width:660px){
+  .toc h2{font-size:29px;margin-bottom:20px}
+  .tocItem{padding:16px 2px;font-size:20px}
+  .tocSeeAll{font-size:15px}
 }
 .tocSeeAll:hover{opacity:.7}
 
@@ -793,9 +799,13 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .insightHead{
   font-family:var(--geom);font-weight:700;color:var(--c);
-  font-size:clamp(21px,5.6vw,26px);line-height:1.24;letter-spacing:-.014em;
+  /* a touch larger than the statement card body (.icText) it sits above */
+  font-size:21px;line-height:1.24;letter-spacing:-.014em;
   margin:0 auto 18px;max-width:22em;
   text-align:center;
+}
+@media (min-width:660px){
+  .insightHead{font-size:29px}
 }
 .insightHead em{font-style:italic;font-weight:700}
 .insightHead em.ic-agree{color:var(--agree)}
@@ -826,23 +836,32 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   background:var(--paper);
   border:1px solid color-mix(in srgb,var(--c) 22%,#fff);
   border-radius:20px;
-  padding:16px 18px 18px;
+  padding:20px 22px 22px;
   -webkit-tap-highlight-color:transparent;
   transition:transform .2s ease,box-shadow .2s ease;
   box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+@media (min-width:660px){
+  .icard{padding:26px 28px 28px}
 }
 @media (hover:hover){
   .icard:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.14)}
 }
 .icard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.22)}
 
+/* on mobile the card's status pill centers over the statement; on desktop
+   it stays left-aligned with the rest of the card content */
+@media (max-width:659px){
+  .icard > .who{display:flex;width:fit-content;margin-inline:auto}
+}
+
 .icText{
-  margin:14px 0 16px;color:var(--ink);
+  margin:18px 0 20px;color:var(--ink);
   font-family:var(--geom);font-weight:600;
   font-size:20px;line-height:1.32;letter-spacing:-.01em;
 }
 @media (min-width:660px){
-  .icText{font-size:23px;line-height:1.3}
+  .icText{font-size:26px;line-height:1.28;margin:22px 0 24px}
 }
 
 .icWho{
@@ -864,17 +883,27 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   .icWho .icAv{width:26px;height:26px;font-size:14px}
 }
 
-/* the bleed-to-edge footer band that holds the caption + the per-group row */
+/* the bleed-to-edge footer band that holds the caption + the per-group row —
+   its side/bottom negative margins must track .icard's padding */
 .icStatsWrap{
-  margin:16px -18px -18px;
-  padding:12px 18px 14px;
-  background:color-mix(in srgb,var(--c) 6%,#fff);
+  margin:16px -22px -22px;
+  padding:13px 22px 15px;
+  background:color-mix(in srgb,var(--c) 2.5%,#fff);
   border-radius:0 0 19px 19px;
 }
+@media (min-width:660px){
+  .icStatsWrap{margin:20px -28px -28px;padding:15px 28px 17px}
+}
 .icStatsCap{
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:color-mix(in srgb,var(--ink) 55%,transparent);
-  margin-bottom:8px;
+  text-align:center;
+  padding-bottom:9px;margin-bottom:13px;
+  border-bottom:1px solid color-mix(in srgb,var(--ink) 14%,transparent);
+}
+.icStatsCap .capKey{color:var(--agree)}
+@media (min-width:660px){
+  .icStatsCap{font-size:12.5px;padding-bottom:10px;margin-bottom:15px}
 }
 .icStats{display:flex;gap:10px}
 .icStat{flex:1;min-width:0}
@@ -888,9 +917,15 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   display:inline-flex;align-items:center;gap:4px;
 }
 .icStat .icLabel{
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 75%,transparent);
   margin-bottom:6px;
+}
+@media (min-width:660px){
+  /* on desktop the card's per-group readout is the loudest thing on it —
+     an oversized number over a roomier label */
+  .icStat .icVal{font-size:30px;margin-bottom:3px}
+  .icStat .icLabel{font-size:13px;margin-bottom:8px}
 }
 .icStat .icBarTrack{height:3px;border-radius:2px;background:color-mix(in srgb,var(--ink) 10%,transparent)}
 .icStat .icBarFill{height:100%;border-radius:2px}
@@ -989,23 +1024,31 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 /* consensus / difference / plain-agreement indicator for poll statements
    (quotes have no vote data, so the pill is hidden entirely for those) */
 .who{
-  display:inline-flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;gap:9px;
   color:#fff;
-  border-radius:999px;padding:5px 13px 5px 5px;
-  min-height:30px;max-width:82%;
+  border-radius:999px;padding:5px 15px 5px 5px;
+  min-height:34px;max-width:82%;
 }
 .who[hidden]{display:none}
 .who.consensus,.who.consensus-against{background:var(--agree)}
 .who.difference{background:var(--disagree)}
 .who.neutral{background:#484848}
 .who .av{
-  width:21px;height:21px;border-radius:50%;background:#fff;flex:none;
+  width:24px;height:24px;border-radius:50%;background:#fff;flex:none;
   display:grid;place-items:center;
 }
-.who .av img{width:14px;height:14px;object-fit:contain;display:block}
+.who .av img{width:16px;height:16px;object-fit:contain;display:block}
+@media (min-width:660px){
+  .who{gap:10px;padding:6px 17px 6px 6px;min-height:38px}
+  .who .av{width:27px;height:27px}
+  .who .av img{width:18px;height:18px}
+}
 .who .txt{
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+@media (min-width:660px){
+  .who .txt{font-size:13px}
 }
 .closeb{
   flex:none;width:32px;height:32px;display:grid;place-items:center;
@@ -1057,33 +1100,56 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .bar .d{background:var(--disagree)}
 .bar .p{background:var(--pass)}
 .bar .a{background:var(--agree)}
-.barkey{
-  display:flex;gap:13px;margin-top:9px;
-  font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
-  color:color-mix(in srgb,var(--c) 48%,#fff);
-}
-.barkey span{display:inline-flex;align-items:center;gap:5px}
-.barkey i{width:9px;height:3px;border-radius:2px;flex:none}
 
 /* ─── L3 modal label + %-agree sizing ──────────────────────────────
-   The shared .meta/.grow/.barkey rules above are tuned small and light;
-   inside the statement pop-up they run bigger and darker so the source,
-   the per-group labels and — on desktop especially — the %-agree numbers
-   carry real weight. Scoped to #l3 so #gdetail / #ddetail keep their own
-   tighter treatment. */
-#l3 .who .txt{font-size:11.5px}
-#l3 .meta h4{font-size:12px;color:color-mix(in srgb,var(--c) 72%,#000)}
-#l3 .meta .src{font-size:15px}
-#l3 .meta .src small{font-size:13px}
-#l3 .grow .top{font-size:11.5px;color:color-mix(in srgb,var(--c) 68%,#000)}
-#l3 .grow .top b{font-size:15px;font-weight:700}
-#l3 .barkey{font-size:10px;color:color-mix(in srgb,var(--c) 60%,#000)}
+   The shared .meta/.grow rules above are tuned small and light;
+   inside the statement pop-up the copy runs bigger — noticeably so on
+   desktop — so the statement, the source and the per-group labels carry
+   real weight. Everything below the .meta line is a variant of gray
+   rather than the theme color; the only color down there is each group's
+   %-agree number, tiered red/amber/green by value (set inline in JS, the
+   same scale the statement card uses). Scoped to #l3 so #gdetail /
+   #ddetail keep their own tighter treatment. */
+#l3 .who .txt{font-size:13px}
+/* roomier gutters than the shared modal layout — scoped to #l3 so
+   #gdetail / #ddetail keep their tighter padding */
+#l3 .cardtop{padding:14px 18px 14px 16px}
+#l3 .quotewrap{padding:28px 24px}
+#l3 .cardfoot{padding:12px 18px}
+#l3 .meta{padding:22px 24px 28px;border-top-color:color-mix(in srgb,var(--ink) 12%,transparent)}
+#l3 .meta h4{font-size:14.5px;color:color-mix(in srgb,var(--ink) 52%,transparent)}
+/* a hairline rule divides the Source block from the Open-poll block */
+#l3 .meta section + section{
+  margin-top:16px;padding-top:22px;
+  border-top:1px solid color-mix(in srgb,var(--ink) 12%,transparent);
+}
+#l3 .meta .poll h4{margin-bottom:14px}
+#l3 .meta .src{font-size:16.5px;font-weight:400;color:color-mix(in srgb,var(--ink) 82%,transparent)}
+#l3 .meta .src small{font-size:14.5px;color:color-mix(in srgb,var(--ink) 52%,transparent)}
+/* group label + agree% match the section subheadings */
+#l3 .grow .top{font-size:14.5px;color:color-mix(in srgb,var(--ink) 75%,transparent);margin-bottom:9px}
+/* the group name reads as a plain name, not a small-caps token */
+#l3 .grow .top span{text-transform:none;letter-spacing:.01em}
+#l3 .grow .top b{font-size:14.5px;font-weight:700}
+/* roomier per-group rows and thicker bars than the shared .grow/.bar
+   defaults — the L3 modal has the space and no longer carries a legend */
+#l3 .grow{margin-bottom:16px}
+#l3 .bar{height:6px}
 @media (min-width:660px){
-  #l3 .who .txt{font-size:12.5px}
-  #l3 .meta h4{font-size:13px}
-  #l3 .grow .top{font-size:13px}
-  #l3 .grow .top b{font-size:23px}
-  #l3 .barkey{font-size:11px}
+  #l3 .quotewrap blockquote{font-size:33px}
+  #l3 .who .txt{font-size:15px}
+  #l3 .meta h4{font-size:18px}
+  #l3 .meta .src{font-size:19.5px}
+  #l3 .meta .src small{font-size:18px}
+  #l3 .grow .top{font-size:18px;margin-bottom:11px}
+  #l3 .grow .top b{font-size:18px}
+  #l3 .grow{margin-bottom:20px}
+  #l3 .bar{height:7px}
+  #l3 .card{max-width:620px}
+  #l3 .cardtop{padding:18px 28px 18px 26px}
+  #l3 .quotewrap{padding:40px 40px 34px}
+  #l3 .meta{padding:30px 40px 40px}
+  #l3 .cardfoot{padding:15px 28px}
 }
 
 /* #gdetail's own take on the shared .meta/.grow/.bar block above (L3 keeps
@@ -1120,15 +1186,6 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 #gdetail .ddTitle{color:var(--c)}
 #gdetail .quotewrap blockquote{color:var(--ink)}
 #gdetail .bar{height:8px}
-
-.tags{display:flex;flex-wrap:wrap;gap:6px}
-.tags i{
-  font-style:normal;
-  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
-  padding:4px 9px;border-radius:999px;
-  background:color-mix(in srgb,var(--c) 11%,#fff);
-  color:var(--c);
-}
 
 .cardfoot{
   flex:none;display:flex;align-items:center;justify-content:space-between;
