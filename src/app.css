@@ -701,8 +701,12 @@ body.demogs-page .shell{padding-bottom:0}
   color:var(--theme-blue);text-decoration:underline;
 }
 @media (min-width:660px){
-  /* the same centred stack, just larger type */
-  .titleBottom p{font-size:19px;margin-bottom:22px;max-width:34em}
+  /* on desktop, match the CTA page's cover type exactly: 54px headline
+     (the shared .masthead h1 desktop size) and 25px/1.45 body copy
+     (#l0-cta .masthead p) — leading kept a touch looser than CTA's 1.05
+     so the "AI?" chip's padding has room */
+  .titleHead h1{font-size:54px;line-height:1.1}
+  .titleBottom p{font-size:25px;line-height:1.45;margin-bottom:22px;max-width:34em}
   .diveIn{font-size:22px;padding:21px 26px}
   .diveSub{margin-top:14px}
 }
