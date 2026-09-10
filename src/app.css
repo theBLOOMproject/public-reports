@@ -872,9 +872,12 @@ body.demogs-page .shell{padding-bottom:0}
 @media (min-width:660px){
   .insightHead{font-size:29px}
 }
-.insightHead em{font-style:italic;font-weight:700}
-.insightHead em.ic-agree{color:var(--agree)}
-.insightHead em.ic-disagree{color:var(--disagree)}
+/* the key verb — bold and coloured (not italic), the same in the
+   insight headline and its "What we learned" TOC line */
+.insightHead em,.tocItem em{font-style:normal;font-weight:700}
+em.ic-agree{color:var(--agree)}
+em.ic-disagree{color:var(--disagree)}
+em.ic-divided,em.ic-mixed{color:var(--theme-blue)}
 
 .carousel{
   display:flex;align-items:flex-start;gap:14px;overflow-x:auto;

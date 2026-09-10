@@ -142,32 +142,34 @@ const pillInfoFor = vote => {
   return { cls: 'neutral', icon: null, label: vote.minAgree + '% AGREE' };
 };
 
-// turns a claim + hand-assigned direction into TOC/headline copy. Some
-// claims are already written as "People disagree about whether X" —
-// those are used verbatim (with the verb emphasized) rather than
-// double-wrapped in another "People X that…" template. The TOC line is
-// phrased to match the headline's softened "generally agree" register.
+// turns a claim + hand-assigned direction into one HTML phrase, used
+// verbatim for BOTH the insight headline and its "What we learned" TOC
+// line so the two always read identically (down to "generally" and the
+// trailing period). The key verb — agree / disagree / divided / mixed —
+// is wrapped in an <em class="ic-{verb}"> that both contexts colour
+// (green / red / blue). Claims already written as "People disagree about
+// whether X" are used as-is rather than double-wrapped in another
+// "People X that…" template.
 const CLAIM_VERB_RE = /^People (agree|disagree)\b/i;
 const claimPhrase = (claim, direction) => {
   const m = claim.match(CLAIM_VERB_RE);
+  let html;
   if (m) {
     const verb = m[1].toLowerCase(), rest = claim.slice(m[0].length);
-    return {
-      toc: 'People ' + verb + rest,
-      head: 'People <em class="ic-' + verb + '">' + verb + '</em>' + rest + '.',
+    html = `People <em class="ic-${verb}">${verb}</em>${rest}.`;
+  } else {
+    const firstWord = claim.match(/^\S+/)[0];
+    const lead = /^[A-Z]{2,}$/.test(firstWord.replace(/[^A-Za-z]/g, ''))
+      ? claim : claim.charAt(0).toLowerCase() + claim.slice(1);
+    const HEAD = {
+      agree: `People generally <em class="ic-agree">agree</em> that ${lead}.`,
+      disagree: `People generally <em class="ic-disagree">disagree</em> that ${lead}.`,
+      divided: `People are <em class="ic-divided">divided</em> over whether ${lead}.`,
+      mixed: `People have <em class="ic-mixed">mixed</em> views on whether ${lead}.`,
     };
+    html = HEAD[direction] || HEAD.mixed;
   }
-  const firstWord = claim.match(/^\S+/)[0];
-  const lead = /^[A-Z]{2,}$/.test(firstWord.replace(/[^A-Za-z]/g, ''))
-    ? claim : claim.charAt(0).toLowerCase() + claim.slice(1);
-  const TOC_LEAD = { agree: 'generally agree that', disagree: 'generally disagree that', divided: 'are divided on whether', mixed: 'are mixed on whether' };
-  const HEAD = {
-    agree: 'People generally <em class="ic-agree">agree</em> that ' + lead + '.',
-    disagree: 'People generally <em class="ic-disagree">disagree</em> that ' + lead + '.',
-    divided: 'People are <em>divided</em> over whether ' + lead + '.',
-    mixed: 'People have <em>mixed</em> views on whether ' + lead + '.',
-  };
-  return { toc: 'People ' + (TOC_LEAD[direction] || TOC_LEAD.mixed) + ' ' + lead, head: HEAD[direction] || HEAD.mixed };
+  return { toc: html, head: html };
 };
 
 const state = { theme: null };
@@ -807,7 +809,9 @@ function buildToc(t, insights, nstatements) {
   insights.forEach((ins, i) => {
     const { toc: line } = claimPhrase(ins.claim, ins.direction);
     const item = el('button', 'tocItem');
-    item.append(el('span', null, line));
+    const label = el('span');
+    label.innerHTML = line;
+    item.append(label);
     item.append(el('span', 'arrow', '→'));
     item.onclick = () => document.getElementById('insight-' + t.key + '-' + i)
       ?.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
