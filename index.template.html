@@ -54,10 +54,11 @@
 
   <!-- ══ LEVEL 0 — INTRO PAGES ══
        Order (title → demogs → groups → consensus) is set by INTRO_PAGES in
-       src/app.js, not by this markup — that array drives routing and wires
-       each .introNext arrow to whatever page comes after its own. Adding a
-       page means adding a <main class="introPage" id="..."> here AND an
-       entry in INTRO_PAGES; either alone leaves the other half not working. -->
+       src/app.js, not by this markup — that array drives routing. Forward
+       navigation is the bottom .pageBar (and .diveIn on the title page).
+       Adding a page means adding a <main class="introPage" id="..."> here
+       AND an entry in INTRO_PAGES; either alone leaves the other half not
+       working. -->
   <main class="introPage" id="l0-title">
     <div class="titleMain">
       <div class="titleHead">
@@ -76,9 +77,6 @@
     <div class="demogMap" id="demogMap">
       <svg id="demogSvg" aria-hidden="true"></svg>
     </div>
-    <button class="introNext demogReset" id="demogReset" type="button" aria-label="Reset map view" title="Reset map view">
-      <svg viewBox="0 0 22 22" aria-hidden="true"><path d="M11 4v4M11 4a7 7 0 1 1-6.1 3.6M4.9 4.6V8h3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
     <div class="demogStat">
       <h1>400+</h1>
       <p>People across the region participated in this conversation, both through our Open Poll and live conversations.</p>
@@ -141,11 +139,11 @@
       <h1>What 400+ people had to say about AI in Central Oregon</h1>
       <p>Responses gathered in six listening sessions around the region and one open poll, sorted into eight themes. Each square below is one poll statement or one comment from a live session.</p>
     </div>
-    <div id="blocks"></div>
     <div class="legend label">
       <span><i></i> Poll statement</span>
       <span><i class="q"></i> Session quote</span>
     </div>
+    <div id="blocks"></div>
   </main>
 
   <!-- ══ LEVEL 2 ══ -->

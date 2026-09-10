@@ -83,10 +83,10 @@ body{
   font-family:var(--body);
   -webkit-font-smoothing:antialiased;
 }
-body.title-page,body.groups-page{--page-bg:var(--paper);background-color:var(--page-bg);background-image:var(--grid-bg);background-size:var(--grid-size)}
+body.title-page,body.groups-page,body.themes-page{--page-bg:var(--paper);background-color:var(--page-bg);background-image:var(--grid-bg);background-size:var(--grid-size)}
 body.cta-page{--page-bg:var(--theme-blue);background:var(--page-bg)}
-body.consensus-page{--page-bg:color-mix(in srgb,var(--agree) 60%,#000);background:var(--page-bg)}
-body:has(#l2.on){--page-bg:var(--paper);background:var(--page-bg)}
+body.consensus-page{--page-bg:color-mix(in srgb,var(--agree) 88%,#000);background:var(--page-bg)}
+body:has(#l2.on){--page-bg:var(--paper);background-color:var(--page-bg);background-image:var(--grid-bg);background-size:var(--grid-size)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 :focus-visible{outline:2.5px solid currentColor;outline-offset:3px;border-radius:3px}
 
@@ -131,6 +131,7 @@ body:has(#l2.on) .shell{padding-top:0}
 }
 body.title-page .topBar{color:var(--theme-blue)}
 body.groups-page .topBar{color:var(--home)}
+body.themes-page .topBar{color:var(--theme-blue)}
 body:has(#l2.on) .topBar{display:none}
 .topBarBrand{
   display:inline-flex;align-items:center;
@@ -164,7 +165,13 @@ body:has(#l2.on) .topBar{display:none}
 /* ─────────────────────────────────────────────
    LEVEL 1 — THEMES
    ───────────────────────────────────────────── */
-#l1{display:block}
+#l1{
+  display:block;
+  background-color:var(--paper);color:var(--ink);
+  background-image:var(--grid-bg);background-size:var(--grid-size);
+}
+#l1 .masthead h1{color:var(--theme-blue)}
+#l1 .masthead p{color:var(--ink)}
 .masthead{padding:32px 22px 20px}
 .masthead h1{
   font-family:var(--geom);font-weight:700;
@@ -176,15 +183,19 @@ body:has(#l2.on) .topBar{display:none}
   margin:12px 0 0;max-width:none;
 }
 
+/* one rounded card per theme, stacked with a gap — the same container
+   treatment as the Opinion Groups page's .gbubble cards */
+#blocks{display:flex;flex-direction:column;gap:14px;padding:6px 22px 20px}
 .theme-block{
   display:block;width:100%;text-align:left;
-  background:var(--c);
-  padding:22px 22px 24px;
+  background:var(--c);color:#fff;
+  border-radius:22px;
+  padding:22px 24px 24px;
   position:relative;
-  transition:filter .25s ease;
+  box-shadow:0 10px 26px rgba(0,0,0,.16);
+  transition:filter .25s ease,transform .15s ease,box-shadow .2s ease;
   -webkit-tap-highlight-color:transparent;
 }
-.theme-block + .theme-block{box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
 .theme-block h2{
   font-family:var(--geom);font-weight:700;
   font-size:clamp(26px,7.4vw,32px);line-height:1.06;
@@ -197,10 +208,10 @@ body:has(#l2.on) .topBar{display:none}
   opacity:.45;transition:transform .3s ease,opacity .3s ease;
 }
 @media (hover:hover){
-  .theme-block:hover{filter:brightness(1.12) saturate(1.05)}
+  .theme-block:hover{filter:brightness(1.12) saturate(1.05);transform:translateY(-2px);box-shadow:0 16px 34px rgba(0,0,0,.22)}
   .theme-block:hover .arrow{transform:translateX(5px);opacity:1}
 }
-.theme-block:active{filter:brightness(.94)}
+.theme-block:active{filter:brightness(.94);transform:scale(.99)}
 
 /* the tally: one cell per record. filled = poll statement, ring = session quote */
 .tally{
@@ -217,12 +228,12 @@ body:has(#l2.on) .topBar{display:none}
 @keyframes tallyIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
 
 .legend{
-  padding:20px 22px 46px;display:flex;gap:20px;flex-wrap:wrap;
-  color:rgba(255,255,255,.42);
+  padding:24px 22px 18px;display:flex;gap:20px;flex-wrap:wrap;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
 }
 .legend span{display:inline-flex;align-items:center;gap:7px}
-.legend i{width:11px;height:11px;border-radius:1.5px;background:rgba(255,255,255,.6);flex:none}
-.legend i.q{background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)}
+.legend i{width:11px;height:11px;border-radius:1.5px;background:color-mix(in srgb,var(--ink) 55%,transparent);flex:none}
+.legend i.q{background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 55%,transparent)}
 
 /* ─────────────────────────────────────────────
    LEVEL 0 — INTRO PAGES
@@ -241,6 +252,18 @@ body:has(#l2.on) .topBar{display:none}
   min-height:calc(100dvh - var(--topbar-h));
 }
 #l0-demogs{background:var(--home);color:#fff}
+/* the map page never scrolls — it's exactly the viewport (minus .topBar),
+   the map fills it, and dragging pans the map rather than the page. The
+   bottom page-bar's usual scroll reserve (body.navBarOn .shell) is
+   dropped here so nothing hangs below the fold. */
+#l0-demogs{
+  height:calc(100vh - var(--topbar-h));
+  height:calc(100dvh - var(--topbar-h));
+  min-height:0;padding-bottom:0;overflow:hidden;
+}
+body.demogs-page{overflow:hidden}
+body.demogs-page .shell{padding-bottom:0}
+.demogMap,#demogSvg{touch-action:none}
 /* white with the same faint hairline grid #l0-title uses (--grid-bg,
    TOKENS above) — the group cards' own solid gradients sit on top of it,
    same as #l0-title's content sits on top of its grid */
@@ -260,13 +283,9 @@ body:has(#l2.on) .topBar{display:none}
   background-image:var(--grid-bg);
   background-size:var(--grid-size);
 }
-/* darker at the very top, settling into the flat --agree green (same token
-   .who.consensus's pill already uses — "consensus" and "agree" are the
-   same color throughout the report) by ~20% down the page */
-#l0-consensus{
-  background:linear-gradient(180deg,color-mix(in srgb,var(--agree) 60%,#000) 0%,var(--agree) 20%);
-  color:#fff;
-}
+/* flat green — a touch darker than the flat --agree token so the white
+   cards and copy sit more comfortably on it */
+#l0-consensus{background:color-mix(in srgb,var(--agree) 88%,#000);color:#fff}
 /* Call to Action — the lighter --theme-blue (matching CTA.jpg's own
    background, sampled at #1a3d8f — close kin to --theme-blue, not the
    darker --home every other dark intro page uses), with .ctaImg (below)
@@ -283,8 +302,8 @@ body:has(#l2.on) .topBar{display:none}
    min-width:660px) .titleMain gives up the flex:1 grow so .titleBottom
    just follows it in normal flow instead of being pinned to the viewport
    bottom — "up with the rest of the content", per design call. Zeroing the
-   shared .introPage bottom padding (reserved on other pages for
-   #demogReset/general breathing room), title has no use for it. */
+   shared .introPage bottom padding (general breathing room on other
+   pages), title has no use for it. */
 #l0-title{display:flex;flex-direction:column;padding-bottom:0}
 .titleMain{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
 
@@ -294,7 +313,7 @@ body:has(#l2.on) .topBar{display:none}
 .introPage .masthead h1{max-width:none}
 .introPage .masthead p{max-width:none}
 
-#l0-groups .masthead h1{color:var(--home)}
+#l0-groups .masthead h1{color:var(--theme-blue)}
 /* Geom + solid ink per design call — the shared .masthead p rule (light,
    body-font) is right for a dark background but reads as unreadable here,
    the one .introPage that isn't dark. max-width:none overrides the shared
@@ -347,6 +366,11 @@ body:has(#l2.on) .topBar{display:none}
   filter:brightness(.55) contrast(1.15) saturate(1.4);
   mix-blend-mode:luminosity;
   pointer-events:none;
+}
+@media (max-width:659px){
+  /* bigger and lifted on mobile only — the sides clip against
+     #l0-cta's overflow:hidden */
+  .ctaImg{width:118%;transform:translate(-50%,16%)}
 }
 @media (min-width:660px){
   .ctaImg{position:fixed;width:min(100%,1400px)}
@@ -521,15 +545,6 @@ body:has(#l2.on) .topBar{display:none}
    an explicit stack here they'd paint (and sit) underneath the map instead
    of over it as the intended overlay. */
 #l0-demogs .demogStat{position:relative;z-index:2}
-#l0-demogs .introNext{z-index:2}
-
-/* the reset button borrows .introNext's whole visual shell (circle, shadow,
-   hover transition) via a second class on the same element — the arrow's
-   own bottom-right slot is already taken by page navigation, so this sits
-   at bottom-left instead, both thumb-reachable on mobile. Compound selector
-   (not a same-specificity bare .demogReset) so this reliably beats the base
-   .introNext rule regardless of declaration order. */
-.introNext.demogReset{left:22px;right:auto;bottom:26px}
 
 /* the headline stat sits below the map rather than inside .masthead —
    the mock centers this block, unlike Title's left-aligned copy. Its own
@@ -592,22 +607,6 @@ body:has(#l2.on) .topBar{display:none}
   font-size:16.5px;line-height:1.45;
   margin:14px 0 0;
 }
-
-/* the "continue to the next intro page" bubble — same position/style on
-   every .introPage; app.js wires each one to whatever INTRO_PAGES says
-   comes after its own page, so this never needs a page-specific variant */
-.introNext{
-  position:absolute;right:22px;bottom:26px;
-  width:52px;height:52px;border-radius:50%;
-  background:#fff;color:var(--home);
-  display:grid;place-items:center;
-  box-shadow:0 10px 28px rgba(0,0,0,.4);
-  transition:transform .2s ease;
-}
-@media (hover:hover){
-  .introNext:hover{transform:scale(1.07)}
-}
-.introNext svg{width:22px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
 
 /* title head — the headline, centered, sitting on the plain white/grid
    background rather than inside .masthead (whose light-on-dark defaults are
@@ -753,7 +752,9 @@ body:has(#l2.on) .topBar{display:none}
    full-bleed color block.
    ───────────────────────────────────────────── */
 #l2{
-  display:none;background:var(--paper);color:var(--ink);
+  display:none;color:var(--ink);
+  background-color:var(--paper);
+  background-image:var(--grid-bg);background-size:var(--grid-size);
   min-height:100vh;min-height:100dvh;
   position:relative;
 }
@@ -871,21 +872,21 @@ body:has(#l2.on) .topBar{display:none}
 
 .carousel{
   display:flex;align-items:flex-start;gap:14px;overflow-x:auto;
-  padding:2px 7% 14px;margin:0 -22px;
+  padding:2px 5% 14px;margin:0 -22px;
   scroll-snap-type:x mandatory;
-  scroll-padding-inline:7%;
+  scroll-padding-inline:5%;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
 }
 .carousel::-webkit-scrollbar{display:none}
 /* each card takes most of the row and centers when snapped, with a
    sliver of its neighbor peeking on either side */
-.carousel .icard{flex:0 0 86%;scroll-snap-align:center}
+.carousel .icard{flex:0 0 90%;scroll-snap-align:center}
 @media (min-width:660px){
   /* on desktop, cards should read as barely narrower than the full-width
      All Statements cards below them — just a thin peek of the next one */
-  .carousel{padding-inline:3%;scroll-padding-inline:3%}
-  .carousel .icard{flex-basis:94%}
+  .carousel{padding-inline:2.5%;scroll-padding-inline:2.5%}
+  .carousel .icard{flex-basis:95%}
 }
 
 /* ─── the new statement card — shared by carousels and the full list */
@@ -907,11 +908,10 @@ body:has(#l2.on) .topBar{display:none}
 }
 .icard.sel{box-shadow:0 0 0 3px var(--c),0 10px 30px rgba(0,0,0,.22)}
 
-/* on mobile the card's status pill centers over the statement; on desktop
-   it stays left-aligned with the rest of the card content */
-@media (max-width:659px){
-  .icard > .who{display:flex;width:fit-content;margin-inline:auto}
-}
+/* the card's status pill spans the full card width (inside the padding),
+   with just its centered label — no icon in this mode */
+.icard > .who{display:flex;width:100%;max-width:none;justify-content:center;padding-inline:14px}
+.icard > .who .av{display:none}
 
 .icText{
   margin:18px 0 20px;color:var(--ink);
@@ -1019,7 +1019,7 @@ body:has(#l2.on) .topBar{display:none}
 .lowFlag:hover::after,.lowFlag:focus-visible::after{opacity:1}
 
 /* ─── All Statements ──────────────────────────────────────────────── */
-.allStatements{padding:38px 22px 4px}
+.allStatements{padding:38px 16px 4px}
 .allStatements h2{
   font-family:var(--geom);font-weight:700;color:var(--c);
   font-size:24px;letter-spacing:-.014em;margin:0 0 20px;
@@ -1075,6 +1075,7 @@ body:has(#l2.on) .topBar{display:none}
 .cardtop{
   display:flex;align-items:center;
   padding:13px 16px 13px 14px;flex:none;
+  padding-block:16px;   /* even space above and below the title */
   background:var(--paper);
   border-bottom:1px solid color-mix(in srgb,var(--c) 16%,#fff);
   border-radius:24px 24px 0 0;
@@ -1236,14 +1237,35 @@ body:has(#l2.on) .topBar{display:none}
 #gdetail .grow.current .top{
   display:inline-flex;
   color:#fff;background:var(--c);
-  padding:4px 11px;border-radius:999px;
-  font-size:11.5px;
+  padding:5px 12px;border-radius:999px;
 }
 #gdetail .grow.current .top span,
 #gdetail .grow.current .top b{color:#fff}
 #gdetail .ddTitle{color:var(--c)}
 #gdetail .quotewrap blockquote{color:var(--ink)}
-#gdetail .bar{height:8px}
+
+/* detail text matched to the L3 statement modal's scale (14.5px / 18px) */
+#gdetail .gdDesc{padding:26px 24px 24px}
+#gdetail .gdText{font-size:26px;line-height:1.3}
+#gdetail .quotewrap{padding:28px 24px}
+#gdetail .meta h4{font-size:14.5px}
+#gdetail .meta{padding:22px 24px 26px}
+#gdetail .grow{margin-bottom:16px}
+#gdetail .grow .top,
+#gdetail .grow .top b{font-size:14.5px}
+#gdetail .bar{height:6px}
+@media (min-width:660px){
+  #gdetail .card{max-width:620px}
+  #gdetail .gdDesc{padding:36px 40px 32px}
+  #gdetail .gdText{font-size:32px}
+  #gdetail .quotewrap{padding:40px 40px 34px}
+  #gdetail .meta{padding:30px 40px 38px}
+  #gdetail .meta h4{font-size:18px}
+  #gdetail .grow{margin-bottom:20px}
+  #gdetail .grow .top,
+  #gdetail .grow .top b{font-size:18px}
+  #gdetail .bar{height:7px}
+}
 
 .cardfoot{
   flex:none;display:flex;align-items:center;justify-content:space-between;
@@ -1311,7 +1333,7 @@ body:has(#l2.on) .topBar{display:none}
 #ddetail.on{display:block}
 
 .ddTitle{
-  font-family:var(--geom);font-weight:700;font-size:32px;color:var(--home);
+  font-family:var(--geom);font-weight:700;font-size:24px;line-height:1.15;color:var(--home);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 

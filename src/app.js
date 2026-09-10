@@ -201,7 +201,6 @@ const INTRO_PAGES = [
 // scale would render that as a barely-visible speck next to a blob.
 const TRI_COUNTY_FIPS = new Set(['41017', '41013', '41031']);   // Deschutes, Crook, Jefferson
 const DEMOG_MAX_ZOOM_IN = 8;        // tunable: multiple of the home (city-cluster) fit scale
-const DEMOG_RESET_DURATION = 500;   // ms
 const DEMOG_MIN_R = 13, DEMOG_MAX_R = 70;
 
 // One-time DOM/data-binding setup. The projection isn't fit to real pixel
@@ -310,15 +309,19 @@ function updateDemogDotSizes() {
   demogMarkersG.selectAll('.demogDotsLayer .demogDot').attr('r', d => d.r.toFixed(1));
   demogMarkersG.selectAll('.demogLabelsLayer .demogCity').each(function (d) {
     const g = d3.select(this);
-    const text = g.select('.demogDotLabel').attr('x', d.r - DEMOG_LABEL_OVERLAP);
+    // text sits one PAD_X clear of the dot's right edge, so the visible
+    // left padding matches the right; the pill still tucks OVERLAP px back
+    // under the dot for the intended overlap.
+    const text = g.select('.demogDotLabel').attr('x', d.r + DEMOG_LABEL_PAD_X);
     // getBBox() reads the text's own rendered geometry, independent of the
     // svg's current viewBox/zoom transform, so this is safe to call before
     // fitDemogMap() has ever run
     const box = text.node().getBBox();
+    const pillLeft = d.r - DEMOG_LABEL_OVERLAP;
     g.select('.demogLabelBg')
-      .attr('x', box.x - DEMOG_LABEL_PAD_X)
+      .attr('x', pillLeft)
       .attr('y', box.y - DEMOG_LABEL_PAD_Y)
-      .attr('width', box.width + DEMOG_LABEL_PAD_X * 2)
+      .attr('width', (box.x + box.width + DEMOG_LABEL_PAD_X) - pillLeft)
       .attr('height', box.height + DEMOG_LABEL_PAD_Y * 2)
       .attr('rx', box.height / 2 + DEMOG_LABEL_PAD_Y);
     // mini label (non-major only): sits just past the dot's right edge,
@@ -339,13 +342,19 @@ function fitDemogMap(w, h) {
   // The home view fits the city POINTS, not the tri-county polygons — the
   // county shapes include a lot of empty land the report doesn't care about;
   // fitting to where the markers actually sit keeps the default view focused
-  // on the cities themselves rather than the wider region. PAD leaves room
-  // for marker radius/labels at the fitted extent's edges; TOP_OFFSET pushes
-  // the cluster down so it doesn't sit directly under the "400+" stat block
-  // overlaid at the top of the page.
-  const PAD = 130;   // bigger PAD = more surrounding context fit into view = more zoomed out
-  const TOP_OFFSET = h * 0.16;
-  const BOTTOM_OFFSET = 24;   // extra breathing room so the southernmost label (La Pine) clears the frame edge
+  // on the cities themselves rather than the wider region. The fitted band
+  // is bounded by what actually overlays the map: the "400+" stat block at
+  // the top and the fixed bottom page-bar. Side insets fit the dot CENTERS;
+  // the right one runs wider because every label extends right of its dot
+  // and the easternmost (Prineville) would otherwise clip. Both smaller
+  // than the old symmetric 130, so the home view sits more zoomed in.
+  const PAD_L = 44, PAD_R = 92;
+  const statBox = document.querySelector('.demogStat');
+  const topInset = (statBox ? statBox.offsetHeight : h * 0.28) + 14;
+  // the demographics page always carries the bottom page-bar (its reveal is
+  // delayed, so read the token, not the not-yet-set body.navBarOn class)
+  const barH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-h')) || 70;
+  const bottomInset = barH + 16;   // La Pine (southernmost) lands just above the bar
   const cityPoints = {
     type: 'FeatureCollection',
     features: PARTICIPANT_LOCATIONS.cities.map(c => (
@@ -356,7 +365,7 @@ function fitDemogMap(w, h) {
   // fitSize, which wants a plain [width,height] — see the note this file
   // used to carry on that exact mixup) — used here specifically because it
   // lets the fitted extent be inset/offset, not just sized.
-  demogProjection.fitExtent([[PAD, PAD + TOP_OFFSET], [w - PAD, h - PAD - BOTTOM_OFFSET]], cityPoints);
+  demogProjection.fitExtent([[PAD_L, topInset], [w - PAD_R, h - bottomInset]], cityPoints);
   demogWorld.selectAll('path').attr('d', demogPath);
 
   demogMarkersG.selectAll('.demogCity').each(d => {
@@ -396,12 +405,6 @@ function demogZoomed(event) {
   });
 }
 
-function resetDemogMap() {
-  demogHoverShow(null);
-  const sel = REDUCED ? demogSvg : demogSvg.transition().duration(DEMOG_RESET_DURATION);
-  sel.call(demogZoom.transform, d3.zoomIdentity);
-}
-
 /* ─── DEMOGRAPHICS MAP — hover/tap info tooltip ───────── */
 // Positions each city's two-line tooltip (name + count) at the same anchor
 // the plain label pill uses (see DEMOG_LABEL_OVERLAP), just taller since
@@ -430,7 +433,7 @@ function updateDemogHoverLayout() {
 
 // Only ever one city's tooltip showing at a time — .classed() with a
 // per-datum predicate clears every other city's .hovered in the same pass.
-// city === null (the map background, or resetDemogMap) hides all of them.
+// city === null (the map background) hides all of them.
 function demogHoverShow(city) {
   demogMarkersG.selectAll('.demogHoverLayer .demogCity').classed('hovered', d => d === city);
 }
@@ -1109,7 +1112,8 @@ function route() {
   if (key === 'themes') {
     close();
     updateNavBar('themes');
-    document.body.classList.remove('groups-page', 'title-page', 'cta-page', 'consensus-page');
+    document.body.classList.remove('groups-page', 'title-page', 'cta-page', 'consensus-page', 'demogs-page');
+    document.body.classList.add('themes-page');
     const back = state.theme !== null;
     hideIntroPages();
     $('#l2').classList.remove('on');
@@ -1131,10 +1135,12 @@ function route() {
     // strips and the desktop gutter track it) — Groups and Title are light,
     // CTA is on --theme-blue, Consensus on its own dark green; the rest fall
     // through to body's --home default. See these classes in app.css.
+    document.body.classList.remove('themes-page');
     document.body.classList.toggle('groups-page', intro.key === 'groups');
     document.body.classList.toggle('title-page', intro.key === 'title');
     document.body.classList.toggle('cta-page', intro.key === 'cta');
     document.body.classList.toggle('consensus-page', intro.key === 'consensus');
+    document.body.classList.toggle('demogs-page', intro.key === 'demogs');
     INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = p === intro ? '' : 'none'; });
     $('#l1').style.display = 'none';
     $('#l2').classList.remove('on');
@@ -1156,7 +1162,7 @@ function route() {
     return;
   }
   updateNavBar(t.key);
-  document.body.classList.remove('groups-page');
+  document.body.classList.remove('groups-page', 'themes-page', 'demogs-page');
   const themeChanged = state.theme !== t;
   state.theme = t;
   hideIntroPages();
@@ -1187,7 +1193,6 @@ $('#dCloseb').onclick = closeDemog;
 $('#dscrim').onclick = closeDemog;
 $('#dPrev').onclick = () => pageDemog(-1);
 $('#dNext').onclick = () => pageDemog(1);
-$('#demogReset').onclick = resetDemogMap;
 $('#diveIn').onclick = () => { location.hash = '#/demogs'; };
 $('#ctaExplore').onclick = () => { location.hash = '#/themes'; };
 $('#ctaShare').onclick = openShare;
