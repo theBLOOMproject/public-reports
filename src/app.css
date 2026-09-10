@@ -109,7 +109,6 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    ───────────────────────────────────────────── */
 #l1{display:block}
 .masthead{padding:26px 22px 20px}
-.masthead .eyebrow{color:rgba(255,255,255,.45);margin-bottom:9px}
 .masthead h1{
   font-family:var(--geom);font-weight:700;
   font-size:clamp(30px,9vw,40px);line-height:1.06;
@@ -236,7 +235,6 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .introPage .masthead h1{max-width:none}
 .introPage .masthead p{max-width:none}
 
-#l0-groups .masthead .eyebrow{color:color-mix(in srgb,var(--ink) 55%,transparent)}
 #l0-groups .masthead h1{color:var(--home)}
 /* Geom + solid ink per design call — the shared .masthead p rule (light,
    body-font) is right for a dark background but reads as unreadable here,
@@ -310,6 +308,8 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
      the fixed page bar, with a wide gap between the two */
   #l0-cta{justify-content:center;padding-bottom:var(--bar-h)}
   #l0-cta .masthead{flex:none}
+  /* CTA keeps the larger body copy the other mastheads reverted */
+  #l0-cta .masthead p{font-size:25px;line-height:1.45}
   .ctaActions{margin-top:52px}
 }
 
@@ -355,8 +355,8 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   .ctaActions{padding-bottom:0}
 }
 
-/* the county map — a sibling of .masthead, not inside it. Full-bleed behind
-   the whole page: real Oregon county geometry (data/oregon-counties.json)
+/* the county map — full-bleed behind the whole page: real Oregon county
+   geometry (data/oregon-counties.json)
    rendered and panned/zoomed by vendored D3 (vendor/d3-custom.min.js) —
    initDemogMap()/fitDemogMap()/demogZoomed() in app.js. overflow:hidden is
    cheap defensive insurance on top of d3-zoom's own translateExtent clamp. */
@@ -367,9 +367,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
      to fill the actual browser window: position:fixed's containing block is
      the viewport, not the nearest positioned ancestor (#l0-demogs), so
      inset:0 here means the full window instead of the 800px column. The
-     masthead eyebrow band and the 400+ stat block stay put, still centered
-     in the column, layered on top via their own z-index:2 (below) — that
-     comparison still resolves correctly since nothing between here and the
+     400+ stat block stays put, still centered in the column, layered on top
+     via its own z-index:2 (below) — that comparison still resolves
+     correctly since nothing between here and the
      document root establishes a new stacking context. fitDemogMap()'s
      ResizeObserver already refits the projection to whatever box this
      resolves to, so no JS change is needed for the wider box. */
@@ -459,13 +459,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 /* .demogMap going position:absolute promotes it into the "positioned"
    paint bucket ahead of these still-static siblings by default — without
    an explicit stack here they'd paint (and sit) underneath the map instead
-   of over it as the intended overlay. Scoped to #l0-demogs since .masthead
-   is shared across every L0 page. */
-#l0-demogs .masthead,#l0-demogs .demogStat{position:relative;z-index:2}
+   of over it as the intended overlay. */
+#l0-demogs .demogStat{position:relative;z-index:2}
 #l0-demogs .introNext{z-index:2}
-/* solid backing band behind the eyebrow so it stays legible now that the
-   map sits right up against the top of the page with no scrim */
-#l0-demogs .masthead{background:var(--home)}
 
 /* the reset button borrows .introNext's whole visual shell (circle, shadow,
    hover transition) via a second class on the same element — the arrow's
@@ -553,12 +549,11 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 .introNext svg{width:22px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
 
-/* title head — eyebrow + headline, centered, sitting on the plain white/grid
+/* title head — the headline, centered, sitting on the plain white/grid
    background rather than inside .masthead (whose light-on-dark defaults are
    wrong here). Larger and in --theme-blue (the Governance theme's blue, not
    the darker --home navy the rest of L0 uses) per the redesign. */
 .titleHead{padding:30px 22px 18px;text-align:center}
-.titleHead .eyebrow{color:color-mix(in srgb,var(--theme-blue) 70%,transparent)}
 .titleHead h1{
   font-family:var(--geom);font-weight:700;
   font-size:clamp(36px,10.5vw,52px);line-height:1.05;
@@ -754,8 +749,15 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 @media (min-width:660px){
   /* placed after the base rules above so it actually wins the cascade —
-     an earlier attempt put this override before them and silently lost */
+     an earlier attempt put this override before them and silently lost.
+     The masthead cover headline runs large on desktop across every page
+     that uses it (groups, consensus, CTA, L1 landing); .hero.desc is the
+     theme-viewer's own smaller subhead. The big headline is shared; only
+     CTA takes the larger body copy (see #l0-cta below). */
+  .masthead h1{font-size:54px;line-height:1.05}
   .masthead p{font-size:20.5px}
+  /* a little more room above the headline on the roomier desktop layout */
+  .masthead{padding-top:34px}
   .hero .desc{font-size:20.5px}
 }
 

@@ -342,7 +342,7 @@ function fitDemogMap(w, h) {
   // fitting to where the markers actually sit keeps the default view focused
   // on the cities themselves rather than the wider region. PAD leaves room
   // for marker radius/labels at the fitted extent's edges; TOP_OFFSET pushes
-  // the cluster down so it doesn't sit directly under the eyebrow text
+  // the cluster down so it doesn't sit directly under the "400+" stat block
   // overlaid at the top of the page.
   const PAD = 130;   // bigger PAD = more surrounding context fit into view = more zoomed out
   const TOP_OFFSET = h * 0.16;
