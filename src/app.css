@@ -663,12 +663,12 @@ body.demogs-page .shell{padding-bottom:0}
   aspect-ratio:1800/849;height:auto;
   object-fit:cover;   /* crop, never stretch, if ever size-constrained */
 }
-.titleImg{margin-top:4px}
+.titleImg{margin-top:0}
 @media (max-width:659px){
-  /* oversized so it bleeds ~16% past each edge; pulled up tight under the
+  /* oversized so it bleeds ~16% past each edge; pulled right up under the
      headline (the silhouette's own transparent margin sits above the peaks,
-     so a small negative closes the visual gap without touching the ridge) */
-  .titleImg{width:132%;margin-inline:-16%;margin-top:-6px}
+     so a healthy negative closes the visual gap without touching the ridge) */
+  .titleImg{width:132%;margin-inline:-16%;margin-top:-20px}
 }
 @media (min-width:660px){
   /* contained and centred on desktop */
