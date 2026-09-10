@@ -60,10 +60,13 @@
 
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-/* overflow-x here (not on body) — putting it on body makes browsers treat
-   body as the sticky/scroll containing block instead of the viewport,
-   which silently breaks every position:sticky element on the page */
-html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+/* clip, not hidden: `overflow-x:hidden` forces `overflow-y` to compute to
+   `auto`, making <html> a scroll container and silently breaking every
+   position:sticky element on the page (e.g. .l2nav). `overflow-x:clip`
+   still suppresses the horizontal scrollbar but leaves overflow-y
+   `visible`, so the viewport stays the scroll/sticky container. The
+   `hidden` line is a fallback for browsers without `clip` support. */
+html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
 body{
   background:var(--ink);
   color:#fff;
@@ -735,6 +738,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 .l2nav button:hover{opacity:.7}
 .l2nav .nextT{max-width:62%;text-align:right}
 .l2nav .nextT b{font-weight:600}
+@media (min-width:660px){
+  .l2nav button{font-size:14px;letter-spacing:.09em}
+}
 
 .hero{padding:28px 22px 8px}
 .hero h1{
@@ -742,7 +748,13 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   font-size:clamp(30px,9vw,40px);line-height:1.02;letter-spacing:-.024em;
   margin:0 0 9px;color:var(--c);
 }
-.hero .count{color:color-mix(in srgb,var(--c) 60%,#000);margin-bottom:18px}
+.hero .count{
+  color:color-mix(in srgb,var(--c) 60%,#000);margin-bottom:18px;
+  font-size:13px;letter-spacing:.1em;
+}
+@media (min-width:660px){
+  .hero .count{font-size:19px;letter-spacing:.06em;margin-bottom:24px}
+}
 .hero .desc{
   font-size:16.5px;line-height:1.5;margin:0;
   color:var(--ink);letter-spacing:-.003em;
@@ -1130,7 +1142,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 #l3 .grow .top{font-size:14.5px;color:color-mix(in srgb,var(--ink) 75%,transparent);margin-bottom:9px}
 /* the group name reads as a plain name, not a small-caps token */
 #l3 .grow .top span{text-transform:none;letter-spacing:.01em}
-#l3 .grow .top b{font-size:14.5px;font-weight:700}
+#l3 .grow .top b{font-size:14.5px;font-weight:700;letter-spacing:0}
 /* roomier per-group rows and thicker bars than the shared .grow/.bar
    defaults — the L3 modal has the space and no longer carries a legend */
 #l3 .grow{margin-bottom:16px}
