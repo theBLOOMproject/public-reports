@@ -124,7 +124,7 @@ body:has(#l2.on) .shell{padding-top:0}
 .topBar{
   position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:45;
   width:100%;max-width:600px;height:var(--topbar-h);
-  display:flex;align-items:center;justify-content:flex-end;gap:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
   padding:0 16px;
   color:#fff;background:var(--page-bg);
   border-bottom:1px solid color-mix(in srgb,currentColor 22%,transparent);
@@ -133,12 +133,14 @@ body.title-page .topBar{color:var(--theme-blue)}
 body.groups-page .topBar{color:var(--home)}
 body:has(#l2.on) .topBar{display:none}
 .topBarBrand{
-  display:none;
+  display:inline-flex;align-items:center;
   font-family:var(--mono);font-size:11px;font-weight:600;
   letter-spacing:.1em;text-transform:uppercase;
-  color:color-mix(in srgb,currentColor 66%,transparent);
-  text-decoration:none;transition:opacity .2s ease;
+  color:inherit;text-decoration:none;transition:opacity .2s ease;
 }
+/* mobile: a home glyph; desktop: the wordmark */
+.topBarHome{width:19px;height:19px;flex:none;stroke:currentColor;stroke-width:2;fill:none}
+.topBarBrandText{display:none;color:color-mix(in srgb,currentColor 66%,transparent)}
 .topBarLink{
   display:inline-flex;align-items:center;gap:6px;
   font-family:var(--mono);font-size:11px;font-weight:600;
@@ -151,9 +153,10 @@ body:has(#l2.on) .topBar{display:none}
   .topBarLink:hover,.topBarBrand:hover{opacity:.62}
 }
 @media (min-width:660px){
-  .topBar{max-width:800px;justify-content:space-between;padding:0 24px}
-  .topBarBrand{display:block}
-  .topBarBrand,.topBarLink{font-size:14px;letter-spacing:.09em}
+  .topBar{max-width:800px;padding:0 24px}
+  .topBarHome{display:none}
+  .topBarBrandText{display:inline}
+  .topBarBrandText,.topBarLink{font-size:14px;letter-spacing:.09em}
 }
 
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
