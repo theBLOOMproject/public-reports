@@ -45,9 +45,10 @@
   --mono:'Geomanist',system-ui,-apple-system,sans-serif;
 
   --nav-h:46px;
-  --bar-blue:#00216F;   /* top page-nav bar — deliberately distinct from --home */
+  --bar-blue:#00216F;   /* the page-nav bars — deliberately distinct from --home */
   --bar-pink:#BE00C1;
   --bar-h:70px;
+  --topbar-h:44px;   /* the fixed COCAP strip pinned to the top of the column */
 
   /* faint hairline grid, shared by the title page's #l0-title (mobile —
      it fills the viewport) and body.title-page (the desktop gutter outside
@@ -67,12 +68,22 @@ html,body{margin:0;padding:0}
    `visible`, so the viewport stays the scroll/sticky container. The
    `hidden` line is a fallback for browsers without `clip` support. */
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
+/* the page background lives on <body>, not .shell — .shell is transparent
+   so the strip the fixed .topBar reserves (and the space the bottom
+   .pageBar reserves) shows the current page's colour rather than a slab
+   of --ink. Each page's own element still paints the same colour behind
+   its content; body just guarantees the reserved gutters match. The
+   desktop gutter outside the column falls out of this for free. */
 body{
-  background:var(--ink);
+  background:var(--c,var(--home));
   color:#fff;
   font-family:var(--body);
   -webkit-font-smoothing:antialiased;
 }
+body.title-page,body.groups-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
+body.cta-page{background:var(--theme-blue)}
+body.consensus-page{background:color-mix(in srgb,var(--agree) 60%,#000)}
+body:has(#l2.on){background:var(--paper)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 :focus-visible{outline:2.5px solid currentColor;outline-offset:3px;border-radius:3px}
 
@@ -85,7 +96,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   position:relative;
   min-height:100vh;
   min-height:100dvh;
-  background:var(--ink);
+  padding-top:var(--topbar-h);   /* clears the fixed .topBar */
   padding-bottom:0;
   transition:padding-bottom .35s cubic-bezier(.2,.85,.3,1);
 }
@@ -93,13 +104,51 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
    slide-in/out (see updateNavBar() in app.js) rather than snapping instantly */
 body.navBarOn .shell{padding-bottom:var(--bar-h)}
 @media (min-width:660px){
-  /* on the roomier desktop layout, the gutter around the column tints to
-     match whatever's active — the open theme's color, or --home on L1.
-     Theme pages (L2) are white throughout, so their gutter stays white too. */
-  body{background:var(--c,var(--home))}
-  body:has(#l2.on){background:var(--paper)}
   .shell{max-width:800px}
-  :root{--bar-h:96px}
+  :root{--bar-h:96px;--topbar-h:52px}
+}
+
+/* ─────────────────────────────────────────────
+   TOP BAR — a thin strip fixed to the top of the column on every page
+   (column-width-matched to .shell, like .pageBar). Transparent: it reads
+   as part of whatever page is behind it. Its text flips per page — white
+   on the dark intro pages, the page's own dark accent on the light ones
+   (title / groups) and the active theme colour on L2 — and the hairline
+   bottom border follows that colour at low opacity via currentColor.
+   .shell's padding-top reserves its height; each page header adds its own
+   breathing room below that. ─────────────────────────────────────────*/
+.topBar{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:45;
+  width:100%;max-width:600px;height:var(--topbar-h);
+  display:flex;align-items:center;justify-content:flex-end;gap:14px;
+  padding:0 16px;
+  color:#fff;
+  border-bottom:1px solid color-mix(in srgb,currentColor 22%,transparent);
+}
+body.title-page .topBar{color:var(--theme-blue)}
+body.groups-page .topBar{color:var(--home)}
+body:has(#l2.on) .topBar{color:var(--c)}
+.topBarBrand{
+  display:none;
+  font-family:var(--mono);font-size:12.5px;font-weight:600;
+  letter-spacing:.07em;text-transform:uppercase;
+  color:color-mix(in srgb,currentColor 68%,transparent);
+}
+.topBarLink{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:12.5px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+  color:inherit;text-decoration:none;
+  transition:opacity .2s ease;
+}
+.topBarLink svg{width:13px;height:13px;flex:none;stroke:currentColor;stroke-width:1.7;fill:none}
+@media (hover:hover){
+  .topBarLink:hover{opacity:.62}
+}
+@media (min-width:660px){
+  .topBar{max-width:800px;justify-content:space-between;padding:0 24px}
+  .topBarBrand{display:block}
+  .topBarBrand,.topBarLink{font-size:13.5px}
 }
 
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
@@ -108,7 +157,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    LEVEL 1 — THEMES
    ───────────────────────────────────────────── */
 #l1{display:block}
-.masthead{padding:26px 22px 20px}
+.masthead{padding:32px 22px 20px}
 .masthead h1{
   font-family:var(--geom);font-weight:700;
   font-size:clamp(30px,9vw,40px);line-height:1.06;
@@ -179,7 +228,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    the dark default) to slot in.
    ───────────────────────────────────────────── */
 .introPage{
-  position:relative;min-height:100vh;min-height:100dvh;padding-bottom:100px;
+  position:relative;padding-bottom:100px;
+  min-height:calc(100vh - var(--topbar-h));
+  min-height:calc(100dvh - var(--topbar-h));
 }
 #l0-demogs{background:var(--home);color:#fff}
 /* white with the same faint hairline grid #l0-title uses (--grid-bg,
@@ -372,8 +423,9 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
      correctly since nothing between here and the
      document root establishes a new stacking context. fitDemogMap()'s
      ResizeObserver already refits the projection to whatever box this
-     resolves to, so no JS change is needed for the wider box. */
-  .demogMap{position:fixed}
+     resolves to, so no JS change is needed for the wider box. top clears
+     the fixed .topBar. */
+  .demogMap{position:fixed;inset:var(--topbar-h) 0 0}
 }
 
 /* county fill/stroke — vector-effect:non-scaling-stroke keeps the boundary
@@ -612,7 +664,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
 }
 
 /* ─────────────────────────────────────────────
-   TOP PAGE BAR — shared across demogs/groups/consensus/themes (see
+   BOTTOM PAGE BAR — shared across demogs/groups/consensus/themes (see
    NAV_BAR_LABELS/updateNavBar() in app.js). Column-width-matched to .shell
    rather than full-viewport, so it reads as part of the same one-column
    layout on wide viewports instead of a separate full-bleed strip.
@@ -683,17 +735,6 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   .gName{font-size:30px}
   .gCount{font-size:14px}
   .gTagline{font-size:19px}
-  /* the desktop gutter otherwise tints navy (body's --c fallback, correct
-     for demogs) while Groups' own content is white and gridded — keep them
-     matched only there, same treatment title's own gutter gets below */
-  body.groups-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
-  /* same deal for the title cover page, gridded like #l0-title itself
-     (above, under LEVEL 0), so the gutter reads as more of the same page
-     instead of a plain border around it */
-  body.title-page{background-color:var(--paper);background-image:var(--grid-bg);background-size:var(--grid-size)}
-  /* CTA's gutter matches its own --theme-blue rather than the --home the
-     body fallback would otherwise paint there */
-  body.cta-page{background:var(--theme-blue)}
 }
 
 /* ─────────────────────────────────────────────
@@ -705,13 +746,14 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
    ───────────────────────────────────────────── */
 #l2{
   display:none;background:var(--paper);color:var(--ink);
-  min-height:100vh;min-height:100dvh;
+  min-height:calc(100vh - var(--topbar-h));
+  min-height:calc(100dvh - var(--topbar-h));
   position:relative;
 }
 #l2.on{display:block}
 
 .l2nav{
-  position:sticky;top:0;z-index:30;
+  position:sticky;top:var(--topbar-h);z-index:30;
   height:var(--nav-h);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 18px;
@@ -759,7 +801,7 @@ body.navBarOn .shell{padding-bottom:var(--bar-h)}
   .masthead h1{font-size:54px;line-height:1.05}
   .masthead p{font-size:20.5px}
   /* a little more room above the headline on the roomier desktop layout */
-  .masthead{padding-top:34px}
+  .masthead{padding-top:44px}
   .hero .desc{font-size:20.5px}
 }
 

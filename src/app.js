@@ -1115,7 +1115,7 @@ function route() {
   if (key === 'themes') {
     close();
     updateNavBar('themes');
-    document.body.classList.remove('groups-page', 'title-page', 'cta-page');
+    document.body.classList.remove('groups-page', 'title-page', 'cta-page', 'consensus-page');
     const back = state.theme !== null;
     hideIntroPages();
     $('#l2').classList.remove('on');
@@ -1133,13 +1133,14 @@ function route() {
     const intro = INTRO_PAGES.find(p => p.key === key) || INTRO_PAGES[0];
     close();
     updateNavBar(intro.key);
-    // Groups and Title are the two light intro pages, and CTA is the one
-    // on --theme-blue rather than --home — this is what keeps the desktop
-    // gutter matched to whichever intro page is actually showing (see
-    // body.groups-page/.title-page/.cta-page in app.css)
+    // Each intro page paints <body> its own colour (the reserved top/bottom
+    // strips and the desktop gutter track it) — Groups and Title are light,
+    // CTA is on --theme-blue, Consensus on its own dark green; the rest fall
+    // through to body's --home default. See these classes in app.css.
     document.body.classList.toggle('groups-page', intro.key === 'groups');
     document.body.classList.toggle('title-page', intro.key === 'title');
     document.body.classList.toggle('cta-page', intro.key === 'cta');
+    document.body.classList.toggle('consensus-page', intro.key === 'consensus');
     INTRO_PAGES.forEach(p => { $('#' + p.id).style.display = p === intro ? '' : 'none'; });
     $('#l1').style.display = 'none';
     $('#l2').classList.remove('on');
