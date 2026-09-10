@@ -1,0 +1,53 @@
+{
+  "total": 437,
+  "categories": [
+    {
+      "key": "age",
+      "label": "Age",
+      "answered": 233,
+      "breakdown": [
+        { "label": "65+", "pct": 30, "actual": 25 },
+        { "label": "55-64", "pct": 20, "actual": 18 },
+        { "label": "45-54", "pct": 19, "actual": 15 },
+        { "label": "35-44", "pct": 18, "actual": 17 },
+        { "label": "25-34", "pct": 10, "actual": 16 },
+        { "label": "Under 25", "pct": 3, "actual": 10 }
+      ]
+    },
+    {
+      "key": "political",
+      "label": "Political",
+      "answered": 209,
+      "breakdown": [
+        { "label": "Democrat / Progressive / Liberal", "pct": 54, "actual": 25 },
+        { "label": "No Party Preference / Independent", "pct": 33, "actual": 33 },
+        { "label": "Republican / Conservative", "pct": 12, "actual": 42 }
+      ]
+    },
+    {
+      "key": "gender",
+      "label": "Gender",
+      "answered": 221,
+      "breakdown": [
+        { "label": "Female", "pct": 62, "actual": 50 },
+        { "label": "Male", "pct": 35, "actual": 50 },
+        { "label": "Other", "pct": 3, "actual": 0 }
+      ]
+    },
+    {
+      "key": "ethnicity",
+      "label": "Race / Ethnicity",
+      "answered": 223,
+      "breakdown": [
+        { "label": "White or Caucasian", "pct": 86, "actual": 78 },
+        { "label": "Multiracial", "pct": 4, "actual": 5 },
+        { "label": "Native American", "pct": 4, "actual": 4 },
+        { "label": "Hispanic or Latino", "pct": 3, "actual": 10 },
+        { "label": "Asian / Pacific Islander", "pct": 1, "actual": 2 },
+        { "label": "Other", "pct": 1, "actual": 1 },
+        { "label": "Black or African American", "pct": 0, "actual": 1 },
+        { "label": "Middle Eastern / North African", "pct": 0, "actual": 0 }
+      ]
+    }
+  ]
+}

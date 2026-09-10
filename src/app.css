@@ -348,7 +348,7 @@ body.demogs-page .shell{padding-bottom:0}
 #l0-cta .masthead h1{max-width:15em;margin-left:auto;margin-right:auto}
 #l0-cta .masthead p{max-width:30em;margin-left:auto;margin-right:auto}
 
-/* the Sisters mountain skyline (static/sisters_bg.webp — a 2000px-wide
+/* the report's CTA backdrop (Central Oregon's is the Sisters skyline — a 2000px-wide
    alpha cut-out, sky already transparent), pinned across the bottom and
    rising to about the middle of the viewport. Spans the full width;
    capped on ultra-wide monitors so the 2000px source isn't stretched too
@@ -443,8 +443,8 @@ body.demogs-page .shell{padding-bottom:0}
   .ctaActions{padding-bottom:0}
 }
 
-/* the county map — full-bleed behind the whole page: real Oregon county
-   geometry (data/oregon-counties.json)
+/* the county map — full-bleed behind the whole page: real county
+   geometry (the report's counties.json)
    rendered and panned/zoomed by vendored D3 (vendor/d3-custom.min.js) —
    initDemogMap()/fitDemogMap()/demogZoomed() in app.js. overflow:hidden is
    cheap defensive insurance on top of d3-zoom's own translateExtent clamp. */
@@ -651,16 +651,16 @@ body.demogs-page .shell{padding-bottom:0}
   -webkit-box-decoration-break:clone;box-decoration-break:clone;
 }
 
-/* the Sisters mountain skyline (static/sisters_title.webp — a ~2.1:1
-   silhouette, cropped so it starts right at the peaks; it fades out at
-   the base on its own). Always rendered at its own aspect (aspect-ratio
-   + height:auto), so it is never cropped in either direction — only its
-   width changes between breakpoints. */
+/* the report's title image (Central Oregon's is the Sisters skyline — a
+   ~2.1:1 silhouette, cropped so it starts right at the peaks; it fades out
+   at the base on its own). Always rendered at its own aspect (the inline
+   aspect-ratio report.json gives it + height:auto), so it is never cropped
+   in either direction — only its width changes between breakpoints. */
 .titleImg{
   display:block;flex:none;   /* a flex child of .titleMain — must not let
                                 flexbox shrink its height and squish it */
   width:100%;margin-inline:auto;
-  aspect-ratio:1800/849;height:auto;
+  height:auto;
   object-fit:cover;   /* crop, never stretch, if ever size-constrained */
 }
 .titleImg{margin-top:0}

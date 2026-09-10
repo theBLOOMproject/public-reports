@@ -10,16 +10,21 @@ const GROUP_STATEMENTS = J('group-statements');
 const CONSENSUS_STATEMENTS = J('consensus-statements');
 const PARTICIPANT_LOCATIONS = J('participant-locations');
 const DEMOGRAPHICS = J('demographics');
-const OREGON_COUNTIES = J('oregon-counties');
+const COUNTIES = J('counties');
+const REPORT = J('report');
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
 const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
-// title-cases a raw ALL-CAPS chip (e.g. demographic tags), with one special
-// case: a bare "or" stays uppercase right after a comma — that's the Oregon
-// abbreviation ("Bend, OR"), not the conjunction ("White or Caucasian").
+// title-cases a raw ALL-CAPS chip (e.g. demographic tags), with two special
+// cases: a two-letter word ending the chip right after a comma is a state
+// abbreviation and stays uppercase ("Bend, OR"), and any other "or" is the
+// conjunction and stays lowercase ("White or Caucasian").
 const titleCaseChip = s => s.toLowerCase().replace(/\b\w+/g, (word, offset, str) => {
-  if (word === 'or') return str.slice(0, offset).trimEnd().endsWith(',') ? 'OR' : 'or';
+  const isState = word.length === 2 && offset + 2 === str.length
+    && str.slice(0, offset).trimEnd().endsWith(',');
+  if (isState) return word.toUpperCase();
+  if (word === 'or') return 'or';
   return word.charAt(0).toUpperCase() + word.slice(1);
 });
 
@@ -194,14 +199,16 @@ const INTRO_PAGES = [
 ];
 
 // participant-locations.json's cities become clickable markers over real
-// Oregon county geometry (data/oregon-counties.json, sourced from the U.S.
-// Census Bureau — see its own _readme), rendered and panned/zoomed by
+// county geometry (the report's counties.json, from the U.S. Census
+// Bureau), rendered and panned/zoomed by
 // vendored D3 (vendor/d3-custom.min.js — d3-geo for the projection/path
 // generator, d3-zoom for the gesture engine; see that file's own header for
 // exactly which modules and why). Marker radius is scaled by sqrt of count
 // rather than count itself — Bend outnumbers Prineville 8 to 1, and a linear
 // scale would render that as a barely-visible speck next to a blob.
-const TRI_COUNTY_FIPS = new Set(['41017', '41013', '41031']);   // Deschutes, Crook, Jefferson
+// the report's home region: tinted on the map, and all the mobile home view fits
+const HOME_FIPS = new Set(Object.keys(REPORT.map.homeCounties));
+const HOME_COUNTIES = new Set(Object.values(REPORT.map.homeCounties));
 const DEMOG_MAX_ZOOM_IN = 8;        // tunable: multiple of the home (city-cluster) fit scale
 const DEMOG_MIN_R = 13, DEMOG_MAX_R = 70;
 
@@ -220,9 +227,9 @@ function initDemogMap() {
   demogPath = d3.geoPath(demogProjection);
 
   demogWorld.selectAll('path')
-    .data(OREGON_COUNTIES.features, d => d.id)
+    .data(COUNTIES.features, d => d.id)
     .join('path')
-    .attr('class', d => 'demogCounty' + (TRI_COUNTY_FIPS.has(d.id) ? ' inRegion' : ''));
+    .attr('class', d => 'demogCounty' + (HOME_FIPS.has(d.id) ? ' inRegion' : ''));
 
   // SVG has no cross-element z-index for plain shapes — paint order is DOM
   // order, full stop. So dots/labels/hover-tooltips live in three separate
@@ -337,8 +344,8 @@ function updateDemogDotSizes() {
 }
 
 // Fits the projection to the home view, then derives the zoom's pan/scale
-// bounds from the FULL 36-county collection's projected bounds — this is
-// what makes "zoom all the way out" land on the real Oregon outline rather
+// bounds from the FULL county collection's projected bounds — this is
+// what makes "zoom all the way out" land on the whole region's outline rather
 // than an arbitrary crop. A resize always resets to the home view rather
 // than trying to preserve an equivalent pan/zoom at the new size.
 function fitDemogMap(w, h) {
@@ -354,7 +361,7 @@ function fitDemogMap(w, h) {
   // the right one runs wider because every label extends right of its dot
   // and the easternmost (Prineville) would otherwise clip. On mobile the
   // insets are tighter (the otherwise-cramped home view zooms in) and the
-  // fit is limited to the tri-county cluster so Madras sits right under the
+  // fit is limited to the home counties' cities so Madras sits right under the
   // stat block — Antelope (the lone Wasco-county place) still renders, just
   // above the frame, behind the block.
   const mobile = w < 660;
@@ -366,9 +373,8 @@ function fitDemogMap(w, h) {
   // delayed, so read the token, not the not-yet-set body.navBarOn class)
   const barH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-h')) || 70;
   const bottomInset = barH + 16;   // La Pine (southernmost) lands just above the bar
-  const TRI_COUNTY = new Set(['Deschutes', 'Crook', 'Jefferson']);
   const fitCities = mobile
-    ? PARTICIPANT_LOCATIONS.cities.filter(c => TRI_COUNTY.has(c.county))
+    ? PARTICIPANT_LOCATIONS.cities.filter(c => HOME_COUNTIES.has(c.county))
     : PARTICIPANT_LOCATIONS.cities;
   const cityPoints = {
     type: 'FeatureCollection',
@@ -385,11 +391,11 @@ function fitDemogMap(w, h) {
 
   demogMarkersG.selectAll('.demogCity').each(d => {
     // d3-geo takes points as [lng, lat] — the reverse of these field names'
-    // own reading order (see participant-locations.json's _readme)
+    // own reading order
     d.projected = demogProjection([d.lng, d.lat]);
   });
 
-  const [[x0, y0], [x1, y1]] = demogPath.bounds(OREGON_COUNTIES);
+  const [[x0, y0], [x1, y1]] = demogPath.bounds(COUNTIES);
   const kMin = Math.min(w / (x1 - x0), h / (y1 - y0));
   demogZoom.scaleExtent([kMin, DEMOG_MAX_ZOOM_IN])
     .translateExtent([[x0, y0], [x1, y1]])
@@ -464,9 +470,9 @@ function demogHoverHide(city) {
 }
 
 /* ─── DEMOGRAPHICS DETAIL MODAL ───────────────────────── */
-// data/demographics.json's own _readme has the derivation: each category's
-// breakdown is a share of only the respondents who answered that question,
-// not of everyone — the modal's copy spells that denominator out per tab.
+// Each category's breakdown in demographics.json is a share of only the
+// respondents who answered that question, not of everyone — the modal's copy
+// spells that denominator out per tab.
 const dstate = { key: DEMOGRAPHICS.categories[0].key };
 
 function openDemog() {
@@ -529,9 +535,8 @@ function renderDemogTab() {
 
   // column headers over the two %-columns below — IN POLL is this report's
   // own respondents (row.pct); ACTUAL is the real tri-county population's
-  // share for the same subgroup (row.actual, see demographics.json's
-  // _readme for its source), so a reader can spot who's over/under-
-  // represented at a glance rather than needing outside context.
+  // share for the same subgroup (row.actual), so a reader can spot who's
+  // over/under-represented at a glance rather than needing outside context.
   const colHead = el('div', 'ddColHead');
   colHead.append(el('span', 'ddColHeadLabel'));
   colHead.append(el('span', 'ddColHeadCol', 'In Poll'));
@@ -554,12 +559,12 @@ function renderDemogTab() {
 
 /* ─── SHARE MODAL ─────────────────────────────────────── */
 // Opened from the Call to Action page's "Share this with a friend" button.
-// The URL is a fixed constant (the report's own published address), not
-// derived from location.href — the report can be viewed from a preview
-// deploy or a local build, and what's meant to be shared is always the
-// canonical published URL regardless of where this particular load came
-// from.
-const SHARE_URL = 'https://report.bloomproject.us/central-oregon-ai';
+// The URL is the report's canonical published address, fixed at build time
+// from its slug, not derived from location.href — the report can be viewed
+// from a preview deploy or a local build, and what's meant to be shared is
+// always the canonical published URL regardless of where this particular
+// load came from.
+const SHARE_URL = REPORT.shareUrl;
 let shareCopyResetTimer = null;
 
 function openShare() {
@@ -591,10 +596,10 @@ async function copyShareLink() {
   trackEvent('share-copy');
 }
 
-// group-info.json is a hand-maintained snapshot (see its own _readme for
-// provenance and staleness caveats) — bloom-data.json's own groups[] never
-// carries participant counts, since refresh-poll.js deliberately avoids
-// storing cluster sizes that go stale the moment Polis reclusters.
+// group-info.json is a hand-maintained snapshot — bloom-data.json's own
+// groups[] never carries participant counts, since refresh-poll.js
+// deliberately avoids storing cluster sizes that go stale the moment Polis
+// reclusters.
 const groupByKey = {};
 DATA.groups.forEach(g => groupByKey[g.key] = g);
 // group-info's per-key extras (participants/color/description) merged onto
@@ -620,7 +625,7 @@ function buildGroups() {
 }
 
 /* ─── GROUP DETAIL MODAL ──────────────────────────────── */
-// Page 0 is the hand-written description (see group-info.json's _readme);
+// Page 0 is group-info.json's hand-written description;
 // pages 1..N are group-statements.json's defining statements, most
 // representative first. Deliberately its own small state/open/close/page
 // set rather than reusing L3's — the content shape (a generated blurb vs.
@@ -1150,7 +1155,7 @@ function route() {
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
     $('#l1').style.display = '';
-    document.title = 'Public Report on AI & Central Oregon';
+    document.title = REPORT.siteTitle;
     document.documentElement.style.setProperty('--c', 'var(--home)');
     state.theme = null;
     if (back) scrollTo({ top: l1Scroll, behavior: 'auto' });
@@ -1176,7 +1181,7 @@ function route() {
     $('#l1').style.display = 'none';
     $('#l2').classList.remove('on');
     $('#l2').setAttribute('aria-hidden', 'true');
-    document.title = 'Public Report on AI & Central Oregon';
+    document.title = REPORT.siteTitle;
     // consensus's L3-modal-via-buildConsensus() needs --c set to something
     // other than the shared --home every other intro page uses — green,
     // same token .who.consensus's own background already means "agreement"
@@ -1199,7 +1204,7 @@ function route() {
   $('#l1').style.display = 'none';
   $('#l2').classList.add('on');
   $('#l2').setAttribute('aria-hidden', 'false');
-  document.title = t.short + ' — Public Report on AI & Central Oregon';
+  document.title = t.short + ' — ' + REPORT.siteTitle;
   if (l3state.idx > -1) close();
   renderL2();
   // renderL2() has just rebuilt the page taller — make sure we're still

@@ -1,0 +1,23 @@
+{
+  "A": [
+    { "id": "p52", "direction": "agree" },
+    { "id": "p61", "direction": "agree" },
+    { "id": "p78", "direction": "disagree" },
+    { "id": "p76", "direction": "disagree" },
+    { "id": "p64", "direction": "disagree" }
+  ],
+  "B": [
+    { "id": "p43", "direction": "agree" },
+    { "id": "p7", "direction": "agree" },
+    { "id": "p16", "direction": "agree" },
+    { "id": "p63", "direction": "agree" },
+    { "id": "p59", "direction": "disagree" }
+  ],
+  "C": [
+    { "id": "p116", "direction": "agree" },
+    { "id": "p48", "direction": "disagree" },
+    { "id": "p52", "direction": "disagree" },
+    { "id": "p35", "direction": "disagree" },
+    { "id": "p50", "direction": "disagree" }
+  ]
+}

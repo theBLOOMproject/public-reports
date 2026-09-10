@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-// Refreshes the open-poll records in data/bloom-data.json from Polis, via comhairle.
+// Refreshes the open-poll records in one report's data/<slug>/bloom-data.json from
+// Polis, via comhairle.
 //
-//   node scripts/refresh-poll.js --step <workflow-step-uuid>
-//   node scripts/refresh-poll.js --step <uuid> --dry-run
-//   node scripts/refresh-poll.js --from data/polis-snapshots/report-data-2026-08-18T….json
+//   node scripts/refresh-poll.js --report <slug> --step <workflow-step-uuid>
+//   node scripts/refresh-poll.js --report <slug> --step <uuid> --dry-run
+//   node scripts/refresh-poll.js --report <slug> --from data/<slug>/polis-snapshots/report-data-2026-08-18T….json
 //
 // Only two things in the file come from upstream: the per-group vote tallies on each
 // poll record, and the opinion groups themselves. Everything else — tags, chips, place,
@@ -17,8 +18,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DATA = path.join(ROOT, 'data', 'bloom-data.json');
-const SNAPSHOTS = path.join(ROOT, 'data', 'polis-snapshots');
+const REPORTS = path.join(ROOT, 'data');
 // The Bloom deployment, per bloom_charts/civic-os/templates/configmap.yaml, which sets
 // this same API_URL + API_PREFIX for both the staging and production admin apps.
 // Note comhairle.scot is a *different* comhairle instance and answers plausibly:
@@ -73,16 +73,19 @@ function voteFor(comment, keys) {
 }
 
 const USAGE = `
-Refreshes the open-poll records in data/bloom-data.json from Polis, via comhairle.
+Refreshes the open-poll records in one report's data/<slug>/bloom-data.json from
+Polis, via comhairle.
 
-  node scripts/refresh-poll.js --step <workflow-step-uuid> [options]
-  node scripts/refresh-poll.js --from <snapshot.json> [options]
+  node scripts/refresh-poll.js --report <slug> --step <workflow-step-uuid> [options]
+  node scripts/refresh-poll.js --report <slug> --from <snapshot.json> [options]
 
 Options
+  --report <slug> The report to refresh: its directory under data/. Required — a
+                  step id belongs to one poll, so no report is assumed.
   --step <uuid>   Polis workflow step to fetch. This is the id comhairle knows the
                   poll by; the Insights page uses the same one.
   --from <file>   Merge a saved payload instead of fetching. Every live run leaves one
-                  in data/polis-snapshots/, dry runs included, so this applies exactly
+                  in data/<slug>/polis-snapshots/, dry runs included, so this applies exactly
                   the payload you reviewed rather than re-fetching a moved-on poll.
                   Snapshots hold only the fields this script reads; a full payload
                   fetched by hand works too.
@@ -90,7 +93,7 @@ Options
                   Local backend is usually http://localhost:3000.
                   Check this before a real run — pointing at the wrong environment
                   refreshes the published report with plausible but wrong numbers.
-  --dry-run       Report what would change and leave data/bloom-data.json alone. Still
+  --dry-run       Report what would change and leave bloom-data.json alone. Still
                   saves the snapshot, and prints the --from line that applies it.
   -h, --help      Show this.
 
@@ -106,24 +109,29 @@ What it writes
 After a run
   node build.js        — new statements arrive untagged and are named in a warning
                          until you tag them; they show under no theme meanwhile.
-  Then check the hand-written percentages in data/theme-descriptions.json, which
+  Then check the hand-written percentages in data/<slug>/theme-descriptions.json, which
   nothing recomputes.
 `.trim();
 
 function parseArgs(argv) {
-  const args = { dryRun: false, api: DEFAULT_API, step: null, from: null, help: false };
+  const args = { dryRun: false, api: DEFAULT_API, report: null, step: null, from: null, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--dry-run') args.dryRun = true;
     else if (a === '-h' || a === '--help') args.help = true;
+    else if (a === '--report') args.report = argv[++i];
     else if (a === '--step') args.step = argv[++i];
     else if (a === '--api') args.api = argv[++i];
     else if (a === '--from') args.from = argv[++i];
     else throw new Error(`unknown argument ${a}\n\n${USAGE}`);
   }
   if (args.help) return args;
-  for (const [flag, value] of [['--step', args.step], ['--api', args.api], ['--from', args.from]]) {
+  const valued = [['--report', args.report], ['--step', args.step], ['--api', args.api], ['--from', args.from]];
+  for (const [flag, value] of valued) {
     if (value === undefined) throw new Error(`${flag} needs a value\n\n${USAGE}`);
+  }
+  if (!args.report) {
+    throw new Error(`need --report <slug>, the report's directory under data/\n\n${USAGE}`);
   }
   if (!args.step && !args.from) {
     throw new Error(`need --step <workflow-step-uuid> or --from <file>\n\n${USAGE}`);
@@ -132,6 +140,18 @@ function parseArgs(argv) {
     throw new Error(`--step and --from are alternatives: one fetches, the other reads a file`);
   }
   return args;
+}
+
+function reportPaths(slug) {
+  const dir = path.join(REPORTS, slug);
+  const data = path.join(dir, 'bloom-data.json');
+  if (!fs.existsSync(data)) {
+    const known = fs.readdirSync(REPORTS, { withFileTypes: true })
+      .filter(d => d.isDirectory()).map(d => d.name);
+    throw new Error(`no report "${slug}": ${path.relative(ROOT, data)} does not exist. `
+      + `Reports: ${known.join(', ')}`);
+  }
+  return { data, snapshots: path.join(dir, 'polis-snapshots') };
 }
 
 // The endpoint returns a good deal this report has no use for: participant PCA positions,
@@ -162,9 +182,15 @@ const germane = payload => ({
   })),
 });
 
-async function loadPayload({ api, step, from }) {
+async function loadPayload({ api, step, from, report, paths }) {
   if (from) {
     const file = path.resolve(from);
+    // A snapshot is one poll's payload; merged into another report, it would overwrite
+    // that report's votes with a different poll's numbers.
+    const [owner, sub] = path.relative(REPORTS, file).split(path.sep);
+    if (sub === 'polis-snapshots' && owner !== report) {
+      throw new Error(`${path.relative(ROOT, file)} is a snapshot of "${owner}", not "${report}"`);
+    }
     console.log(`reading ${path.relative(ROOT, file)}`);
     return { payload: germane(JSON.parse(fs.readFileSync(file, 'utf8'))), snapshot: null };
   }
@@ -194,9 +220,9 @@ async function loadPayload({ api, step, from }) {
   // be traced to the payload that produced it — but mostly so that reviewing a dry run
   // and then applying it are the same payload. People vote continuously, so a second
   // fetch is a different poll, and "apply what I just reviewed" has to mean --from.
-  fs.mkdirSync(SNAPSHOTS, { recursive: true });
+  fs.mkdirSync(paths.snapshots, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const file = path.join(SNAPSHOTS, `report-data-${stamp}.json`);
+  const file = path.join(paths.snapshots, `report-data-${stamp}.json`);
   const snapshot = path.relative(ROOT, file);
 
   let payload;
@@ -239,7 +265,7 @@ function hintFor(code) {
 const heading = t => console.log(`\n${t}\n${'─'.repeat(t.length)}`);
 
 function main(args, payload, snapshot) {
-  const data = JSON.parse(fs.readFileSync(DATA, 'utf8'));
+  const data = JSON.parse(fs.readFileSync(args.paths.data, 'utf8'));
   const before = data.groups.map(g => g.key);
 
   const groups = [...payload.groups].sort((a, b) => a.group_id - b.group_id);
@@ -362,21 +388,23 @@ function main(args, payload, snapshot) {
     }
   }
 
+  const dataFile = path.relative(ROOT, args.paths.data);
   if (args.dryRun) {
-    console.log('\n--dry-run: data/bloom-data.json not written.');
+    console.log(`\n--dry-run: ${dataFile} not written.`);
     if (snapshot) {
       console.log('Apply exactly this payload — not whatever the poll looks like by then — with:');
-      console.log(`  node scripts/refresh-poll.js --from ${snapshot}`);
+      console.log(`  node scripts/refresh-poll.js --report ${args.report} --from ${snapshot}`);
     }
     return;
   }
-  fs.writeFileSync(DATA, JSON.stringify(data, null, 2) + '\n');
-  console.log(`\nwrote ${path.relative(ROOT, DATA)} — run "node build.js" next.`);
+  fs.writeFileSync(args.paths.data, JSON.stringify(data, null, 2) + '\n');
+  console.log(`\nwrote ${dataFile} — run "node build.js" next.`);
 }
 
 (async () => {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) return console.log(USAGE);
+  args.paths = reportPaths(args.report);
   const { payload, snapshot } = await loadPayload(args);
   main(args, payload, snapshot);
 })().catch(err => {

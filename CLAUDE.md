@@ -4,12 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A single-page interactive report on a Bloom Project's public engagement. Currently this repo
-has both code and data; the data is for the Oregon COCAP engagement - six listening sessions plus
-one open Polis-style poll. It is published as a static GitHub Pages site — `main` deploys on push via
+Interactive single-page reports on Bloom Project public engagements, one report per slug, all
+built from the same app code. Currently this repo has both code and data: each report's data
+lives in `data/<slug>/`. `central-oregon-ai` is the Oregon COCAP engagement - six listening
+sessions plus one open Polis-style poll; `utah-common-ground` is, for now, a placeholder copy
+of it. It is published as a static GitHub Pages site — `main` deploys every report on push via
 `.github/workflows/pages.yml`.
 
-It is served from `report.bloomproject.us`: the report at `/central-oregon-ai/`, with the
+It is served from `report.bloomproject.us`: each report at `/<slug>/`, with the
 site root and any unmatched path redirecting to bloom-project.org. The custom domain is a
 repo Settings value — a workflow-published Pages site ignores a `CNAME` file, so nothing in
 the repo configures it.
@@ -17,13 +19,13 @@ the repo configures it.
 ## Commands
 
 ```sh
-node build.js                                  # build dist/
-node build.js && (cd dist && python3 -m http.server 8000)   # preview at :8000/central-oregon-ai/
+node build.js                                  # build every report into dist/
+node build.js && (cd dist && python3 -m http.server 8000)   # preview at :8000/<slug>/
 
-node scripts/refresh-poll.js --help                   # options, and what it will/won't touch
-node scripts/refresh-poll.js --step <uuid>            # pull fresh votes from Polis
-node scripts/refresh-poll.js --step <uuid> --dry-run  # report what would change; snapshot it
-node scripts/refresh-poll.js --from <snapshot.json>   # apply a saved payload, no network
+node scripts/refresh-poll.js --help                                   # options, and what it will/won't touch
+node scripts/refresh-poll.js --report <slug> --step <uuid>            # pull fresh votes from Polis
+node scripts/refresh-poll.js --report <slug> --step <uuid> --dry-run  # report what would change; snapshot it
+node scripts/refresh-poll.js --report <slug> --from <snapshot.json>   # apply a saved payload, no network
 ```
 
 No package.json, no dependencies, no test suite, no linter. Node is used only for
@@ -33,18 +35,22 @@ other source, never resolved or fetched.
 
 ## Build model
 
-`build.js` is a simple, 0-dependency script that creates the single-page app in dist/index.html
+`build.js` is a simple, 0-dependency script that builds one single-page app per report, at
+`dist/<slug>/index.html`. Every directory under `data/` is a report, and its name is its slug.
 
 `dist/` is gitignored and rebuilt from scratch every time — never edit it, and never commit
 it. Only what lands in `dist/` is public, which is why repo sources can stay in the repo.
 
 ## Architecture
 
-`index.template.html` - markup only - app code and JSON data is injected in here by build.js. 
+`index.template.html` - markup only - app code and JSON data is injected in here by build.js,
+and each report's copy is filled in from its `report.json`. 
 
 `src/app.js` - Application code
 
-`data/` - All Data, editorial content, etc
+`data/<slug>/` - one report: its data, editorial content, copy and images
+
+`static/` - assets shared by every report (fonts, icons)
 
 `vendor/d3-custom.min.js` - a checked-in subset of d3 (geo + zoom) used by the
 Demographics map, so the published page still makes no network requests
@@ -76,35 +82,42 @@ unrecognized key falls back to the homepage. Navigation is done by assigning
 
 ## Data
 
-`data/bloom-data.json` — `{ themes, records, groups }`.
+Each report's directory holds the files below; names are relative to it.
+
+`report.json` — the report's copy (titles, headlines, links, call to action) and config (the
+Demographics map's home counties). The template takes its strings by dotted path. It has no
+slug field: the slug is the directory name.
+
+`static/` — the report's own images, merged with the shared `static/` at build time; a name
+in both fails the build.
+
+`bloom-data.json` — `{ themes, records, groups }`.
 
 - `themes[]`: defines the themes and which tags, when applied to statements, pull them into the theme
 - `records[]`: holds statements and quotes
 - `groups[]`: the poll's opinion clusters, in render order
 
-`data/bloom-insights.json` — Editorial content revolving around insights. Keyed by theme.
+`bloom-insights.json` — Editorial content revolving around insights. Keyed by theme.
 `direction` (`agree`/`disagree`/`divided`/`mixed`) - Top-level consensus category
 
-`data/group-info.json` — per opinion group: participant count, color, tagline and a
+`group-info.json` — per opinion group: participant count, color, tagline and a
 hand-written description, for the Opinion Groups page and its modal. Hand-maintained; `refresh-poll.js`
 never touches it.
 
-`data/group-statements.json` — per opinion group, the statements that most define it, in
+`group-statements.json` — per opinion group, the statements that most define it, in
 rank order, feeding the rest of that group's modal.
 
-`data/consensus-statements.json` — the statement ids shown on the Consensus page, in order.
+`consensus-statements.json` — the statement ids shown on the Consensus page, in order.
 
-`data/demographics.json` — the Demographics detail modal, one category per tab.
+`demographics.json` — the Demographics detail modal, one category per tab.
 
-`data/participant-locations.json` — cities with participant counts and real lat/lng for the
+`participant-locations.json` — cities with participant counts and real lat/lng for the
 Demographics map, plus an `other` bucket for every zip not broken out. Note that d3-geo
 takes points as `[lng, lat]` — the reverse of these fields' reading order.
 
-`data/oregon-counties.json` — GeoJSON for all 36 Oregon counties, from the U.S. Census
-Bureau via `us-atlas`. All 36 are kept, not just the three Central Oregon ones, so the
-map's zoomed-out bound is the real state outline.
-
-Each of these carries its own `_readme` recording where its numbers came from.
+`counties.json` — GeoJSON for the report's region, from the U.S. Census Bureau via
+`us-atlas`. The map's zoomed-out bound is this whole file, so it should hold more than the
+home counties — Central Oregon's keeps all 36 Oregon counties to get the real state outline.
 
 ### Themes are derived from tags
 
@@ -117,19 +130,19 @@ Note: the themes are canonical to this repository, and are not (currently) pulle
 
 ### Refreshing the poll
 
-`node scripts/refresh-poll.js --step <workflow-step-uuid>` rewrites every poll record's
+`node scripts/refresh-poll.js --report <slug> --step <workflow-step-uuid>` rewrites every poll record's
 `vote` and the `groups` array from Polis, via comhairle's
 `GET /tools/polis/report_data` (that route has no auth check, so no credentials are
 involved). `--help` documents every flag.
 
-Every live fetch saves the payload to `data/polis-snapshots/`. These can be committed
+Every live fetch saves the payload to the report's `data/<slug>/polis-snapshots/`. These can be committed
 if desired. 
 
 **Dry runs** review with `--dry-run`, then apply that exact
 file with `--from`. 
 
-    node scripts/refresh-poll.js --step <uuid> --dry-run     # reports, and names the snapshot
-    node scripts/refresh-poll.js --from data/polis-snapshots/report-data-<stamp>.json
+    node scripts/refresh-poll.js --report <slug> --step <uuid> --dry-run     # reports, and names the snapshot
+    node scripts/refresh-poll.js --report <slug> --from data/<slug>/polis-snapshots/report-data-<stamp>.json
 
 The refresh touches **only** `vote` and `groups`. Tags, chips, place, text, the quote records and
 the themes are editorial, and where upstream disagrees the script reports and moves on:
