@@ -620,21 +620,23 @@ body.demogs-page .shell{padding-bottom:0}
   margin:10px auto 0;max-width:13em;
 }
 
-/* the Sisters mountain skyline (static/sisters_title.webp — a silhouette
-   that fades out top and bottom). Height-clamped so it can't take over on
-   a tall/wide viewport; object-position:center keeps the band centred
-   within the clamp. On mobile it runs slightly oversized, bleeding a
-   little past the left and right edges. */
+/* the Sisters mountain skyline (static/sisters_title.webp — a ~2.1:1
+   silhouette, cropped so it starts right at the peaks; it fades out at
+   the base on its own). Always rendered at its own aspect (aspect-ratio
+   + height:auto), so it is never cropped in either direction — only its
+   width changes between breakpoints. */
 .titleImg{
-  display:block;width:100%;
-  /* tall enough that object-fit:cover barely has to crop this ~1.65:1
-     source — so the whole silhouette (peaks and base, both of which fade
-     out on their own) stays in frame */
-  height:clamp(240px,64vw,440px);
-  object-fit:cover;object-position:center 58%;
+  display:block;
+  width:100%;margin-inline:auto;
+  aspect-ratio:1800/849;height:auto;
 }
 @media (max-width:659px){
-  .titleImg{width:112%;margin-inline:-6%}
+  /* oversized so it bleeds ~16% past each edge */
+  .titleImg{width:132%;margin-inline:-16%}
+}
+@media (min-width:660px){
+  /* contained and centred on desktop */
+  .titleImg{width:min(68%,620px);margin-top:26px}
 }
 .titleMain{overflow-x:clip}
 
@@ -645,12 +647,12 @@ body.demogs-page .shell{padding-bottom:0}
    head/image; the desktop override below (min-width:660px) cancels that
    grow so this just follows in normal flow instead. */
 .titleBottom{
-  padding:22px 22px 34px;text-align:center;
+  padding:14px 22px 22px;text-align:center;
 }
 .titleBottom p{
-  font-size:17px;line-height:1.5;font-weight:400;
+  font-size:17px;line-height:1.45;font-weight:400;
   color:var(--theme-blue);
-  margin:0 auto 20px;max-width:30em;
+  margin:0 auto 14px;max-width:30em;
 }
 .titleHighlight{color:#E76E50}
 .diveIn{
@@ -663,19 +665,23 @@ body.demogs-page .shell{padding-bottom:0}
 }
 .diveIn:active{transform:scale(.97)}
 .diveSub{
-  display:inline-block;margin-top:14px;font-size:14.5px;
+  display:inline-block;margin-top:11px;font-size:14.5px;
   color:var(--theme-blue);text-decoration:underline;
 }
 @media (min-width:660px){
   /* mobile pins .titleBottom to the viewport bottom via .titleMain's
-     flex:1 grow; desktop instead centers the whole stack (.titleMain +
-     .titleBottom together) as a group in the viewport — flex:none stops
-     .titleMain from eating the extra space, and justify-content:center on
-     the column centers what's left of it. */
+     flex:1 grow; desktop drops that so head + image + description stack
+     tightly together and centre as one group in the viewport (flex:none
+     stops .titleMain eating the slack; justify-content:center on the
+     column places the group). Everything is sized to clear the fold on a
+     laptop-height screen. */
   #l0-title{justify-content:center}
   .titleMain{flex:none}
-  .titleBottom p{font-size:19px}
+  .titleHead{padding:0 22px}
+  .titleBottom{padding:34px 22px 0;text-align:center}
+  .titleBottom p{font-size:19px;line-height:1.5;margin:0 auto 22px;max-width:34em}
   .diveIn{font-size:22px;padding:21px 26px}
+  .diveSub{margin-top:14px}
 }
 
 /* ─────────────────────────────────────────────
