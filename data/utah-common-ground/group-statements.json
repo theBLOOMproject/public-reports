@@ -1,16 +1,16 @@
 {
   "A": [
-    { "id": "p13", "direction": "agree" },
-    { "id": "p14", "direction": "agree" },
-    { "id": "p15", "direction": "disagree" },
-    { "id": "p20", "direction": "disagree" },
-    { "id": "p32", "direction": "disagree" }
+    { "id": "p49", "direction": "agree" },
+    { "id": "p48", "direction": "agree" },
+    { "id": "p82", "direction": "disagree" },
+    { "id": "p83", "direction": "disagree" },
+    { "id": "p53", "direction": "disagree" }
   ],
   "B": [
-    { "id": "p34", "direction": "agree" },
-    { "id": "p37", "direction": "agree" },
-    { "id": "p40", "direction": "agree" },
+    { "id": "p69", "direction": "agree" },
     { "id": "p44", "direction": "agree" },
-    { "id": "p45", "direction": "disagree" }
+    { "id": "p107", "direction": "agree" },
+    { "id": "p119", "direction": "agree" },
+    { "id": "p46", "direction": "agree" }
   ]
 }

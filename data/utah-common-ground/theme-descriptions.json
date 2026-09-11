@@ -1,8 +1,28 @@
 {
   "themes": {
-    "themey": {
-      "description": "There were definitely commonalities in the statements in this theme",
-      "note": "This is a note about the theme"
+    "datacenters": {
+      "description": "Data centers drew more statements than any other topic, and water came up again and again. Nearly everyone wants data centers to report their full environmental footprint and to earn their tax breaks with real local benefits, and almost no one thinks a few more would be no big deal. Where people split is on whether Utah should keep building them at all.",
+      "note": "Largest theme. Most participant-written statements here have 100–150 votes, well under the ~300 on seed statements, and Group A's share of those is often only 15–25 people."
+    },
+    "economy": {
+      "description": "People talked about jobs lost to automation, who should pay to retrain displaced workers, and whether AI is raising everyday costs. Almost nobody thinks replacing workers is fine as long as prices stay low, or that a stronger safety net would make job losses acceptable. The groups part ways over whether companies should foot the retraining bill, and over whether AI is making life harder for ordinary families.",
+      "note": "Home of Group A's most defining disagreements (p82, p83). On retraining, Group A leans against rather than just agreeing less strongly."
+    },
+    "kids": {
+      "description": "Statements covered AI in the classroom, parents' role, and what chatbots mean for kids' development. There is broad agreement that parents should be able to see what their kids discuss with AI, that kids need to learn to use AI without leaning on it, and that chatbot relationships could harm their social development. People split on whether to bring AI into kids' education now or wait until its effects are better understood.",
+      "note": "Parental visibility is the most even result in the poll: p5 is 82% vs 84%, and both groups reject its mirror image (p68) and giving teens an equal say (p71)."
+    },
+    "governance": {
+      "description": "People talked about how state government should use AI, who gets a say, and whether regulation is keeping up. Most want the public consulted before government rolls out AI, and decisions grounded in expert risk assessment — and almost nobody trusts local officials to decide on data centers alone. The sharpest split is over whether the state should use AI chatbots in place of people.",
+      "note": "p20 and p32 carry a neutral pill (66% and 64% in Group A) rather than a consensus one, even though over 95% of Group B agrees; the insight says 'generally agree' to fit."
+    },
+    "accountability": {
+      "description": "These statements are about what AI companies and employers owe people: consent before using personal data, notice when AI is judging your work, and responsibility for harm. The consent and notice statements are among the most agreed-upon in the whole poll. Holding companies liable for harm, or giving residents a share of the profits made from their data, is where the groups diverge.",
+      "note": "Smallest theme. Several statements are cross-listed from other themes, because transparency ran through the whole conversation."
+    },
+    "living": {
+      "description": "The broadest theme: whether AI is doing more good than harm, whether leaning on it erodes our own thinking, and whether it belongs in mental health care. Almost everyone agrees AI should be a tool that people check, not a replacement for them. Beyond that, this is where the two groups differ most on the basic question of whether AI is worth it.",
+      "note": "Mostly participant-written statements with smaller vote counts. p183 (100% of Group B agree) has only 2 Group A votes, so no insight cites it."
     }
   }
 }

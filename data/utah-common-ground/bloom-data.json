@@ -1,13 +1,73 @@
 {
   "themes": [
     {
-      "key": "themey",
-      "short": "Thematic Theme",
-      "full": "The Thematic Theme",
+      "key": "datacenters",
+      "short": "Data Centers",
+      "full": "Data Centers, Water & the Land",
+      "color": "#CE302B",
+      "tags": [
+        "Water",
+        "Environment & Energy",
+        "Siting & Growth",
+        "Community Benefit"
+      ]
+    },
+    {
+      "key": "economy",
+      "short": "Jobs & the Economy",
+      "full": "Jobs, Costs & Who Benefits",
+      "color": "#8E3AD1",
+      "tags": [
+        "Jobs & Automation",
+        "Retraining & Safety Net",
+        "Cost of Living",
+        "Who Benefits"
+      ]
+    },
+    {
+      "key": "kids",
+      "short": "Kids & Schools",
+      "full": "Kids, Schools & Families",
+      "color": "#137A22",
+      "tags": [
+        "AI in Schools",
+        "Parents' Role",
+        "Child Development"
+      ]
+    },
+    {
+      "key": "governance",
+      "short": "Government & Public Voice",
+      "full": "Government, Regulation & Public Voice",
       "color": "#17348C",
       "tags": [
-        "Themeyness",
-        "Moar Themes"
+        "Government Use of AI",
+        "Public Input",
+        "Regulation",
+        "Expertise & Understanding"
+      ]
+    },
+    {
+      "key": "accountability",
+      "short": "Privacy & Accountability",
+      "full": "Privacy, Transparency & Accountability",
+      "color": "#0E6FA6",
+      "tags": [
+        "Personal Data",
+        "Right to Know",
+        "Corporate Accountability"
+      ]
+    },
+    {
+      "key": "living",
+      "short": "Living with AI",
+      "full": "Living with AI: Promise, Risk & Human Thinking",
+      "color": "#27756B",
+      "tags": [
+        "Benefits & Promise",
+        "Risks & Skepticism",
+        "Human Thinking & Judgment",
+        "Mental Health & Connection"
       ]
     }
   ],
@@ -41,7 +101,9 @@
         "minAgree": 76
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy"
+      ],
       "inReport": false
     },
     {
@@ -73,7 +135,10 @@
         "minAgree": 77
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Community Benefit",
+        "Corporate Accountability"
+      ],
       "inReport": false
     },
     {
@@ -105,7 +170,10 @@
         "minAgree": 10
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Mental Health & Connection",
+        "Child Development"
+      ],
       "inReport": false
     },
     {
@@ -137,7 +205,9 @@
         "minAgree": 82
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Parents' Role"
+      ],
       "inReport": false
     },
     {
@@ -169,7 +239,9 @@
         "minAgree": 76
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Parents' Role"
+      ],
       "inReport": false
     },
     {
@@ -201,7 +273,9 @@
         "minAgree": 33
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Retraining & Safety Net"
+      ],
       "inReport": false
     },
     {
@@ -233,7 +307,9 @@
         "minAgree": 79
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Right to Know"
+      ],
       "inReport": false
     },
     {
@@ -265,7 +341,9 @@
         "minAgree": 47
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Corporate Accountability"
+      ],
       "inReport": false
     },
     {
@@ -297,7 +375,9 @@
         "minAgree": 49
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Personal Data"
+      ],
       "inReport": false
     },
     {
@@ -329,7 +409,10 @@
         "minAgree": 66
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Public Input",
+        "Government Use of AI"
+      ],
       "inReport": false
     },
     {
@@ -361,7 +444,10 @@
         "minAgree": 64
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Government Use of AI",
+        "Right to Know"
+      ],
       "inReport": false
     },
     {
@@ -393,7 +479,9 @@
         "minAgree": 78
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Personal Data"
+      ],
       "inReport": false
     },
     {
@@ -425,7 +513,10 @@
         "minAgree": 45
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools",
+        "Right to Know"
+      ],
       "inReport": false
     },
     {
@@ -457,7 +548,9 @@
         "minAgree": 55
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Retraining & Safety Net"
+      ],
       "inReport": false
     },
     {
@@ -489,7 +582,9 @@
         "minAgree": 7
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Cost of Living"
+      ],
       "inReport": false
     },
     {
@@ -521,7 +616,9 @@
         "minAgree": 38
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Retraining & Safety Net"
+      ],
       "inReport": false
     },
     {
@@ -553,7 +650,10 @@
         "minAgree": 34
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Government Use of AI",
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -585,7 +685,9 @@
         "minAgree": 49
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Benefits & Promise"
+      ],
       "inReport": false
     },
     {
@@ -617,7 +719,9 @@
         "minAgree": 25
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Government Use of AI"
+      ],
       "inReport": false
     },
     {
@@ -647,7 +751,9 @@
         "minAgree": 63
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Expertise & Understanding"
+      ],
       "inReport": false
     },
     {
@@ -677,7 +783,10 @@
         "minAgree": 10
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Risks & Skepticism",
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -709,7 +818,10 @@
         "minAgree": 3
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy",
+        "Community Benefit"
+      ],
       "inReport": false
     },
     {
@@ -741,7 +853,9 @@
         "minAgree": 1
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -773,7 +887,9 @@
         "minAgree": 16
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Water"
+      ],
       "inReport": false
     },
     {
@@ -805,7 +921,9 @@
         "minAgree": 56
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -837,7 +955,10 @@
         "minAgree": 1
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth",
+        "Public Input"
+      ],
       "inReport": false
     },
     {
@@ -869,7 +990,9 @@
         "minAgree": 75
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Community Benefit"
+      ],
       "inReport": false
     },
     {
@@ -901,7 +1024,9 @@
         "minAgree": 19
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools"
+      ],
       "inReport": false
     },
     {
@@ -933,7 +1058,9 @@
         "minAgree": 52
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools"
+      ],
       "inReport": false
     },
     {
@@ -965,7 +1092,10 @@
         "minAgree": 75
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools",
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -997,7 +1127,9 @@
         "minAgree": 30
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -1029,7 +1161,9 @@
         "minAgree": 16
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools"
+      ],
       "inReport": false
     },
     {
@@ -1061,7 +1195,9 @@
         "minAgree": 6
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Child Development"
+      ],
       "inReport": false
     },
     {
@@ -1093,7 +1229,10 @@
         "minAgree": 81
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Child Development",
+        "Mental Health & Connection"
+      ],
       "inReport": false
     },
     {
@@ -1125,7 +1264,9 @@
         "minAgree": 7
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Parents' Role"
+      ],
       "inReport": false
     },
     {
@@ -1157,7 +1298,9 @@
         "minAgree": 25
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Child Development"
+      ],
       "inReport": false
     },
     {
@@ -1189,7 +1332,9 @@
         "minAgree": 50
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Child Development"
+      ],
       "inReport": false
     },
     {
@@ -1221,7 +1366,9 @@
         "minAgree": 6
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Parents' Role"
+      ],
       "inReport": false
     },
     {
@@ -1253,7 +1400,9 @@
         "minAgree": 23
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Retraining & Safety Net"
+      ],
       "inReport": false
     },
     {
@@ -1285,7 +1434,9 @@
         "minAgree": 11
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -1317,7 +1468,9 @@
         "minAgree": 32
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Retraining & Safety Net"
+      ],
       "inReport": false
     },
     {
@@ -1349,7 +1502,9 @@
         "minAgree": 40
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Right to Know"
+      ],
       "inReport": false
     },
     {
@@ -1381,7 +1536,9 @@
         "minAgree": 35
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Benefits & Promise"
+      ],
       "inReport": false
     },
     {
@@ -1413,7 +1570,9 @@
         "minAgree": 9
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -1445,7 +1604,9 @@
         "minAgree": 15
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -1477,7 +1638,9 @@
         "minAgree": 7
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools"
+      ],
       "inReport": false
     },
     {
@@ -1509,7 +1672,9 @@
         "minAgree": 2
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -1541,7 +1706,10 @@
         "minAgree": 4
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Government Use of AI",
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -1573,7 +1741,9 @@
         "minAgree": 0
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Who Benefits"
+      ],
       "inReport": false
     },
     {
@@ -1605,7 +1775,9 @@
         "minAgree": 6
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Cost of Living"
+      ],
       "inReport": false
     },
     {
@@ -1635,7 +1807,9 @@
         "minAgree": 28
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Mental Health & Connection"
+      ],
       "inReport": false
     },
     {
@@ -1665,7 +1839,9 @@
         "minAgree": 13
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Retraining & Safety Net"
+      ],
       "inReport": false
     },
     {
@@ -1695,7 +1871,9 @@
         "minAgree": 70
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Expertise & Understanding"
+      ],
       "inReport": false
     },
     {
@@ -1725,7 +1903,9 @@
         "minAgree": 67
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -1755,7 +1935,10 @@
         "minAgree": 75
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools",
+        "Public Input"
+      ],
       "inReport": false
     },
     {
@@ -1785,7 +1968,9 @@
         "minAgree": 88
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -1815,7 +2000,10 @@
         "minAgree": 32
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Mental Health & Connection",
+        "Child Development"
+      ],
       "inReport": false
     },
     {
@@ -1845,7 +2033,9 @@
         "minAgree": 35
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -1875,7 +2065,10 @@
         "minAgree": 78
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Expertise & Understanding",
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -1905,7 +2098,10 @@
         "minAgree": 74
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Water",
+        "Environment & Energy"
+      ],
       "inReport": false
     },
     {
@@ -1935,7 +2131,10 @@
         "minAgree": 57
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Benefits & Promise",
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -1965,7 +2164,9 @@
         "minAgree": 26
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Community Benefit"
+      ],
       "inReport": false
     },
     {
@@ -1995,7 +2196,10 @@
         "minAgree": 50
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy",
+        "Risks & Skepticism"
+      ],
       "inReport": false
     },
     {
@@ -2025,7 +2229,9 @@
         "minAgree": 25
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Water"
+      ],
       "inReport": false
     },
     {
@@ -2055,7 +2261,10 @@
         "minAgree": 53
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Child Development",
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -2085,7 +2294,9 @@
         "minAgree": 6
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -2115,7 +2326,9 @@
         "minAgree": 56
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Water"
+      ],
       "inReport": false
     },
     {
@@ -2145,7 +2358,10 @@
         "minAgree": 45
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Expertise & Understanding",
+        "Environment & Energy"
+      ],
       "inReport": false
     },
     {
@@ -2175,7 +2391,10 @@
         "minAgree": 32
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Water",
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -2205,7 +2424,9 @@
         "minAgree": 26
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -2235,7 +2456,9 @@
         "minAgree": 17
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Risks & Skepticism"
+      ],
       "inReport": false
     },
     {
@@ -2265,7 +2488,10 @@
         "minAgree": 11
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth",
+        "Who Benefits"
+      ],
       "inReport": false
     },
     {
@@ -2295,7 +2521,9 @@
         "minAgree": 5
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -2325,7 +2553,9 @@
         "minAgree": 20
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Government Use of AI"
+      ],
       "inReport": false
     },
     {
@@ -2355,7 +2585,9 @@
         "minAgree": 42
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy"
+      ],
       "inReport": false
     },
     {
@@ -2385,7 +2617,10 @@
         "minAgree": 87
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "AI in Schools",
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -2415,7 +2650,10 @@
         "minAgree": 40
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth",
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -2445,7 +2683,9 @@
         "minAgree": 27
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -2475,7 +2715,9 @@
         "minAgree": 8
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Who Benefits"
+      ],
       "inReport": false
     },
     {
@@ -2505,7 +2747,9 @@
         "minAgree": 0
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Siting & Growth"
+      ],
       "inReport": false
     },
     {
@@ -2535,7 +2779,9 @@
         "minAgree": 40
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Benefits & Promise"
+      ],
       "inReport": false
     },
     {
@@ -2565,7 +2811,9 @@
         "minAgree": 21
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Jobs & Automation"
+      ],
       "inReport": false
     },
     {
@@ -2595,7 +2843,9 @@
         "minAgree": 60
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -2625,7 +2875,9 @@
         "minAgree": 77
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy"
+      ],
       "inReport": false
     },
     {
@@ -2655,7 +2907,9 @@
         "minAgree": 0
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -2685,7 +2939,9 @@
         "minAgree": 59
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -2715,7 +2971,10 @@
         "minAgree": 33
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy",
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -2745,7 +3004,10 @@
         "minAgree": 67
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Corporate Accountability",
+        "Regulation"
+      ],
       "inReport": false
     },
     {
@@ -2775,7 +3037,10 @@
         "minAgree": 85
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Environment & Energy",
+        "Corporate Accountability"
+      ],
       "inReport": false
     },
     {
@@ -2805,7 +3070,9 @@
         "minAgree": 50
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Community Benefit"
+      ],
       "inReport": false
     },
     {
@@ -2835,7 +3102,10 @@
         "minAgree": 0
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Risks & Skepticism",
+        "Human Thinking & Judgment"
+      ],
       "inReport": false
     },
     {
@@ -2865,7 +3135,9 @@
         "minAgree": 0
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Who Benefits"
+      ],
       "inReport": false
     },
     {
@@ -2895,7 +3167,9 @@
         "minAgree": 44
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Corporate Accountability"
+      ],
       "inReport": false
     },
     {
@@ -2925,7 +3199,9 @@
         "minAgree": 55
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Water"
+      ],
       "inReport": false
     },
     {
@@ -2955,7 +3231,9 @@
         "minAgree": 0
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Risks & Skepticism"
+      ],
       "inReport": false
     },
     {
@@ -2985,18 +3263,20 @@
         "minAgree": 50
       },
       "source": "Open Poll",
-      "tags": ["Themeyness"],
+      "tags": [
+        "Risks & Skepticism"
+      ],
       "inReport": false
     }
   ],
   "groups": [
     {
       "key": "A",
-      "label": "Group A"
+      "label": "Group A · AI Optimists"
     },
     {
       "key": "B",
-      "label": "Group B"
+      "label": "Group B · Cautious Majority"
     }
   ]
 }

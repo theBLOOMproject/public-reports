@@ -1,12 +1,159 @@
 {
-  "themey": [
+  "datacenters": [
     {
-      "claim": "Themes are cool",
+      "claim": "Data centers should face full reporting and hard limits on their water, energy and pollution",
       "direction": "agree",
-      "ids": [
-        "p2",
-        "p4"
-      ]
+      "ids": ["p0", "p143", "p98"]
+    },
+    {
+      "claim": "Data centers should deliver real local benefits in return for public support",
+      "direction": "agree",
+      "ids": ["p2", "p60"]
+    },
+    {
+      "claim": "Adding more data centers is no big deal, even for the tax revenue",
+      "direction": "disagree",
+      "ids": ["p56", "p55"]
+    },
+    {
+      "claim": "Water scarcity should rule out water-hungry data centers in Utah",
+      "direction": "divided",
+      "ids": ["p170", "p115", "p107"]
+    },
+    {
+      "claim": "New data centers should be paused or stopped altogether",
+      "direction": "divided",
+      "ids": ["p124", "p119", "p128"]
+    }
+  ],
+  "economy": [
+    {
+      "claim": "Replacing workers with AI is fine if it keeps prices low, or that the jobs it replaces weren't essential",
+      "direction": "disagree",
+      "ids": ["p80", "p73"]
+    },
+    {
+      "claim": "A stronger safety net would make AI-driven unemployment acceptable",
+      "direction": "disagree",
+      "ids": ["p72"]
+    },
+    {
+      "claim": "Companies that automate jobs should pay to retrain the workers they displace",
+      "direction": "divided",
+      "ids": ["p12", "p74", "p40"]
+    },
+    {
+      "claim": "AI is making life harder for ordinary families while its benefits go to the rich",
+      "direction": "divided",
+      "ids": ["p83", "p44", "p82"]
+    },
+    {
+      "claim": "Slowing AI down in Utah would just send the jobs to other states",
+      "direction": "divided",
+      "ids": ["p77"]
+    }
+  ],
+  "kids": [
+    {
+      "claim": "Parents should be able to see what their kids discuss with AI",
+      "direction": "agree",
+      "ids": ["p5", "p68", "p71"]
+    },
+    {
+      "claim": "Chatbot relationships could harm kids' social development",
+      "direction": "agree",
+      "ids": ["p67", "p66"]
+    },
+    {
+      "claim": "Kids need to learn to use AI without it becoming a crutch, with support for critical thinking at home and in school",
+      "direction": "agree",
+      "ids": ["p63", "p123"]
+    },
+    {
+      "claim": "Parents and experts should shape the rules for AI in schools",
+      "direction": "agree",
+      "ids": ["p91", "p10"]
+    },
+    {
+      "claim": "To bring AI into kids' education now or hold off until its effects are understood",
+      "direction": "divided",
+      "ids": ["p62", "p61", "p69"]
+    }
+  ],
+  "governance": [
+    {
+      "claim": "The public should weigh in before state government rolls out AI, and be told when it was used on them",
+      "direction": "agree",
+      "ids": ["p20", "p32"]
+    },
+    {
+      "claim": "Decisions about AI should rest on expert input and a real risk assessment",
+      "direction": "agree",
+      "ids": ["p89", "p96"]
+    },
+    {
+      "claim": "Local and regional officials can be trusted to make the call on new data centers",
+      "direction": "disagree",
+      "ids": ["p59"]
+    },
+    {
+      "claim": "The state should use AI chatbots in place of human workers",
+      "direction": "divided",
+      "ids": ["p49", "p46", "p81"]
+    },
+    {
+      "claim": "Regulation has fallen dangerously behind the technology",
+      "direction": "divided",
+      "ids": ["p116", "p125"]
+    }
+  ],
+  "accountability": [
+    {
+      "claim": "AI companies shouldn't train on personal data without clear, informed permission",
+      "direction": "agree",
+      "ids": ["p34"]
+    },
+    {
+      "claim": "Workers should know when AI is used to evaluate them",
+      "direction": "agree",
+      "ids": ["p13"]
+    },
+    {
+      "claim": "AI companies need regulating so that profit doesn't come before the public good",
+      "direction": "agree",
+      "ids": ["p141", "p2"]
+    },
+    {
+      "claim": "AI companies should be liable for harm from their products, and share the profits they make from residents' data",
+      "direction": "divided",
+      "ids": ["p14", "p15"]
+    }
+  ],
+  "living": [
+    {
+      "claim": "AI is a tool, not a replacement, and its answers need checking",
+      "direction": "agree",
+      "ids": ["p92"]
+    },
+    {
+      "claim": "AI is doing more good than harm in ordinary people's lives",
+      "direction": "divided",
+      "ids": ["p48", "p76", "p53", "p171"]
+    },
+    {
+      "claim": "Leaning on AI erodes people's own skills and thinking",
+      "direction": "divided",
+      "ids": ["p64", "p108", "p137"]
+    },
+    {
+      "claim": "AI chatbots are better than nothing for teens who can't get therapy",
+      "direction": "disagree",
+      "ids": ["p4"]
+    },
+    {
+      "claim": "AI has a place in mental health care at all",
+      "direction": "divided",
+      "ids": ["p87", "p94"]
     }
   ]
 }
