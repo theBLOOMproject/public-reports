@@ -25,8 +25,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Build site into dist/
-        run: node build.js
+      - name: Build published reports into dist/
+        run: node build.js --published
 
       - uses: actions/configure-pages@v5
 

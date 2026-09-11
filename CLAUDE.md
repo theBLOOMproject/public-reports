@@ -20,23 +20,30 @@ the repo configures it.
 
 ```sh
 node build.js                                  # build every report into dist/
+node build.js --published                      # only published reports — what the deploy runs
 node build.js && (cd dist && python3 -m http.server 8000)   # preview at :8000/<slug>/
 
-node scripts/refresh-poll.js --help                                   # options, and what it will/won't touch
-node scripts/refresh-poll.js --report <slug> --step <uuid>            # pull fresh votes from Polis
-node scripts/refresh-poll.js --report <slug> --step <uuid> --dry-run  # report what would change; snapshot it
-node scripts/refresh-poll.js --report <slug> --from <snapshot.json>   # apply a saved payload, no network
+node scripts/fetch-snapshot.js <slug>                    # save a Polis snapshot
+node scripts/merge-snapshot.js <slug> --dry-run          # report what merging the latest snapshot would change
+node scripts/merge-snapshot.js <slug>                    # merge the latest snapshot into bloom-data.json
+node scripts/merge-snapshot.js <slug> --from <snapshot>  # merge a specific one instead
 ```
 
 No package.json, no dependencies, no test suite, no linter. Node is used only for
-`build.js` and `scripts/refresh-poll.js` (stdlib `fs`/`path`, plus the global `fetch`).
+`build.js` and the scripts in `scripts/` (stdlib `fs`/`path`, plus the global `fetch`).
 `vendor/d3-custom.min.js` is not an exception: it is a checked-in file, inlined like any
 other source, never resolved or fetched.
 
 ## Build model
 
 `build.js` is a simple, 0-dependency script that builds one single-page app per report, at
-`dist/<slug>/index.html`. Every directory under `data/` is a report, and its name is its slug.
+`dist/<slug>/index.html`.
+
+`data/config.json` is the registry of reports: each is keyed by its slug (also its directory
+under `data/`), says whether it's `published`, and names the Polis workflow step its poll
+lives at. A plain build includes every listed report, so unpublished ones can be previewed
+locally; the deploy builds with `--published`. A directory under `data/` that config doesn't
+list is skipped with a warning.
 
 `dist/` is gitignored and rebuilt from scratch every time — never edit it, and never commit
 it. Only what lands in `dist/` is public, which is why repo sources can stay in the repo.
@@ -101,8 +108,10 @@ in both fails the build.
 `direction` (`agree`/`disagree`/`divided`/`mixed`) - Top-level consensus category
 
 `group-info.json` — per opinion group: participant count, color, tagline and a
-hand-written description, for the Opinion Groups page and its modal. Hand-maintained; `refresh-poll.js`
-never touches it.
+hand-written description, for the Opinion Groups page and its modal. Hand-maintained; the
+merge never touches it.
+
+`polis-snapshots/` — the raw Polis results the poll data is built from; see below.
 
 `group-statements.json` — per opinion group, the statements that most define it, in
 rank order, feeding the rest of that group's modal.
@@ -128,23 +137,26 @@ A record whose tags no theme claims vanishes from the report — this will produ
 
 Note: the themes are canonical to this repository, and are not (currently) pulled out of Comhairle. 
 
-### Refreshing the poll
+### Poll data pipeline
 
-`node scripts/refresh-poll.js --report <slug> --step <workflow-step-uuid>` rewrites every poll record's
-`vote` and the `groups` array from Polis, via comhairle's
+Poll data flows in two steps, each script documenting its flags under `--help`.
+
+**1. Fetch a snapshot.** `node scripts/fetch-snapshot.js <slug>` fetches the poll
+named by the report's step id in `data/config.json`, via comhairle's
 `GET /tools/polis/report_data` (that route has no auth check, so no credentials are
-involved). `--help` documents every flag.
+involved), and saves it to `data/<slug>/polis-snapshots/`. A snapshot is comhairle's whole
+response, minus participant-level data (group membership and opinion-map positions — unused,
+and the repo is public), plus a record of where and when it was fetched. It is validated
+before it is written and again whenever it is read, so a malformed response writes nothing.
+Snapshots are the raw layer and are committed.
 
-Every live fetch saves the payload to the report's `data/<slug>/polis-snapshots/`. These can be committed
-if desired. 
+**2. Merge it.** `node scripts/merge-snapshot.js <slug>` rewrites every poll record's `vote`
+and the `groups` array from the report's latest snapshot, or from the one named with
+`--from`. It refuses a snapshot fetched from a different step than the report's, and
+never falls back to an older snapshot when the latest is unusable. Review with
+`--dry-run` first; it prints the exact `--from` line that applies what you reviewed.
 
-**Dry runs** review with `--dry-run`, then apply that exact
-file with `--from`. 
-
-    node scripts/refresh-poll.js --report <slug> --step <uuid> --dry-run     # reports, and names the snapshot
-    node scripts/refresh-poll.js --report <slug> --from data/<slug>/polis-snapshots/report-data-<stamp>.json
-
-The refresh touches **only** `vote` and `groups`. Tags, chips, place, text, the quote records and
+The merge touches **only** `vote` and `groups`. Tags, chips, place, text, the quote records and
 the themes are editorial, and where upstream disagrees the script reports and moves on:
 
 - **New statements** are appended in tid order with `tags: []` and no chips. They build,
@@ -162,9 +174,9 @@ the themes are editorial, and where upstream disagrees the script reports and mo
   statement may be one the group is defined by *rejecting*, and comhairle drops Polis's
   agree/disagree direction. Without the percentage the list reads as self-contradictory.
 
-Records are matched by `id === "p" + tid`, so ids are stable across refreshes.
+Records are matched by `id === "p" + tid`, so ids are stable across merges.
 
-Three things a refresh silently invalidates, all editorial follow-ups: the hand-written
+Three things a merge silently invalidates, all editorial follow-ups: the hand-written
 percentages in `theme-descriptions.json`; `DIFFERENCE_OVER_GAP` — it was calibrated on
 two groups, and `max − min` widens mechanically as clusters are added; and the participant
 counts in `group-info.json`, which need a fresh clustering run to re-derive.

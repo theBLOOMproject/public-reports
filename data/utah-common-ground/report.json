@@ -1,6 +1,6 @@
 {
-  "siteTitle": "Utah Common Ground (test copy)",
-  "brand": "Utah Common Ground (test copy)",
+  "siteTitle": "Utah Common Ground",
+  "brand": "Utah Common Ground",
   "learnMore": {
     "href": "https://cocap.us/ai",
     "label": "Learn more at COCAP.US"
@@ -14,9 +14,9 @@
   },
   "pages": {
     "title": {
-      "headingHtml": "What did Central Oregonians have to say about <span class=\"titleAI\">AI?</span>",
+      "headingHtml": "What did Utahns have to say about <span class=\"titleAI\">AI?</span>",
       "image": { "file": "sisters_title.webp", "aspect": "1800/849" },
-      "bodyHtml": "Central Oregon Civic Action Project and its partners talked to <span class=\"titleHighlight\">over 400 residents</span> from around the region to hear what they thought should be done about AI."
+      "bodyHtml": "Utah Common Ground and its partners talked to <span class=\"titleHighlight\">over 400 residents</span> from around the region to hear what they thought should be done about AI."
     },
     "demogs": {
       "stat": "400+",
@@ -33,12 +33,12 @@
     "cta": {
       "image": { "file": "sisters_bg.webp" },
       "heading": "Now is the time to act for the future of our communities.",
-      "bodyHtml": "We're organizing a Civic Assembly in December 2026, where 30-40 residents will develop policies to make sure the public has a meaningful role in the government's AI-related decisions. <span class=\"ctaHighlight\">You are invited to participate;</span> selected delegates will receive a $250 stipend.",
+      "bodyHtml": "We're organizing a Civic Assembly in September 2026, where 30-40 residents will develop policies to make sure the public has a meaningful role in the government's AI-related decisions. <span class=\"ctaHighlight\">You are invited to participate;</span> selected delegates will receive a $250 stipend.",
       "signupUrl": "https://bloomproject.typeform.com/to/C1N3LI7g?utm_source=report",
       "signupLabel": "Register here"
     },
     "themes": {
-      "heading": "What 400+ people had to say about AI in Central Oregon",
+      "heading": "What 400+ people had to say about AI in Utah",
       "body": "Responses gathered in six listening sessions around the region and one open poll, sorted into seven themes. Each square below is one poll statement or one comment from a live session."
     }
   }

@@ -1,32 +1,8 @@
 {
   "themes": {
-    "governance": {
-      "description": "People talked about who belongs at the table when AI decisions get made, and about independent oversight of government's use of AI. Bringing in rural and lower-income communities has wide support, but whether AI should be publicly or privately owned splits the room.",
-      "note": "Largest theme in the poll (24 statements) and the one where procedural consensus most clearly outruns substantive agreement."
-    },
-    "datacenters": {
-      "description": "Most of the statements were about environmental review, reporting on power and water use, and tax breaks for the companies. Almost everyone wants more transparency, and there is a lot of uncertainty about the real risks and benefits.",
-      "note": "The only theme where a single statement — the jobs-and-tax-revenue framing — is rejected almost absolutely by one group."
-    },
-    "education": {
-      "description": "The discussions centered around rules for schools, such as transparency around use in the classroom, guardrails before kids use AI, and parental controls. There is some disagreement about whether or not AI use dampens children's critical thinking skills.",
-      "note": "Second-richest theme in the conversation record — five starred session quotes alongside twelve poll statements."
-    },
-    "mentalhealth": {
-      "description": "All the groups had different opinions on whether or not AI pulls communities apart, but every group agreed that chatbots are not appropriate stand-ins for therapy.",
-      "note": "Read this theme through the quotes, not the poll. The vote sample is too small to carry much weight on its own."
-    },
-    "workforce": {
-      "description": "People talked about protections against surveillance by AI and worker displacement. There is some disagreement about who (between the public and private sectors) should foot the bill for preparing the workforce for these economic changes.",
-      "note": "The competitiveness argument is the single most group-defining framing in the theme."
-    },
-    "agency": {
-      "description": "People talked about keeping humans in charge, and about making powerful systems prove they are safe before release.",
-      "note": "Useful counterweight to the framing that existential-risk concern maps onto AI skepticism. It doesn't, cleanly."
-    },
-    "access": {
-      "description": "The statements here are largely about access to trustworthy information. This comes in a few ways: both access to good information about AI (to support better public decisions), and concern about how AI could provide false information about other things.",
-      "note": "Highest-participation statement in the whole poll sits here (243 votes) and it is a divergent one."
+    "themey": {
+      "description": "There were definitely commonalities in the statements in this theme",
+      "note": "This is a note about the theme"
     }
   }
 }

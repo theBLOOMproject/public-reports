@@ -1,0 +1,2561 @@
+{
+  "source": {
+    "api": "https://comhairle.bloomproject.us/api",
+    "workflowStepId": "9d1041f9-fda6-4597-b4b0-c1260e4b7268",
+    "fetchedAt": "2026-09-11T16:48:34.578Z"
+  },
+  "reportData": {
+    "comments": [
+      {
+        "tid": 0,
+        "text": "Utah now requires new data centers to report their water use. They should also have to report how much electricity they consume and how much air pollution they produce.",
+        "overall_votes": {
+          "agrees": 291,
+          "disagrees": 10,
+          "passes": 14
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 45,
+            "disagrees": 8,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 246,
+            "disagrees": 2,
+            "passes": 8
+          }
+        ],
+        "group_informed_consensus": 0.7219468801626637,
+        "divisiveness": 0.15584753836552512,
+        "is_seed": true
+      },
+      {
+        "tid": 2,
+        "text": "Tax breaks for AI companies building in Utah should require demonstrated community benefits.",
+        "overall_votes": {
+          "agrees": 282,
+          "disagrees": 11,
+          "passes": 21
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 46,
+            "disagrees": 6,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 236,
+            "disagrees": 5,
+            "passes": 13
+          }
+        ],
+        "group_informed_consensus": 0.7018019153225806,
+        "divisiveness": 0.224728777990247,
+        "is_seed": true
+      },
+      {
+        "tid": 4,
+        "text": "For teenagers who can't access or afford therapy, AI chatbots are better than nothing.",
+        "overall_votes": {
+          "agrees": 44,
+          "disagrees": 178,
+          "passes": 64
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 21,
+            "disagrees": 20,
+            "passes": 15
+          },
+          {
+            "group_id": 1,
+            "agrees": 23,
+            "disagrees": 158,
+            "passes": 49
+          }
+        ],
+        "group_informed_consensus": 0.03923900118906064,
+        "divisiveness": 2.7482670723834532,
+        "is_seed": true
+      },
+      {
+        "tid": 5,
+        "text": "Parents should be able to see what their minor children discuss with AI mental health or companion apps.",
+        "overall_votes": {
+          "agrees": 260,
+          "disagrees": 17,
+          "passes": 33
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 47,
+            "disagrees": 1,
+            "passes": 9
+          },
+          {
+            "group_id": 1,
+            "agrees": 212,
+            "disagrees": 16,
+            "passes": 24
+          }
+        ],
+        "group_informed_consensus": 0.6822367543040171,
+        "divisiveness": 0.05479137556738282,
+        "is_seed": true
+      },
+      {
+        "tid": 10,
+        "text": "Parents who are worried about AI in their children's schools should be educating themselves and organizing with other parents — not waiting for administrators to act.",
+        "overall_votes": {
+          "agrees": 248,
+          "disagrees": 27,
+          "passes": 33
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 42,
+            "disagrees": 5,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 206,
+            "disagrees": 22,
+            "passes": 25
+          }
+        ],
+        "group_informed_consensus": 0.6123839009287925,
+        "divisiveness": 0.1385447715409432,
+        "is_seed": true
+      },
+      {
+        "tid": 12,
+        "text": "Companies that use AI to automate jobs should also help fund training for the workers they displace.",
+        "overall_votes": {
+          "agrees": 293,
+          "disagrees": 65,
+          "passes": 50
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 22,
+            "disagrees": 32,
+            "passes": 13
+          },
+          {
+            "group_id": 1,
+            "agrees": 270,
+            "disagrees": 33,
+            "passes": 37
+          }
+        ],
+        "group_informed_consensus": 0.2641325536062378,
+        "divisiveness": 1.9648489572307823,
+        "is_seed": true
+      },
+      {
+        "tid": 13,
+        "text": "Workers should have the right to know when AI is being used to evaluate their performance or productivity.",
+        "overall_votes": {
+          "agrees": 300,
+          "disagrees": 12,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 44,
+            "disagrees": 9,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 255,
+            "disagrees": 3,
+            "passes": 6
+          }
+        ],
+        "group_informed_consensus": 0.7466943220119263,
+        "divisiveness": 0.18828270280974488,
+        "is_seed": true
+      },
+      {
+        "tid": 14,
+        "text": "Companies that produce or offer to the public AI companions or advice should be held responsible for injuries people experience as a result of trusting content provided by those features.",
+        "overall_votes": {
+          "agrees": 266,
+          "disagrees": 24,
+          "passes": 41
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 27,
+            "disagrees": 11,
+            "passes": 20
+          },
+          {
+            "group_id": 1,
+            "agrees": 238,
+            "disagrees": 13,
+            "passes": 21
+          }
+        ],
+        "group_informed_consensus": 0.4070559610705597,
+        "divisiveness": 0.5567864639205126,
+        "is_seed": true
+      },
+      {
+        "tid": 15,
+        "text": "When AI companies profit from Utahns' personal data, residents should have a legal right to a share of those profits.",
+        "overall_votes": {
+          "agrees": 279,
+          "disagrees": 25,
+          "passes": 42
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 31,
+            "disagrees": 13,
+            "passes": 19
+          },
+          {
+            "group_id": 1,
+            "agrees": 246,
+            "disagrees": 12,
+            "passes": 23
+          }
+        ],
+        "group_informed_consensus": 0.4296819787985866,
+        "divisiveness": 0.5593413097433168,
+        "is_seed": true
+      },
+      {
+        "tid": 20,
+        "text": "When Utah government agencies plan to use AI in services that affect residents, the public should be able to weigh in before — not after — changes are rolled out.",
+        "overall_votes": {
+          "agrees": 298,
+          "disagrees": 13,
+          "passes": 13
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 40,
+            "disagrees": 11,
+            "passes": 10
+          },
+          {
+            "group_id": 1,
+            "agrees": 258,
+            "disagrees": 2,
+            "passes": 3
+          }
+        ],
+        "group_informed_consensus": 0.6360587002096435,
+        "divisiveness": 0.20423281316382677,
+        "is_seed": true
+      },
+      {
+        "tid": 32,
+        "text": "Utah residents should be able to find out whether AI was used in any government decision that directly affected them.",
+        "overall_votes": {
+          "agrees": 262,
+          "disagrees": 11,
+          "passes": 17
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 37,
+            "disagrees": 10,
+            "passes": 11
+          },
+          {
+            "group_id": 1,
+            "agrees": 223,
+            "disagrees": 1,
+            "passes": 6
+          }
+        ],
+        "group_informed_consensus": 0.6114942528735632,
+        "divisiveness": 0.17569239860465669,
+        "is_seed": true
+      },
+      {
+        "tid": 34,
+        "text": "AI companies should not be able to use your personal data to train their systems without your clear, informed permission.",
+        "overall_votes": {
+          "agrees": 251,
+          "disagrees": 7,
+          "passes": 11
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 42,
+            "disagrees": 3,
+            "passes": 9
+          },
+          {
+            "group_id": 1,
+            "agrees": 209,
+            "disagrees": 4,
+            "passes": 2
+          }
+        ],
+        "group_informed_consensus": 0.7430875576036866,
+        "divisiveness": 0.07706106637788636,
+        "is_seed": true
+      },
+      {
+        "tid": 37,
+        "text": "Parents should be notified when their child's schoolwork is being graded or evaluated with the help of an AI tool.",
+        "overall_votes": {
+          "agrees": 246,
+          "disagrees": 44,
+          "passes": 37
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 26,
+            "disagrees": 23,
+            "passes": 9
+          },
+          {
+            "group_id": 1,
+            "agrees": 219,
+            "disagrees": 20,
+            "passes": 27
+          }
+        ],
+        "group_informed_consensus": 0.3694029850746269,
+        "divisiveness": 0.7280455510894523,
+        "is_seed": true
+      },
+      {
+        "tid": 40,
+        "text": "Workers in Utah who lose their jobs to AI automation deserve access to affordable retraining programs close to home.",
+        "overall_votes": {
+          "agrees": 250,
+          "disagrees": 22,
+          "passes": 29
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 33,
+            "disagrees": 14,
+            "passes": 13
+          },
+          {
+            "group_id": 1,
+            "agrees": 217,
+            "disagrees": 8,
+            "passes": 16
+          }
+        ],
+        "group_informed_consensus": 0.4919686711801407,
+        "divisiveness": 0.6818848936742306,
+        "is_seed": true
+      },
+      {
+        "tid": 44,
+        "text": "AI is making everyday life more expensive for ordinary people, even if it makes companies more profitable.",
+        "overall_votes": {
+          "agrees": 166,
+          "disagrees": 55,
+          "passes": 72
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 4,
+            "disagrees": 35,
+            "passes": 20
+          },
+          {
+            "group_id": 1,
+            "agrees": 162,
+            "disagrees": 20,
+            "passes": 52
+          }
+        ],
+        "group_informed_consensus": 0.056612948041122546,
+        "divisiveness": 1.905722395860691,
+        "is_seed": true
+      },
+      {
+        "tid": 45,
+        "text": "The changes AI will bring to our economy are so large that small fixes will not be enough.",
+        "overall_votes": {
+          "agrees": 177,
+          "disagrees": 36,
+          "passes": 78
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 22,
+            "disagrees": 14,
+            "passes": 22
+          },
+          {
+            "group_id": 1,
+            "agrees": 154,
+            "disagrees": 22,
+            "passes": 56
+          }
+        ],
+        "group_informed_consensus": 0.2539173789173789,
+        "divisiveness": 1.5046319577633265,
+        "is_seed": true
+      },
+      {
+        "tid": 46,
+        "text": "Utah's state government should not replace thousands of state workers with AI chatbots just to cut costs.",
+        "overall_votes": {
+          "agrees": 241,
+          "disagrees": 31,
+          "passes": 37
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 20,
+            "disagrees": 24,
+            "passes": 15
+          },
+          {
+            "group_id": 1,
+            "agrees": 218,
+            "disagrees": 7,
+            "passes": 22
+          }
+        ],
+        "group_informed_consensus": 0.3027849101323326,
+        "divisiveness": 0.8220854449670278,
+        "is_seed": true
+      },
+      {
+        "tid": 48,
+        "text": "AI tools are already helping ordinary people do things that used to require expensive professionals.",
+        "overall_votes": {
+          "agrees": 206,
+          "disagrees": 106,
+          "passes": 48
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 61,
+            "disagrees": 1,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 142,
+            "disagrees": 105,
+            "passes": 44
+          }
+        ],
+        "group_informed_consensus": 0.4584755403868032,
+        "divisiveness": 3.1749843673175193,
+        "is_seed": true
+      },
+      {
+        "tid": 49,
+        "text": "If AI chatbots can answer residents' questions faster and more accurately than a person, the state should use them.",
+        "overall_votes": {
+          "agrees": 122,
+          "disagrees": 144,
+          "passes": 71
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 52,
+            "disagrees": 3,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 69,
+            "disagrees": 141,
+            "passes": 63
+          }
+        ],
+        "group_informed_consensus": 0.20755244755244753,
+        "divisiveness": 4.249090455847281,
+        "is_seed": true
+      },
+      {
+        "tid": 52,
+        "text": "Experts should weigh in on laws and regulations. Educate the public. Technology and AI should be available to everyone through public access such as schools and libraries.",
+        "overall_votes": {
+          "agrees": 211,
+          "disagrees": 47,
+          "passes": 55
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 49,
+            "disagrees": 4,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 161,
+            "disagrees": 43,
+            "passes": 50
+          }
+        ],
+        "group_informed_consensus": 0.536281779661017,
+        "divisiveness": 1.8384613432611372,
+        "is_seed": false
+      },
+      {
+        "tid": 53,
+        "text": "The best case scenario for AI is that most people don’t use it. It’s highly regulated and reserved for things that 1) humans can’t do and 2) produce a net benefit greater to humanity than the damage their data centers cause.",
+        "overall_votes": {
+          "agrees": 203,
+          "disagrees": 113,
+          "passes": 34
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 6,
+            "disagrees": 49,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 195,
+            "disagrees": 63,
+            "passes": 25
+          }
+        ],
+        "group_informed_consensus": 0.0740620782726046,
+        "divisiveness": 2.618659609910681,
+        "is_seed": false
+      },
+      {
+        "tid": 55,
+        "text": "A small increase in power costs is worth it if we can get a lot of tax revenue out of new data centers.",
+        "overall_votes": {
+          "agrees": 18,
+          "disagrees": 148,
+          "passes": 51
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 13,
+            "disagrees": 10,
+            "passes": 24
+          },
+          {
+            "group_id": 1,
+            "agrees": 5,
+            "disagrees": 138,
+            "passes": 27
+          }
+        ],
+        "group_informed_consensus": 0.009966777408637871,
+        "divisiveness": 2.920463403551445,
+        "is_seed": true
+      },
+      {
+        "tid": 56,
+        "text": "We already have data centers – what’s the big deal in adding one or two more?",
+        "overall_votes": {
+          "agrees": 10,
+          "disagrees": 176,
+          "passes": 24
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 9,
+            "disagrees": 20,
+            "passes": 17
+          },
+          {
+            "group_id": 1,
+            "agrees": 1,
+            "disagrees": 156,
+            "passes": 7
+          }
+        ],
+        "group_informed_consensus": 0.0025100401606425703,
+        "divisiveness": 3.3092741567027515,
+        "is_seed": true
+      },
+      {
+        "tid": 57,
+        "text": "I would be fine with data centers if they didn’t consume so much water.",
+        "overall_votes": {
+          "agrees": 46,
+          "disagrees": 125,
+          "passes": 66
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 15,
+            "disagrees": 9,
+            "passes": 27
+          },
+          {
+            "group_id": 1,
+            "agrees": 30,
+            "disagrees": 116,
+            "passes": 39
+          }
+        ],
+        "group_informed_consensus": 0.050045404096458475,
+        "divisiveness": 3.647701500603115,
+        "is_seed": true
+      },
+      {
+        "tid": 58,
+        "text": "Data centers should be built where they won’t interrupt anyone’s lives.",
+        "overall_votes": {
+          "agrees": 201,
+          "disagrees": 40,
+          "passes": 59
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 33,
+            "disagrees": 13,
+            "passes": 13
+          },
+          {
+            "group_id": 1,
+            "agrees": 168,
+            "disagrees": 26,
+            "passes": 46
+          }
+        ],
+        "group_informed_consensus": 0.3892426500474191,
+        "divisiveness": 1.3728273910748858,
+        "is_seed": true
+      },
+      {
+        "tid": 59,
+        "text": "I trust our local and regional government officials to make the right decisions on new data centers – they are best positioned to make decisions that benefit everyone.",
+        "overall_votes": {
+          "agrees": 8,
+          "disagrees": 181,
+          "passes": 17
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 6,
+            "disagrees": 27,
+            "passes": 12
+          },
+          {
+            "group_id": 1,
+            "agrees": 2,
+            "disagrees": 154,
+            "passes": 5
+          }
+        ],
+        "group_informed_consensus": 0.0027411565069834225,
+        "divisiveness": 2.3370833769248396,
+        "is_seed": true
+      },
+      {
+        "tid": 60,
+        "text": "Data centers should also serve local computing needs, not just those of large multinational corporations.",
+        "overall_votes": {
+          "agrees": 223,
+          "disagrees": 21,
+          "passes": 38
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 42,
+            "disagrees": 6,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 180,
+            "disagrees": 15,
+            "passes": 30
+          }
+        ],
+        "group_informed_consensus": 0.5911438553850829,
+        "divisiveness": 0.7816243280750592,
+        "is_seed": true
+      },
+      {
+        "tid": 61,
+        "text": "As long as chatbots still guide kids through the learning process, I think they could boost our children’s education.",
+        "overall_votes": {
+          "agrees": 89,
+          "disagrees": 160,
+          "passes": 63
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 40,
+            "disagrees": 5,
+            "passes": 12
+          },
+          {
+            "group_id": 1,
+            "agrees": 49,
+            "disagrees": 155,
+            "passes": 51
+          }
+        ],
+        "group_informed_consensus": 0.13519752027962806,
+        "divisiveness": 4.860014561975141,
+        "is_seed": true
+      },
+      {
+        "tid": 62,
+        "text": "We should be focused on how to integrate AI into our kids’ education safely, not whether or not to ban it.",
+        "overall_votes": {
+          "agrees": 207,
+          "disagrees": 104,
+          "passes": 44
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 53,
+            "disagrees": 5,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 152,
+            "disagrees": 99,
+            "passes": 41
+          }
+        ],
+        "group_informed_consensus": 0.446064139941691,
+        "divisiveness": 3.998236232768842,
+        "is_seed": true
+      },
+      {
+        "tid": 63,
+        "text": "It's important for kids to learn how to use AI without it becoming a cognitive crutch.",
+        "overall_votes": {
+          "agrees": 231,
+          "disagrees": 39,
+          "passes": 28
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 52,
+            "disagrees": 2,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 178,
+            "disagrees": 36,
+            "passes": 24
+          }
+        ],
+        "group_informed_consensus": 0.6699858757062147,
+        "divisiveness": 1.2281963815145351,
+        "is_seed": true
+      },
+      {
+        "tid": 64,
+        "text": "If people use AI to outsource skills they don't possess, they'll be dependent on that tool for the rest of their lives.",
+        "overall_votes": {
+          "agrees": 175,
+          "disagrees": 64,
+          "passes": 44
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 17,
+            "disagrees": 28,
+            "passes": 11
+          },
+          {
+            "group_id": 1,
+            "agrees": 157,
+            "disagrees": 35,
+            "passes": 32
+          }
+        ],
+        "group_informed_consensus": 0.21696673787000303,
+        "divisiveness": 1.3591883822443276,
+        "is_seed": true
+      },
+      {
+        "tid": 65,
+        "text": "We should make AI chatbots more accessible to disadvantaged students so that they don't fall behind.",
+        "overall_votes": {
+          "agrees": 58,
+          "disagrees": 115,
+          "passes": 80
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 26,
+            "disagrees": 10,
+            "passes": 21
+          },
+          {
+            "group_id": 1,
+            "agrees": 32,
+            "disagrees": 105,
+            "passes": 59
+          }
+        ],
+        "group_informed_consensus": 0.07627118644067797,
+        "divisiveness": 3.4180443871839,
+        "is_seed": true
+      },
+      {
+        "tid": 66,
+        "text": "Kids already have access to the internet. Chatbots don't change that much.",
+        "overall_votes": {
+          "agrees": 22,
+          "disagrees": 175,
+          "passes": 21
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 11,
+            "disagrees": 28,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 11,
+            "disagrees": 147,
+            "passes": 13
+          }
+        ],
+        "group_informed_consensus": 0.01698714167748024,
+        "divisiveness": 2.0875196641811855,
+        "is_seed": true
+      },
+      {
+        "tid": 67,
+        "text": "I'm worried that kids building relationships with chatbots will negatively affect their social development.",
+        "overall_votes": {
+          "agrees": 265,
+          "disagrees": 10,
+          "passes": 10
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 48,
+            "disagrees": 6,
+            "passes": 5
+          },
+          {
+            "group_id": 1,
+            "agrees": 216,
+            "disagrees": 4,
+            "passes": 5
+          }
+        ],
+        "group_informed_consensus": 0.7678919621578683,
+        "divisiveness": 0.102791809647341,
+        "is_seed": true
+      },
+      {
+        "tid": 68,
+        "text": "I don't think parents should be able to monitor their teenagers' chat logs in ChatGPT and other tools – it's an invasion of privacy.",
+        "overall_votes": {
+          "agrees": 18,
+          "disagrees": 165,
+          "passes": 27
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 3,
+            "disagrees": 35,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 15,
+            "disagrees": 130,
+            "passes": 21
+          }
+        ],
+        "group_informed_consensus": 0.008281573498964802,
+        "divisiveness": 0.29780934280354227,
+        "is_seed": true
+      },
+      {
+        "tid": 69,
+        "text": "We're still learning of the effects of social media on our health. We shouldn't be giving kids more tools until we've figured that out.",
+        "overall_votes": {
+          "agrees": 230,
+          "disagrees": 34,
+          "passes": 38
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 15,
+            "disagrees": 24,
+            "passes": 20
+          },
+          {
+            "group_id": 1,
+            "agrees": 215,
+            "disagrees": 10,
+            "passes": 17
+          }
+        ],
+        "group_informed_consensus": 0.2321956463316313,
+        "divisiveness": 0.9282373014577668,
+        "is_seed": true
+      },
+      {
+        "tid": 70,
+        "text": "More than anything else, I'm concerned about kids being misinformed by AI tools and chatbots.",
+        "overall_votes": {
+          "agrees": 227,
+          "disagrees": 50,
+          "passes": 32
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 29,
+            "disagrees": 24,
+            "passes": 5
+          },
+          {
+            "group_id": 1,
+            "agrees": 197,
+            "disagrees": 26,
+            "passes": 27
+          }
+        ],
+        "group_informed_consensus": 0.3928571428571429,
+        "divisiveness": 1.3030197734035511,
+        "is_seed": true
+      },
+      {
+        "tid": 71,
+        "text": "Kids older than 13 should have as much say in their AI use as their parents.",
+        "overall_votes": {
+          "agrees": 24,
+          "disagrees": 169,
+          "passes": 30
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 3,
+            "disagrees": 43,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 21,
+            "disagrees": 126,
+            "passes": 27
+          }
+        ],
+        "group_informed_consensus": 0.00980392156862745,
+        "divisiveness": 0.6820351613582522,
+        "is_seed": true
+      },
+      {
+        "tid": 72,
+        "text": "I would be fine with AI-related unemployment if Utah had a better a better social safety net.",
+        "overall_votes": {
+          "agrees": 60,
+          "disagrees": 129,
+          "passes": 64
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 12,
+            "disagrees": 21,
+            "passes": 19
+          },
+          {
+            "group_id": 1,
+            "agrees": 48,
+            "disagrees": 108,
+            "passes": 45
+          }
+        ],
+        "group_informed_consensus": 0.05810983397190294,
+        "divisiveness": 4.061975090511158,
+        "is_seed": true
+      },
+      {
+        "tid": 73,
+        "text": "The jobs being replaced by AI weren’t that essential to begin with. Let’s find more meaningful work for those affected.",
+        "overall_votes": {
+          "agrees": 31,
+          "disagrees": 136,
+          "passes": 47
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 12,
+            "disagrees": 17,
+            "passes": 19
+          },
+          {
+            "group_id": 1,
+            "agrees": 19,
+            "disagrees": 119,
+            "passes": 28
+          }
+        ],
+        "group_informed_consensus": 0.030952380952380953,
+        "divisiveness": 1.9966507744603248,
+        "is_seed": true
+      },
+      {
+        "tid": 74,
+        "text": "The corporations that are cutting jobs should be required to pay for their employees' retraining, instead of that cost falling on the government.",
+        "overall_votes": {
+          "agrees": 204,
+          "disagrees": 37,
+          "passes": 55
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 18,
+            "disagrees": 24,
+            "passes": 15
+          },
+          {
+            "group_id": 1,
+            "agrees": 185,
+            "disagrees": 13,
+            "passes": 39
+          }
+        ],
+        "group_informed_consensus": 0.250620523367137,
+        "divisiveness": 1.3170907958729687,
+        "is_seed": true
+      },
+      {
+        "tid": 75,
+        "text": "Employers shouldn't be making hiring decisions with AI. If they do, the applicants should at least know about it.",
+        "overall_votes": {
+          "agrees": 239,
+          "disagrees": 34,
+          "passes": 24
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 23,
+            "disagrees": 26,
+            "passes": 9
+          },
+          {
+            "group_id": 1,
+            "agrees": 216,
+            "disagrees": 8,
+            "passes": 15
+          }
+        ],
+        "group_informed_consensus": 0.3601659751037345,
+        "divisiveness": 0.8769175834530881,
+        "is_seed": true
+      },
+      {
+        "tid": 76,
+        "text": "I'm okay with AI being used to automate rote tasks in medical treatment, like refilling prescriptions.",
+        "overall_votes": {
+          "agrees": 133,
+          "disagrees": 119,
+          "passes": 58
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 47,
+            "disagrees": 3,
+            "passes": 11
+          },
+          {
+            "group_id": 1,
+            "agrees": 86,
+            "disagrees": 116,
+            "passes": 47
+          }
+        ],
+        "group_informed_consensus": 0.26408651109846326,
+        "divisiveness": 3.3199635099181037,
+        "is_seed": true
+      },
+      {
+        "tid": 77,
+        "text": "Slowing down AI in Utah means the jobs will just go to another state.",
+        "overall_votes": {
+          "agrees": 50,
+          "disagrees": 140,
+          "passes": 59
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 32,
+            "disagrees": 6,
+            "passes": 16
+          },
+          {
+            "group_id": 1,
+            "agrees": 18,
+            "disagrees": 133,
+            "passes": 42
+          }
+        ],
+        "group_informed_consensus": 0.05741758241758242,
+        "divisiveness": 3.374362639208877,
+        "is_seed": true
+      },
+      {
+        "tid": 78,
+        "text": "I would move away from a community that approved a large data center nearby.",
+        "overall_votes": {
+          "agrees": 143,
+          "disagrees": 53,
+          "passes": 66
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 8,
+            "disagrees": 29,
+            "passes": 15
+          },
+          {
+            "group_id": 1,
+            "agrees": 135,
+            "disagrees": 24,
+            "passes": 51
+          }
+        ],
+        "group_informed_consensus": 0.10691823899371068,
+        "divisiveness": 1.6172149362930477,
+        "is_seed": true
+      },
+      {
+        "tid": 79,
+        "text": "AI-powered homeschooling tools could be better for my kids than what their school offers.",
+        "overall_votes": {
+          "agrees": 36,
+          "disagrees": 136,
+          "passes": 60
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 24,
+            "disagrees": 10,
+            "passes": 16
+          },
+          {
+            "group_id": 1,
+            "agrees": 12,
+            "disagrees": 126,
+            "passes": 44
+          }
+        ],
+        "group_informed_consensus": 0.033967391304347824,
+        "divisiveness": 3.3941550157033946,
+        "is_seed": true
+      },
+      {
+        "tid": 80,
+        "text": "A company that replaces workers with AI but keeps prices low is doing the right thing.",
+        "overall_votes": {
+          "agrees": 17,
+          "disagrees": 120,
+          "passes": 71
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 13,
+            "disagrees": 8,
+            "passes": 25
+          },
+          {
+            "group_id": 1,
+            "agrees": 4,
+            "disagrees": 112,
+            "passes": 46
+          }
+        ],
+        "group_informed_consensus": 0.008892276422764226,
+        "divisiveness": 2.9548971394367545,
+        "is_seed": true
+      },
+      {
+        "tid": 81,
+        "text": "If AI can do a government worker's job faster and cheaper, the state should replace them.",
+        "overall_votes": {
+          "agrees": 27,
+          "disagrees": 132,
+          "passes": 59
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 21,
+            "disagrees": 10,
+            "passes": 18
+          },
+          {
+            "group_id": 1,
+            "agrees": 6,
+            "disagrees": 122,
+            "passes": 41
+          }
+        ],
+        "group_informed_consensus": 0.01765852539846348,
+        "divisiveness": 3.2232871539966497,
+        "is_seed": true
+      },
+      {
+        "tid": 82,
+        "text": "The benefits of AI only go to people who are already rich.",
+        "overall_votes": {
+          "agrees": 129,
+          "disagrees": 139,
+          "passes": 45
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 0,
+            "disagrees": 59,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 128,
+            "disagrees": 79,
+            "passes": 43
+          }
+        ],
+        "group_informed_consensus": 0.008125472411186696,
+        "divisiveness": 3.940728037807699,
+        "is_seed": true
+      },
+      {
+        "tid": 83,
+        "text": "I believe AI will make it tougher for families like mine to make ends meet.",
+        "overall_votes": {
+          "agrees": 148,
+          "disagrees": 62,
+          "passes": 68
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 3,
+            "disagrees": 39,
+            "passes": 12
+          },
+          {
+            "group_id": 1,
+            "agrees": 145,
+            "disagrees": 23,
+            "passes": 56
+          }
+        ],
+        "group_informed_consensus": 0.0461441213653603,
+        "divisiveness": 2.083716624267151,
+        "is_seed": true
+      },
+      {
+        "tid": 87,
+        "text": "I do not  believe that mental health providers should use AI. We are loosing human connection and communication.",
+        "overall_votes": {
+          "agrees": 109,
+          "disagrees": 21,
+          "passes": 24
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 7,
+            "disagrees": 12,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 102,
+            "disagrees": 9,
+            "passes": 18
+          }
+        ],
+        "group_informed_consensus": 0.2329657902176986,
+        "divisiveness": 0.5726668876338251,
+        "is_seed": false
+      },
+      {
+        "tid": 88,
+        "text": "We will have to turn to a Universal Basic Income system due to the overwhelming job losses facing our country.",
+        "overall_votes": {
+          "agrees": 38,
+          "disagrees": 35,
+          "passes": 48
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 3,
+            "disagrees": 12,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 35,
+            "disagrees": 22,
+            "passes": 40
+          }
+        ],
+        "group_informed_consensus": 0.05818181818181818,
+        "divisiveness": 0.950337663685202,
+        "is_seed": false
+      },
+      {
+        "tid": 89,
+        "text": "Have a well researched outline before making any decisions, with data centers, introducing AI to the education system, and everyday use and regulations. We need a reliable risk assessment and plan to continue assessing such a new technology",
+        "overall_votes": {
+          "agrees": 132,
+          "disagrees": 12,
+          "passes": 13
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 19,
+            "disagrees": 7,
+            "passes": 1
+          },
+          {
+            "group_id": 1,
+            "agrees": 113,
+            "disagrees": 4,
+            "passes": 11
+          }
+        ],
+        "group_informed_consensus": 0.6047745358090186,
+        "divisiveness": 0.3896256572327577,
+        "is_seed": false
+      },
+      {
+        "tid": 90,
+        "text": "Ideally, a successful adoption of AI across society should reduce the workload of citizens to enjoy the same (or better) standard of living while working less hours per week. This may require new labor/tech policies unique to such a moment.",
+        "overall_votes": {
+          "agrees": 97,
+          "disagrees": 23,
+          "passes": 21
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 21,
+            "disagrees": 3,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 76,
+            "disagrees": 20,
+            "passes": 18
+          }
+        ],
+        "group_informed_consensus": 0.5035671819262781,
+        "divisiveness": 0.799551514204013,
+        "is_seed": false
+      },
+      {
+        "tid": 91,
+        "text": "Policies on AI's use in schools should be made with parents, children, AI experts, AI harm's experts, and researchers before we come to conclusions about how and when it should be used in the public education system.",
+        "overall_votes": {
+          "agrees": 131,
+          "disagrees": 5,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 21,
+            "disagrees": 4,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 109,
+            "disagrees": 1,
+            "passes": 6
+          }
+        ],
+        "group_informed_consensus": 0.6836158192090395,
+        "divisiveness": 0.17667392379527358,
+        "is_seed": false
+      },
+      {
+        "tid": 92,
+        "text": "AI is a tool, not a replacement. Responses should be fact-checked and monitored.",
+        "overall_votes": {
+          "agrees": 133,
+          "disagrees": 9,
+          "passes": 6
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 27,
+            "disagrees": 1,
+            "passes": 0
+          },
+          {
+            "group_id": 1,
+            "agrees": 105,
+            "disagrees": 8,
+            "passes": 6
+          }
+        ],
+        "group_informed_consensus": 0.8176308539944903,
+        "divisiveness": 0.13091266087640205,
+        "is_seed": false
+      },
+      {
+        "tid": 94,
+        "text": "There should not be AI mental heath or companion apps. They are more detrimental than helpful, especially for developing children. If the general public can barely understand computers, let alone AI systems, how can we expect children to?",
+        "overall_votes": {
+          "agrees": 91,
+          "disagrees": 15,
+          "passes": 28
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 7,
+            "disagrees": 9,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 84,
+            "disagrees": 6,
+            "passes": 22
+          }
+        ],
+        "group_informed_consensus": 0.2485380116959064,
+        "divisiveness": 0.48203200892387177,
+        "is_seed": false
+      },
+      {
+        "tid": 95,
+        "text": "Data centers will interrupt all life simply by existing, regardless of location. The only question is how direct and significant the impact will be on different communities.",
+        "overall_votes": {
+          "agrees": 87,
+          "disagrees": 22,
+          "passes": 22
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 9,
+            "disagrees": 12,
+            "passes": 5
+          },
+          {
+            "group_id": 1,
+            "agrees": 77,
+            "disagrees": 10,
+            "passes": 17
+          }
+        ],
+        "group_informed_consensus": 0.2628032345013477,
+        "divisiveness": 0.6879576577789853,
+        "is_seed": false
+      },
+      {
+        "tid": 96,
+        "text": "We need to understand how AI works and create policies that are clear about boundaries. AI is a tool but can be used for both good and bad. We need to define what that looks like.",
+        "overall_votes": {
+          "agrees": 130,
+          "disagrees": 7,
+          "passes": 13
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 18,
+            "disagrees": 3,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 110,
+            "disagrees": 4,
+            "passes": 11
+          }
+        ],
+        "group_informed_consensus": 0.664251968503937,
+        "divisiveness": 0.23629894702817872,
+        "is_seed": false
+      },
+      {
+        "tid": 98,
+        "text": "We never build something that doesn't disrupt someone somehow. So that is an unrealistic requirement. But we can draw hard red lines on responsible data center development around water use, energy use, and sensitive ecological areas.",
+        "overall_votes": {
+          "agrees": 103,
+          "disagrees": 13,
+          "passes": 15
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 17,
+            "disagrees": 3,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 86,
+            "disagrees": 10,
+            "passes": 12
+          }
+        ],
+        "group_informed_consensus": 0.5694545454545454,
+        "divisiveness": 0.44318935357851064,
+        "is_seed": false
+      },
+      {
+        "tid": 99,
+        "text": "Data centers and AI will be part of our future. We have to accept that and lean into it responsibly. We also have to be intentional about what we want for our future and shape AI policy to work for us, not the other way around.",
+        "overall_votes": {
+          "agrees": 93,
+          "disagrees": 43,
+          "passes": 11
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 23,
+            "disagrees": 1,
+            "passes": 0
+          },
+          {
+            "group_id": 1,
+            "agrees": 70,
+            "disagrees": 42,
+            "passes": 11
+          }
+        ],
+        "group_informed_consensus": 0.5243076923076924,
+        "divisiveness": 1.717235254116379,
+        "is_seed": false
+      },
+      {
+        "tid": 104,
+        "text": "Consider what long-term benefits a data center can provide (10+ years after going online) to a community that may help offset negative impacts. Infrastructure upgrades are a one-time investment not a long-term strategy for community benefit",
+        "overall_votes": {
+          "agrees": 37,
+          "disagrees": 28,
+          "passes": 41
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 5,
+            "disagrees": 2,
+            "passes": 12
+          },
+          {
+            "group_id": 1,
+            "agrees": 32,
+            "disagrees": 26,
+            "passes": 29
+          }
+        ],
+        "group_informed_consensus": 0.10593900481540933,
+        "divisiveness": 0.7041567639169459,
+        "is_seed": false
+      },
+      {
+        "tid": 106,
+        "text": "The impact of ai data centers on our environment is not sustainable.   The implications of an unchecked ai controlling people and policy is terrifying.",
+        "overall_votes": {
+          "agrees": 118,
+          "disagrees": 11,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 10,
+            "disagrees": 8,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 106,
+            "disagrees": 3,
+            "passes": 7
+          }
+        ],
+        "group_informed_consensus": 0.4533898305084746,
+        "divisiveness": 0.34679743073379093,
+        "is_seed": false
+      },
+      {
+        "tid": 107,
+        "text": "We don’t have enough water for this. Protect our land!!!",
+        "overall_votes": {
+          "agrees": 107,
+          "disagrees": 9,
+          "passes": 10
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 5,
+            "disagrees": 9,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 102,
+            "disagrees": 0,
+            "passes": 4
+          }
+        ],
+        "group_informed_consensus": 0.26010101010101006,
+        "divisiveness": 0.3559880012911064,
+        "is_seed": false
+      },
+      {
+        "tid": 108,
+        "text": "Too often, AI is used as a shortcut to creativity, which in turn causes a drought of critical thinking and chic reasoning skills. Our children deserve to be raised in communities that support their cognitive development. Period.",
+        "overall_votes": {
+          "agrees": 114,
+          "disagrees": 9,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 10,
+            "disagrees": 7,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 104,
+            "disagrees": 2,
+            "passes": 7
+          }
+        ],
+        "group_informed_consensus": 0.47826086956521735,
+        "divisiveness": 0.1886368256656667,
+        "is_seed": false
+      },
+      {
+        "tid": 112,
+        "text": "Charge the users, not the masses! Don't build anymore. Clean up the storage servers already existing.",
+        "overall_votes": {
+          "agrees": 71,
+          "disagrees": 12,
+          "passes": 23
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 1,
+            "disagrees": 9,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 70,
+            "disagrees": 3,
+            "passes": 17
+          }
+        ],
+        "group_informed_consensus": 0.0857487922705314,
+        "divisiveness": 0.5970247769411159,
+        "is_seed": false
+      },
+      {
+        "tid": 113,
+        "text": "Water conservation and consumption should be at the very top of everyone's concern list",
+        "overall_votes": {
+          "agrees": 105,
+          "disagrees": 9,
+          "passes": 6
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 10,
+            "disagrees": 6,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 94,
+            "disagrees": 2,
+            "passes": 4
+          }
+        ],
+        "group_informed_consensus": 0.5122549019607844,
+        "divisiveness": 0.20093557801346257,
+        "is_seed": false
+      },
+      {
+        "tid": 114,
+        "text": "We need to be listening to the experts and to the point, environmental experts on how this technology is affecting people and our land.",
+        "overall_votes": {
+          "agrees": 101,
+          "disagrees": 8,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 9,
+            "disagrees": 7,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 92,
+            "disagrees": 1,
+            "passes": 5
+          }
+        ],
+        "group_informed_consensus": 0.4227272727272728,
+        "divisiveness": 0.2840643464849642,
+        "is_seed": false
+      },
+      {
+        "tid": 115,
+        "text": "Data centers should not be built in areas that are already drought prone and experiencing water scarcity.  They should be built in places that are remote and already cold",
+        "overall_votes": {
+          "agrees": 80,
+          "disagrees": 14,
+          "passes": 19
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 7,
+            "disagrees": 7,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 73,
+            "disagrees": 7,
+            "passes": 10
+          }
+        ],
+        "group_informed_consensus": 0.2681159420289855,
+        "divisiveness": 0.6170435350565417,
+        "is_seed": false
+      },
+      {
+        "tid": 116,
+        "text": "Regulation needs to be on pace with the technology. We are woefully behind and AI is posed to take advantage of people because of it, not the other way around.",
+        "overall_votes": {
+          "agrees": 102,
+          "disagrees": 12,
+          "passes": 11
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 5,
+            "disagrees": 7,
+            "passes": 7
+          },
+          {
+            "group_id": 1,
+            "agrees": 97,
+            "disagrees": 5,
+            "passes": 4
+          }
+        ],
+        "group_informed_consensus": 0.25925925925925924,
+        "divisiveness": 0.4208607317221531,
+        "is_seed": false
+      },
+      {
+        "tid": 117,
+        "text": "AI is oversold and will not actually be able to deliver on the promises that proponents are pushing.",
+        "overall_votes": {
+          "agrees": 64,
+          "disagrees": 11,
+          "passes": 28
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 3,
+            "disagrees": 7,
+            "passes": 8
+          },
+          {
+            "group_id": 1,
+            "agrees": 61,
+            "disagrees": 4,
+            "passes": 20
+          }
+        ],
+        "group_informed_consensus": 0.1425287356321839,
+        "divisiveness": 0.5052305635727459,
+        "is_seed": false
+      },
+      {
+        "tid": 118,
+        "text": "AI is best utilized in small scale operations. These mega centers that know and do everything like a Swiss Army Knife are designed for profits, not human development. \n",
+        "overall_votes": {
+          "agrees": 81,
+          "disagrees": 15,
+          "passes": 21
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 2,
+            "disagrees": 11,
+            "passes": 6
+          },
+          {
+            "group_id": 1,
+            "agrees": 79,
+            "disagrees": 4,
+            "passes": 14
+          }
+        ],
+        "group_informed_consensus": 0.11544011544011544,
+        "divisiveness": 0.7348006009866277,
+        "is_seed": false
+      },
+      {
+        "tid": 119,
+        "text": "I don’t think any more data centers should be built at all until we the people clearly understand what they will be used for. And under no circumstances should the massive ones like Stratos be permitted at all.",
+        "overall_votes": {
+          "agrees": 79,
+          "disagrees": 19,
+          "passes": 19
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 1,
+            "disagrees": 11,
+            "passes": 7
+          },
+          {
+            "group_id": 1,
+            "agrees": 78,
+            "disagrees": 7,
+            "passes": 12
+          }
+        ],
+        "group_informed_consensus": 0.075998075998076,
+        "divisiveness": 0.8829605753523473,
+        "is_seed": false
+      },
+      {
+        "tid": 120,
+        "text": "It seems like AI is being developed for the public sector at the expense of private citizens.",
+        "overall_votes": {
+          "agrees": 65,
+          "disagrees": 28,
+          "passes": 19
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 4,
+            "disagrees": 12,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 61,
+            "disagrees": 16,
+            "passes": 14
+          }
+        ],
+        "group_informed_consensus": 0.15151515151515155,
+        "divisiveness": 1.0247171283477046,
+        "is_seed": false
+      },
+      {
+        "tid": 122,
+        "text": "Utah’s economy relies on tourism. It is not in Utah’s best interest to host a project that will damage that industry. We should protect our natural resources so people can continue to enjoy our ski resorts, national parks, and wildlife.",
+        "overall_votes": {
+          "agrees": 97,
+          "disagrees": 11,
+          "passes": 12
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 8,
+            "disagrees": 7,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 88,
+            "disagrees": 3,
+            "passes": 8
+          }
+        ],
+        "group_informed_consensus": 0.3776520509193777,
+        "divisiveness": 0.34945034232997874,
+        "is_seed": false
+      },
+      {
+        "tid": 123,
+        "text": "We need to teach critical thinking skills to our children and teens and provide parents and teachers with the support and resources to make this happen. If we are wiser than AI, it will be far more likely to benefit us.",
+        "overall_votes": {
+          "agrees": 90,
+          "disagrees": 6,
+          "passes": 7
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 14,
+            "disagrees": 0,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 75,
+            "disagrees": 6,
+            "passes": 5
+          }
+        ],
+        "group_informed_consensus": 0.7196969696969696,
+        "divisiveness": 0.08981355415564597,
+        "is_seed": false
+      },
+      {
+        "tid": 124,
+        "text": "We need a moratorium on new ai data centers until effective state regulation is enacted and local governments are empowered to block projects that  burn fossil fuels or threaten water supplies.",
+        "overall_votes": {
+          "agrees": 84,
+          "disagrees": 9,
+          "passes": 6
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 6,
+            "disagrees": 7,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 78,
+            "disagrees": 2,
+            "passes": 4
+          }
+        ],
+        "group_informed_consensus": 0.3782489740082079,
+        "divisiveness": 0.31492132610914614,
+        "is_seed": false
+      },
+      {
+        "tid": 125,
+        "text": "We are getting \"free AI\" now to train the models as part of the inevitable future that big tech wants. We should reject that future and demand legislation that prioritizes citizens over servers.",
+        "overall_votes": {
+          "agrees": 89,
+          "disagrees": 7,
+          "passes": 7
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 4,
+            "disagrees": 7,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 84,
+            "disagrees": 0,
+            "passes": 3
+          }
+        ],
+        "group_informed_consensus": 0.2808988764044944,
+        "divisiveness": 0.23765171724509157,
+        "is_seed": false
+      },
+      {
+        "tid": 127,
+        "text": "AI will only empower the wealthy while flattening our society, dividing us further, and used as a tool to fool & coerce us. \n",
+        "overall_votes": {
+          "agrees": 54,
+          "disagrees": 14,
+          "passes": 18
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 1,
+            "disagrees": 9,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 53,
+            "disagrees": 5,
+            "passes": 15
+          }
+        ],
+        "group_informed_consensus": 0.09600000000000002,
+        "divisiveness": 0.6208269170081875,
+        "is_seed": false
+      },
+      {
+        "tid": 128,
+        "text": "We should stop building data centers altogether, AI is not the future of humanity, it's the current revenue avenue of tech giants and those who prey on others lack of restrictions.",
+        "overall_votes": {
+          "agrees": 53,
+          "disagrees": 24,
+          "passes": 11
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 0,
+            "disagrees": 12,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 53,
+            "disagrees": 12,
+            "passes": 8
+          }
+        ],
+        "group_informed_consensus": 0.04235294117647059,
+        "divisiveness": 0.7723967587196391,
+        "is_seed": false
+      },
+      {
+        "tid": 130,
+        "text": "I believe we can find positive sum, win-win, solutions with new technologies & innovation. Not just using AI but in building datacenters & power and water usage. A century ago our current prosperity was unthinkable, let's do it again.",
+        "overall_votes": {
+          "agrees": 39,
+          "disagrees": 27,
+          "passes": 17
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 12,
+            "disagrees": 0,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 27,
+            "disagrees": 27,
+            "passes": 14
+          }
+        ],
+        "group_informed_consensus": 0.30588235294117644,
+        "divisiveness": 1.3006206819658597,
+        "is_seed": false
+      },
+      {
+        "tid": 131,
+        "text": "In terms of AI taking low income jobs, I think that could very well happen. But that may not be a bad thing if those jobs become more about managing AI's work and thus more innovation which will create more work to be done and more jobs.",
+        "overall_votes": {
+          "agrees": 21,
+          "disagrees": 33,
+          "passes": 22
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 8,
+            "disagrees": 0,
+            "passes": 5
+          },
+          {
+            "group_id": 1,
+            "agrees": 13,
+            "disagrees": 33,
+            "passes": 17
+          }
+        ],
+        "group_informed_consensus": 0.12923076923076923,
+        "divisiveness": 1.4941472535641085,
+        "is_seed": false
+      },
+      {
+        "tid": 132,
+        "text": "Let's not reject AI, because it is coming and will be the new reality. But I agree that legislation to protect the economy and vulnerable classes is essential.",
+        "overall_votes": {
+          "agrees": 65,
+          "disagrees": 32,
+          "passes": 8
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 11,
+            "disagrees": 4,
+            "passes": 0
+          },
+          {
+            "group_id": 1,
+            "agrees": 54,
+            "disagrees": 28,
+            "passes": 8
+          }
+        ],
+        "group_informed_consensus": 0.4219948849104858,
+        "divisiveness": 1.8510698314987404,
+        "is_seed": false
+      },
+      {
+        "tid": 136,
+        "text": "Data centers in Utah should look into how they can lean into the states environmental strengths instead of blindly thinking the same thing that works elsewhere can work here. Solar and electric cooling should potentially be considered.",
+        "overall_votes": {
+          "agrees": 40,
+          "disagrees": 4,
+          "passes": 7
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 8,
+            "disagrees": 1,
+            "passes": 1
+          },
+          {
+            "group_id": 1,
+            "agrees": 30,
+            "disagrees": 3,
+            "passes": 6
+          }
+        ],
+        "group_informed_consensus": 0.5670731707317074,
+        "divisiveness": 0.195704565788381,
+        "is_seed": false
+      },
+      {
+        "tid": 137,
+        "text": "I'd rather figure things out myself rather than use AI. It's more dumbing down of humans - like we're too stupid to figure things out ourselves. AI treats us like we're unable to think or create ourselves and sometimes it's wrong.",
+        "overall_votes": {
+          "agrees": 27,
+          "disagrees": 11,
+          "passes": 7
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 0,
+            "disagrees": 5,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 27,
+            "disagrees": 6,
+            "passes": 3
+          }
+        ],
+        "group_informed_consensus": 0.06698564593301436,
+        "divisiveness": 0.41773663176551623,
+        "is_seed": false
+      },
+      {
+        "tid": 138,
+        "text": "Wise AI use: repetitive time-consuming tasks; education-training to think, reason, problem-solve, collaborate at high level.\nFoolish AI use: as proxy for above; hyper-convenience, hyper-pleasure, manipulation, attention-capture for money.",
+        "overall_votes": {
+          "agrees": 40,
+          "disagrees": 10,
+          "passes": 14
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 10,
+            "disagrees": 2,
+            "passes": 1
+          },
+          {
+            "group_id": 1,
+            "agrees": 30,
+            "disagrees": 8,
+            "passes": 13
+          }
+        ],
+        "group_informed_consensus": 0.42893081761006285,
+        "divisiveness": 0.43956573404255495,
+        "is_seed": false
+      },
+      {
+        "tid": 139,
+        "text": "AI risk analysis must extend further than simply reporting resource usage. The recently approved rules that govern this do not detail any retribution for overuse. Moreover, air & water quality standards were reduced so vetting is meritless",
+        "overall_votes": {
+          "agrees": 47,
+          "disagrees": 4,
+          "passes": 15
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 4,
+            "disagrees": 4,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 43,
+            "disagrees": 0,
+            "passes": 11
+          }
+        ],
+        "group_informed_consensus": 0.28061224489795916,
+        "divisiveness": 0.3158808734335602,
+        "is_seed": false
+      },
+      {
+        "tid": 141,
+        "text": "It is important that AI corporations and other businesses do not get greedy. They need to put the benefits to users and society above profits. AI needs to be regulated to prevent misuse by the corporations, businesses, and governments.",
+        "overall_votes": {
+          "agrees": 44,
+          "disagrees": 4,
+          "passes": 3
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 8,
+            "disagrees": 3,
+            "passes": 1
+          },
+          {
+            "group_id": 1,
+            "agrees": 36,
+            "disagrees": 1,
+            "passes": 2
+          }
+        ],
+        "group_informed_consensus": 0.5801393728222997,
+        "divisiveness": 0.07828085001650764,
+        "is_seed": false
+      },
+      {
+        "tid": 143,
+        "text": "Data Centers should be required to report how much electricity they consume and how much air pollution they produce. They should be held liable for negative health effects on communities due to pollution.",
+        "overall_votes": {
+          "agrees": 66,
+          "disagrees": 0,
+          "passes": 4
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 11,
+            "disagrees": 0,
+            "passes": 2
+          },
+          {
+            "group_id": 1,
+            "agrees": 55,
+            "disagrees": 0,
+            "passes": 2
+          }
+        ],
+        "group_informed_consensus": 0.7593220338983051,
+        "divisiveness": 0.011417838861438405,
+        "is_seed": false
+      },
+      {
+        "tid": 144,
+        "text": "EU law requires data centers over 1MW to share waste heat with homes via district heating networks. Utah should do the same, and  turn AI’s data center energy burden into a community asset that provides low cost heat to homes and businesses",
+        "overall_votes": {
+          "agrees": 21,
+          "disagrees": 7,
+          "passes": 12
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 6,
+            "disagrees": 3,
+            "passes": 1
+          },
+          {
+            "group_id": 1,
+            "agrees": 15,
+            "disagrees": 4,
+            "passes": 11
+          }
+        ],
+        "group_informed_consensus": 0.29166666666666663,
+        "divisiveness": 0.4198032501591428,
+        "is_seed": false
+      },
+      {
+        "tid": 145,
+        "text": "The effect generative AI has on a populations ability to determine truth and think critically for themselves is so dangerous it should be outlawed entirely.",
+        "overall_votes": {
+          "agrees": 16,
+          "disagrees": 15,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 0,
+            "disagrees": 10,
+            "passes": 0
+          },
+          {
+            "group_id": 1,
+            "agrees": 16,
+            "disagrees": 5,
+            "passes": 9
+          }
+        ],
+        "group_informed_consensus": 0.04427083333333333,
+        "divisiveness": 0.6183972940385492,
+        "is_seed": false
+      },
+      {
+        "tid": 146,
+        "text": "AI is being pushed on societies by the wealthy and powerful 1%. They are not doing it for the benefit of the masses of people. It will only help the rich get richer, at everyone else's expense.",
+        "overall_votes": {
+          "agrees": 29,
+          "disagrees": 8,
+          "passes": 9
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 0,
+            "disagrees": 6,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 29,
+            "disagrees": 2,
+            "passes": 5
+          }
+        ],
+        "group_informed_consensus": 0.06578947368421052,
+        "divisiveness": 0.42692845904598953,
+        "is_seed": false
+      },
+      {
+        "tid": 148,
+        "text": "We should not be granting tax breaks to any for profit corporations. Profitable businesses should pay a fair share of taxes.",
+        "overall_votes": {
+          "agrees": 38,
+          "disagrees": 2,
+          "passes": 6
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 4,
+            "disagrees": 2,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 33,
+            "disagrees": 0,
+            "passes": 3
+          }
+        ],
+        "group_informed_consensus": 0.40669856459330145,
+        "divisiveness": 0.10344619166158989,
+        "is_seed": false
+      },
+      {
+        "tid": 170,
+        "text": "AI data centers that require a huge amount of water should not be built in drought-prone states like Utah.",
+        "overall_votes": {
+          "agrees": 38,
+          "disagrees": 4,
+          "passes": 4
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 6,
+            "disagrees": 2,
+            "passes": 3
+          },
+          {
+            "group_id": 1,
+            "agrees": 32,
+            "disagrees": 2,
+            "passes": 1
+          }
+        ],
+        "group_informed_consensus": 0.48024948024948033,
+        "divisiveness": 0.14277643033725568,
+        "is_seed": false
+      },
+      {
+        "tid": 171,
+        "text": "If there is a clear understanding of what AI is and how it works, to responsibly manage it is to minimize its use to only critical matters, because the harm it is causing is outweighing the good",
+        "overall_votes": {
+          "agrees": 24,
+          "disagrees": 7,
+          "passes": 12
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 0,
+            "disagrees": 5,
+            "passes": 4
+          },
+          {
+            "group_id": 1,
+            "agrees": 24,
+            "disagrees": 2,
+            "passes": 7
+          }
+        ],
+        "group_informed_consensus": 0.06493506493506494,
+        "divisiveness": 0.32124677798536827,
+        "is_seed": false
+      },
+      {
+        "tid": 183,
+        "text": "Between deskilling, job displacement and the risk of human extinction, the risks of AI appear to outweigh the benefits. I'm a techno-optimist, but unregulated AI is incredibly dangerous.",
+        "overall_votes": {
+          "agrees": 23,
+          "disagrees": 1,
+          "passes": 0
+        },
+        "group_votes": [
+          {
+            "group_id": 0,
+            "agrees": 1,
+            "disagrees": 1,
+            "passes": 0
+          },
+          {
+            "group_id": 1,
+            "agrees": 22,
+            "disagrees": 0,
+            "passes": 0
+          }
+        ],
+        "group_informed_consensus": 0.47916666666666663,
+        "divisiveness": 0.01351769524423446,
+        "is_seed": false
+      }
+    ],
+    "groups": [
+      {
+        "group_id": 0,
+        "representative_comments": [
+          {
+            "tid": 49,
+            "text": "If AI chatbots can answer residents' questions faster and more accurately than a person, the state should use them."
+          },
+          {
+            "tid": 48,
+            "text": "AI tools are already helping ordinary people do things that used to require expensive professionals."
+          },
+          {
+            "tid": 82,
+            "text": "The benefits of AI only go to people who are already rich."
+          },
+          {
+            "tid": 83,
+            "text": "I believe AI will make it tougher for families like mine to make ends meet."
+          },
+          {
+            "tid": 53,
+            "text": "The best case scenario for AI is that most people don’t use it. It’s highly regulated and reserved for things that 1) humans can’t do and 2) produce a net benefit greater to humanity than the damage their data centers cause."
+          }
+        ],
+        "total_members": 70
+      },
+      {
+        "group_id": 1,
+        "representative_comments": [
+          {
+            "tid": 69,
+            "text": "We're still learning of the effects of social media on our health. We shouldn't be giving kids more tools until we've figured that out."
+          },
+          {
+            "tid": 44,
+            "text": "AI is making everyday life more expensive for ordinary people, even if it makes companies more profitable."
+          },
+          {
+            "tid": 107,
+            "text": "We don’t have enough water for this. Protect our land!!!"
+          },
+          {
+            "tid": 119,
+            "text": "I don’t think any more data centers should be built at all until we the people clearly understand what they will be used for. And under no circumstances should the massive ones like Stratos be permitted at all."
+          },
+          {
+            "tid": 46,
+            "text": "Utah's state government should not replace thousands of state workers with AI chatbots just to cut costs."
+          }
+        ],
+        "total_members": 457
+      }
+    ]
+  }
+}

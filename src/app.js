@@ -597,7 +597,7 @@ async function copyShareLink() {
 }
 
 // group-info.json is a hand-maintained snapshot — bloom-data.json's own
-// groups[] never carries participant counts, since refresh-poll.js
+// groups[] never carries participant counts, since merge-snapshot.js
 // deliberately avoids storing cluster sizes that go stale the moment Polis
 // reclusters.
 const groupByKey = {};

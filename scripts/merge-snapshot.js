@@ -1,29 +1,20 @@
 #!/usr/bin/env node
-// Refreshes the open-poll records in one report's data/<slug>/bloom-data.json from
-// Polis, via comhairle.
+// Merges a Polis snapshot (from scripts/fetch-snapshot.js) into the open-poll records in
+// one report's data/<slug>/bloom-data.json — by default its latest snapshot.
 //
-//   node scripts/refresh-poll.js --report <slug> --step <workflow-step-uuid>
-//   node scripts/refresh-poll.js --report <slug> --step <uuid> --dry-run
-//   node scripts/refresh-poll.js --report <slug> --from data/<slug>/polis-snapshots/report-data-2026-08-18T….json
+//   node scripts/merge-snapshot.js <slug> --dry-run
+//   node scripts/merge-snapshot.js <slug>
+//   node scripts/merge-snapshot.js <slug> --from data/<slug>/polis-snapshots/report-data-….json
 //
 // Only two things in the file come from upstream: the per-group vote tallies on each
 // poll record, and the opinion groups themselves. Everything else — tags, chips, place,
 // text, the quote records, the themes — is editorial and is never written here. Where
 // upstream and the file disagree about something editorial, this reports it and leaves
 // it alone; deciding is a person's job.
-//
-// GET /tools/polis/report_data has no auth check on the comhairle side, so this needs
-// no credentials and touches no personal data.
 const fs = require('fs');
 const path = require('path');
-
-const ROOT = path.join(__dirname, '..');
-const REPORTS = path.join(ROOT, 'data');
-// The Bloom deployment, per bloom_charts/civic-os/templates/configmap.yaml, which sets
-// this same API_URL + API_PREFIX for both the staging and production admin apps.
-// Note comhairle.scot is a *different* comhairle instance and answers plausibly:
-// pointing at it would refresh the report with another project's poll.
-const DEFAULT_API = 'https://comhairle.bloomproject.us/api';
+const { ROOT, REPORTS, loadConfig, stepIdFor } = require('./lib/config');
+const { latestSnapshot, readSnapshot } = require('./lib/polis-snapshot');
 
 // Polis's own group ids are 0-based ints; the report has always called them A, B, …
 // Same mapping as groupLabel() on the Civic OS side.
@@ -73,28 +64,18 @@ function voteFor(comment, keys) {
 }
 
 const USAGE = `
-Refreshes the open-poll records in one report's data/<slug>/bloom-data.json from
-Polis, via comhairle.
+Merges a Polis snapshot into the open-poll records in one report's
+data/<slug>/bloom-data.json.
 
-  node scripts/refresh-poll.js --report <slug> --step <workflow-step-uuid> [options]
-  node scripts/refresh-poll.js --report <slug> --from <snapshot.json> [options]
+  node scripts/merge-snapshot.js <slug> [options]
+
+  <slug>          The report to merge into: a key of data/config.json.
 
 Options
-  --report <slug> The report to refresh: its directory under data/. Required — a
-                  step id belongs to one poll, so no report is assumed.
-  --step <uuid>   Polis workflow step to fetch. This is the id comhairle knows the
-                  poll by; the Insights page uses the same one.
-  --from <file>   Merge a saved payload instead of fetching. Every live run leaves one
-                  in data/<slug>/polis-snapshots/, dry runs included, so this applies exactly
-                  the payload you reviewed rather than re-fetching a moved-on poll.
-                  Snapshots hold only the fields this script reads; a full payload
-                  fetched by hand works too.
-  --api <url>     comhairle base URL. Default: ${DEFAULT_API}
-                  Local backend is usually http://localhost:3000.
-                  Check this before a real run — pointing at the wrong environment
-                  refreshes the published report with plausible but wrong numbers.
-  --dry-run       Report what would change and leave bloom-data.json alone. Still
-                  saves the snapshot, and prints the --from line that applies it.
+  --from <file>   The snapshot to merge. Default: the latest in
+                  data/<slug>/polis-snapshots/. Either way it must have been fetched
+                  from this report's configured Polis step.
+  --dry-run       Report what would change and leave bloom-data.json alone.
   -h, --help      Show this.
 
 What it writes
@@ -114,131 +95,47 @@ After a run
 `.trim();
 
 function parseArgs(argv) {
-  const args = { dryRun: false, api: DEFAULT_API, report: null, step: null, from: null, help: false };
+  const args = { dryRun: false, report: null, from: null, help: false };
+  const positional = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--dry-run') args.dryRun = true;
     else if (a === '-h' || a === '--help') args.help = true;
-    else if (a === '--report') args.report = argv[++i];
-    else if (a === '--step') args.step = argv[++i];
-    else if (a === '--api') args.api = argv[++i];
     else if (a === '--from') args.from = argv[++i];
-    else throw new Error(`unknown argument ${a}\n\n${USAGE}`);
+    else if (a.startsWith('-')) throw new Error(`unknown option ${a}\n\n${USAGE}`);
+    else positional.push(a);
   }
   if (args.help) return args;
-  const valued = [['--report', args.report], ['--step', args.step], ['--api', args.api], ['--from', args.from]];
-  for (const [flag, value] of valued) {
-    if (value === undefined) throw new Error(`${flag} needs a value\n\n${USAGE}`);
+  if (args.from === undefined) throw new Error(`--from needs a value\n\n${USAGE}`);
+  if (positional.length !== 1) {
+    throw new Error(`need exactly one report slug, got ${positional.length}\n\n${USAGE}`);
   }
-  if (!args.report) {
-    throw new Error(`need --report <slug>, the report's directory under data/\n\n${USAGE}`);
-  }
-  if (!args.step && !args.from) {
-    throw new Error(`need --step <workflow-step-uuid> or --from <file>\n\n${USAGE}`);
-  }
-  if (args.step && args.from) {
-    throw new Error(`--step and --from are alternatives: one fetches, the other reads a file`);
-  }
+  [args.report] = positional;
   return args;
 }
 
-function reportPaths(slug) {
-  const dir = path.join(REPORTS, slug);
-  const data = path.join(dir, 'bloom-data.json');
-  if (!fs.existsSync(data)) {
-    const known = fs.readdirSync(REPORTS, { withFileTypes: true })
-      .filter(d => d.isDirectory()).map(d => d.name);
-    throw new Error(`no report "${slug}": ${path.relative(ROOT, data)} does not exist. `
-      + `Reports: ${known.join(', ')}`);
+// The latest snapshot is taken as-is: if it fails validation or belongs to another poll,
+// the merge fails rather than falling back to an older one nobody chose.
+function loadSnapshot(from, report) {
+  const expected = stepIdFor(loadConfig(), report);
+  const file = from || latestSnapshot(report);
+  if (!file) {
+    throw new Error(`data/${report}/polis-snapshots/ has no snapshots — `
+      + `run: node scripts/fetch-snapshot.js ${report}`);
   }
-  return { data, snapshots: path.join(dir, 'polis-snapshots') };
-}
-
-// The endpoint returns a good deal this report has no use for: participant PCA positions,
-// overall vote counts, Polis's own consensus and divisiveness scores, and the base-cluster
-// id lists. Snapshots keep only what this script reads — the tallies it merges, and the
-// cluster sizes and representative statements the re-label aid prints — so a saved payload
-// says plainly what it is for. Anything needed later gets added here and re-fetched.
-//
-// Applied on read as well as on write, so merging a snapshot and merging the live response
-// it came from cannot diverge, and a full payload fetched by hand still works.
-const germane = payload => ({
-  comments: (payload.comments || []).map(c => ({
-    tid: c.tid,
-    text: c.text,
-    is_seed: c.is_seed,
-    group_votes: (c.group_votes || []).map(gv => ({
-      group_id: gv.group_id,
-      agrees: gv.agrees,
-      disagrees: gv.disagrees,
-      passes: gv.passes,
-    })),
-  })),
-  groups: (payload.groups || []).map(g => ({
-    group_id: g.group_id,
-    total_members: g.total_members,
-    representative_comments: (g.representative_comments || [])
-      .map(rc => ({ tid: rc.tid, text: rc.text })),
-  })),
-});
-
-async function loadPayload({ api, step, from, report, paths }) {
-  if (from) {
-    const file = path.resolve(from);
-    // A snapshot is one poll's payload; merged into another report, it would overwrite
-    // that report's votes with a different poll's numbers.
-    const [owner, sub] = path.relative(REPORTS, file).split(path.sep);
-    if (sub === 'polis-snapshots' && owner !== report) {
-      throw new Error(`${path.relative(ROOT, file)} is a snapshot of "${owner}", not "${report}"`);
-    }
-    console.log(`reading ${path.relative(ROOT, file)}`);
-    return { payload: germane(JSON.parse(fs.readFileSync(file, 'utf8'))), snapshot: null };
+  const abs = path.resolve(file);
+  const rel = path.relative(ROOT, abs);
+  const shown = rel.startsWith('..') ? abs : rel;
+  const snapshot = readSnapshot(abs, shown);
+  console.log(`${from ? 'reading' : 'latest snapshot:'} ${shown} `
+    + `(fetched ${snapshot.source.fetchedAt})`);
+  // Merged into another report, one poll's results would overwrite that report's votes
+  // with a different poll's numbers.
+  if (snapshot.source.workflowStepId !== expected) {
+    throw new Error(`${shown} was fetched from Polis step ${snapshot.source.workflowStepId}, `
+      + `but "${report}" is configured for ${expected}`);
   }
-  const url = `${api}/tools/polis/report_data?workflow_step_id=${encodeURIComponent(step)}`;
-  console.log(`fetching ${url}`);
-  let res;
-  try {
-    res = await fetch(url);
-  } catch (e) {
-    // Node reports every network-level failure as a bare "fetch failed" and hides the
-    // reason in .cause, which is useless when the answer is "that host has no route
-    // for this name" or "you are pointed at the wrong environment".
-    const code = e.cause && (e.cause.code || e.cause.message);
-    throw new Error(`could not reach ${url}\n  ${code || e.message}${hintFor(code)}`);
-  }
-  // The status line alone hides the body, and comhairle puts the actual explanation
-  // there — "Workflow Step not found" for an id this server has never heard of.
-  if (!res.ok) {
-    const body = (await res.text()).trim();
-    throw new Error(`${url}\n  → ${res.status} ${res.statusText}`
-      + (body ? `\n  ${clip(body, 300)}` : '')
-      + (res.status === 404 ? '\n  A 404 here usually means the step id belongs to a '
-        + 'different environment than --api points at.' : ''));
-  }
-  const text = await res.text();
-  // Every live fetch is saved, dry run included. Partly so a surprising number later can
-  // be traced to the payload that produced it — but mostly so that reviewing a dry run
-  // and then applying it are the same payload. People vote continuously, so a second
-  // fetch is a different poll, and "apply what I just reviewed" has to mean --from.
-  fs.mkdirSync(paths.snapshots, { recursive: true });
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const file = path.join(paths.snapshots, `report-data-${stamp}.json`);
-  const snapshot = path.relative(ROOT, file);
-
-  let payload;
-  try {
-    payload = germane(JSON.parse(text));
-  } catch (e) {
-    // Keep the unparseable body rather than dropping it — what the server actually said
-    // is the only evidence of what went wrong.
-    fs.writeFileSync(file, text);
-    throw new Error(`${url} did not return JSON: ${e.message}\n  body saved to ${snapshot}`);
-  }
-  // Re-indented rather than saved verbatim: these sit in the repo to be read and diffed
-  // against each other, and one 57KB line is neither.
-  fs.writeFileSync(file, JSON.stringify(payload, null, 2) + '\n');
-  console.log(`saved ${snapshot}`);
-  return { payload, snapshot };
+  return { snapshot, file: shown };
 }
 
 const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1) + '…');
@@ -249,23 +146,10 @@ const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1) + '…');
 // a report gets ignored on the run that has something real in it. Compare normalized.
 const normalizeText = t => t.replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
 
-// Turn Node's terse network error codes into the thing you actually need to do.
-function hintFor(code) {
-  if (!code) return '';
-  if (String(code).includes('CERT')) {
-    return '\n  That host\'s TLS certificate is not trusted. A "Kubernetes Ingress'
-      + '\n  Controller Fake Certificate" means nothing is routed for that hostname —'
-      + '\n  check --api. If the certificate is genuinely self-signed and you trust the'
-      + '\n  host, point NODE_EXTRA_CA_CERTS at its CA rather than disabling verification.';
-  }
-  if (code === 'ENOTFOUND') return '\n  That hostname does not resolve — check --api.';
-  if (code === 'ECONNREFUSED') return '\n  Nothing is listening there — is the backend up?';
-  return '';
-}
 const heading = t => console.log(`\n${t}\n${'─'.repeat(t.length)}`);
 
-function main(args, payload, snapshot) {
-  const data = JSON.parse(fs.readFileSync(args.paths.data, 'utf8'));
+function main(args, payload) {
+  const data = JSON.parse(fs.readFileSync(args.dataFile, 'utf8'));
   const before = data.groups.map(g => g.key);
 
   const groups = [...payload.groups].sort((a, b) => a.group_id - b.group_id);
@@ -388,26 +272,29 @@ function main(args, payload, snapshot) {
     }
   }
 
-  const dataFile = path.relative(ROOT, args.paths.data);
+  const dataFile = path.relative(ROOT, args.dataFile);
   if (args.dryRun) {
-    console.log(`\n--dry-run: ${dataFile} not written.`);
-    if (snapshot) {
-      console.log('Apply exactly this payload — not whatever the poll looks like by then — with:');
-      console.log(`  node scripts/refresh-poll.js --report ${args.report} --from ${snapshot}`);
-    }
+    // Names the file even when it was picked as the latest, so applying it merges exactly
+    // what was reviewed, even if another fetch lands in between.
+    console.log(`\n--dry-run: ${dataFile} not written. Apply it with:`);
+    console.log(`  node scripts/merge-snapshot.js ${args.report} --from ${args.snapshotFile}`);
     return;
   }
-  fs.writeFileSync(args.paths.data, JSON.stringify(data, null, 2) + '\n');
+  fs.writeFileSync(args.dataFile, JSON.stringify(data, null, 2) + '\n');
   console.log(`\nwrote ${dataFile} — run "node build.js" next.`);
 }
 
-(async () => {
+try {
   const args = parseArgs(process.argv.slice(2));
-  if (args.help) return console.log(USAGE);
-  args.paths = reportPaths(args.report);
-  const { payload, snapshot } = await loadPayload(args);
-  main(args, payload, snapshot);
-})().catch(err => {
-  console.error(`refresh failed: ${err.message}`);
+  if (args.help) {
+    console.log(USAGE);
+  } else {
+    args.dataFile = path.join(REPORTS, args.report, 'bloom-data.json');
+    const { snapshot, file } = loadSnapshot(args.from, args.report);
+    args.snapshotFile = file;
+    main(args, snapshot.reportData);
+  }
+} catch (err) {
+  console.error(`merge failed: ${err.message}`);
   process.exit(1);
-});
+}

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // Builds the deployable site into dist/.
 //
-//   node build.js
+//   node build.js               every report in data/config.json
+//   node build.js --published   only those marked published — what the deploy builds
 //
-// Every directory under data/ is one report, and its name is the report's slug — the URL
-// path it publishes at. For each, fills the report's copy (its report.json) into
+// Each report lives in data/<slug>/, and its slug is the URL path it publishes at. For
+// each, fills the report's copy (its report.json) into
 // index.template.html and inlines src/app.css, src/app.js and the report's JSON, producing
 // a single self-contained dist/<slug>/index.html with the shared static/ and the report's
 // own static/ copied alongside it. The dist/ root gets a redirect stub instead, since the
@@ -13,6 +14,7 @@
 // published, so repo sources stay out of the public site.
 const fs = require('fs');
 const path = require('path');
+const { loadConfig } = require('./scripts/lib/config');
 
 const ROOT = __dirname;
 const TEMPLATE = path.join(ROOT, 'index.template.html');
@@ -21,8 +23,6 @@ const SHARED_STATIC = path.join(ROOT, 'static');
 const DIST = path.join(ROOT, 'dist');
 const SITE_ORIGIN = 'https://report.bloomproject.us';
 const REDIRECT_TO = 'https://bloom-project.org/';
-// The slug is a URL path segment, so it is held to characters that never need encoding.
-const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 // Theme membership is derived: a record belongs to every theme that lists one of its
 // tags. A record carrying no tag any theme claims does not land somewhere wrong — it
@@ -98,7 +98,7 @@ function checkInsightIdsResolve(insights, file, bloomData) {
 }
 
 // group-info.json is a hand-maintained snapshot (participant counts, display color) keyed
-// by group key, kept separate from bloom-data.json's own groups[] because refresh-poll.js
+// by group key, kept separate from bloom-data.json's own groups[] because merge-snapshot.js
 // deliberately never persists cluster sizes there (see its comment on why). A refresh that
 // regroups — a different number of keys, or the same keys meaning different clusters — makes
 // this file stale in a way nothing here can detect; it can only catch a key mismatch.
@@ -334,20 +334,27 @@ function substituteCopy(template, report, derived, file) {
   return html;
 }
 
-function listReports() {
-  const slugs = fs.readdirSync(REPORTS, { withFileTypes: true })
-    .filter(d => d.isDirectory()).map(d => d.name).sort();
-  if (!slugs.length) throw new Error('data/ has no report directories');
-  for (const slug of slugs) {
-    if (!SLUG.test(slug)) {
-      throw new Error(`data/${slug}: a report directory's name is its URL slug, so it must be `
-        + 'lowercase letters, digits and single hyphens');
-    }
-    if (!fs.existsSync(path.join(REPORTS, slug, 'report.json'))) {
-      throw new Error(`data/${slug}: no report.json — every directory in data/ is built as a report`);
-    }
+function listReports({ publishedOnly }) {
+  const { reports } = loadConfig();
+  const unlisted = fs.readdirSync(REPORTS, { withFileTypes: true })
+    .filter(d => d.isDirectory() && !reports[d.name]).map(d => d.name);
+  if (unlisted.length) {
+    console.warn(`WARNING data/config.json does not list [${unlisted.join(', ')}] — not built`);
+  }
+  const slugs = Object.keys(reports).filter(slug => !publishedOnly || reports[slug].published).sort();
+  if (!slugs.length) {
+    throw new Error(`data/config.json lists no ${publishedOnly ? 'published ' : ''}reports`);
   }
   return slugs;
+}
+
+function parseArgs(argv) {
+  const args = { publishedOnly: false };
+  for (const a of argv) {
+    if (a === '--published') args.publishedOnly = true;
+    else throw new Error(`unknown argument ${a} — the only option is --published`);
+  }
+  return args;
 }
 
 // A report's static/ is merged into a copy of the shared one, so a name in both would
@@ -411,11 +418,11 @@ function redirectStub() {
 `;
 }
 
-function build() {
+function build(args) {
   const template = fs.readFileSync(TEMPLATE, 'utf8');
   // Every report is rendered and checked before dist/ is touched, so one bad report
   // fails the build without leaving a half-written dist/ behind.
-  const built = listReports().map(slug => ({ slug, html: buildReport(template, slug) }));
+  const built = listReports(args).map(slug => ({ slug, html: buildReport(template, slug) }));
 
   fs.rmSync(DIST, { recursive: true, force: true });
   for (const { slug, html } of built) {
@@ -441,7 +448,7 @@ function build() {
 }
 
 try {
-  build();
+  build(parseArgs(process.argv.slice(2)));
 } catch (err) {
   console.error(`build failed: ${err.message}`);
   process.exit(1);
