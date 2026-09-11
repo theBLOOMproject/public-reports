@@ -21,9 +21,12 @@ node build.js                                  # build every report into dist/
 node build.js --published                      # only published reports — what the deploy runs
 node build.js && (cd dist && python3 -m http.server 8000)   # preview at :8000/<slug>/
 
+node scripts/validate-data.js                            # check every report's data without building
+node scripts/validate-data.js <slug>                     # just one
+
 node scripts/fetch-snapshot.js <slug>                    # save a Polis snapshot
 node scripts/merge-snapshot.js <slug> --dry-run          # report what merging the latest snapshot would change
-node scripts/merge-snapshot.js <slug>                    # merge the latest snapshot into bloom-data.json
+node scripts/merge-snapshot.js <slug>                    # merge the latest snapshot into bloom-data.json (+ demographics.json)
 node scripts/merge-snapshot.js <slug> --from <snapshot>  # merge a specific one instead
 ```
 
@@ -45,6 +48,11 @@ list is skipped with a warning.
 
 `dist/` is gitignored and rebuilt from scratch every time — never edit it, and never commit
 it. Only what lands in `dist/` is public, which is why repo sources can stay in the repo.
+
+The checks on a report's data — cross-file references, vote integrity, demographics labels
+and the like — live in their own module, not in the build. The build runs them (warnings
+print, errors fail it), the merge runs them before writing, and `scripts/validate-data.js`
+runs them on demand after a hand edit.
 
 ## Architecture
 
@@ -116,7 +124,13 @@ rank order, feeding the rest of that group's modal.
 
 `consensus-statements.json` — the statement ids shown on the Consensus page, in order.
 
-`demographics.json` — the Demographics detail modal, one category per tab.
+`demographics.json` — the Demographics detail modal, one category per tab, in two halves
+paired by label. `poll` is who answered the poll's demographics questions: for a report
+with a `demographics` source in `data/config.json` the merge rewrites it wholesale, so
+don't hand-edit it there. `actual` is hand-maintained: each category's groups and their
+share of the real population. Every poll label needs an actual; `actual` may also list
+groups nobody in the poll belongs to, which the modal shows at 0%. Utah's actuals are
+placeholders for now.
 
 `participant-locations.json` — cities with participant counts and real lat/lng for the
 Demographics map, plus an `other` bucket for every zip not broken out. Note that d3-geo
@@ -148,14 +162,22 @@ and the repo is public), plus a record of where and when it was fetched. It is v
 before it is written and again whenever it is read, so a malformed response writes nothing.
 Snapshots are the raw layer and are committed.
 
-**2. Merge it.** `node scripts/merge-snapshot.js <slug>` rewrites every poll record's `vote`
-and the `groups` array from the report's latest snapshot, or from the one named with
-`--from`. It refuses a snapshot fetched from a different step than the report's, and
-never falls back to an older snapshot when the latest is unusable. Review with
-`--dry-run` first; it prints the exact `--from` line that applies what you reviewed.
+For a report with a `demographics` source in `data/config.json`, the same snapshot also
+carries comhairle's participation report for the poll (also unauthenticated): aggregate
+demographic counts and per-zip counts, nothing per person.
 
-The merge touches **only** `vote` and `groups`. Tags, chips, place, text, the quote records and
-the themes are editorial, and where upstream disagrees the script reports and moves on:
+**2. Merge it.** `node scripts/merge-snapshot.js <slug>` rewrites every poll record's `vote`
+and the `groups` array in `bloom-data.json` — and, when the snapshot carries a
+participation report, the `poll` half of `demographics.json` — from the report's latest
+snapshot, or from the one named with `--from`. It refuses a snapshot fetched from a
+different step or workflow than the report's, and never falls back to an older snapshot
+when the latest is unusable. Both results are run through the data checks first; if
+either has errors, neither file is written. Review with `--dry-run` first; it prints the
+exact `--from` line that applies what you reviewed.
+
+In `bloom-data.json` the merge touches **only** `vote` and `groups`. Tags, chips, place,
+text, the quote records and the themes are editorial, and where upstream disagrees the
+script reports and moves on:
 
 - **New statements** are appended in tid order with `tags: []` and no chips. They build,
   with a warning, and show under no theme until tagged.

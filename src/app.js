@@ -470,13 +470,14 @@ function demogHoverHide(city) {
 }
 
 /* ─── DEMOGRAPHICS DETAIL MODAL ───────────────────────── */
-// Each category's breakdown in demographics.json is a share of only the
+// Each category's breakdown in demographics.json's poll is a share of only the
 // respondents who answered that question, not of everyone — the modal's copy
 // spells that denominator out per tab.
-const dstate = { key: DEMOGRAPHICS.categories[0].key };
+const DEMOG_CATS = DEMOGRAPHICS.poll.categories;
+const dstate = { key: DEMOG_CATS[0].key };
 
 function openDemog() {
-  dstate.key = DEMOGRAPHICS.categories[0].key;
+  dstate.key = DEMOG_CATS[0].key;
   buildDemogTabs();
   renderDemogTab();
   $('#ddetail').classList.add('on');
@@ -494,7 +495,7 @@ function closeDemog() {
 // "last" demographic category, so wrapping (4 -> 1, not a disabled arrow at
 // 4/4) reads more like a dial than a stop-ended list
 function pageDemog(d) {
-  const cats = DEMOGRAPHICS.categories;
+  const cats = DEMOG_CATS;
   const i = cats.findIndex(c => c.key === dstate.key);
   dstate.key = cats[(i + d + cats.length) % cats.length].key;
   renderDemogTab();
@@ -503,7 +504,7 @@ function pageDemog(d) {
 function buildDemogTabs() {
   const wrap = $('#ddTabs');
   wrap.innerHTML = '';
-  DEMOGRAPHICS.categories.forEach(cat => {
+  DEMOG_CATS.forEach(cat => {
     const b = el('button', null, cat.label.toUpperCase());
     b.type = 'button';
     b.setAttribute('role', 'tab');
@@ -515,7 +516,7 @@ function buildDemogTabs() {
 }
 
 function renderDemogTab() {
-  const cats = DEMOGRAPHICS.categories;
+  const cats = DEMOG_CATS;
   const idx = cats.findIndex(c => c.key === dstate.key);
   const cat = cats[idx];
   document.querySelectorAll('#ddTabs button').forEach(b =>
@@ -527,15 +528,15 @@ function renderDemogTab() {
   body.innerHTML = '';
   body.scrollTop = 0;
 
-  const pctAnswered = Math.round(cat.answered / DEMOGRAPHICS.total * 100);
+  const pctAnswered = Math.round(cat.answered / DEMOGRAPHICS.poll.total * 100);
   const intro = el('p', 'ddIntro');
   intro.innerHTML = `<b>${pctAnswered}%</b> of all respondents provided this information. `
     + `Of the <b>${cat.answered}</b> people that provided this information, here is the breakdown:`;
   body.append(intro);
 
   // column headers over the two %-columns below — IN POLL is this report's
-  // own respondents (row.pct); ACTUAL is the real tri-county population's
-  // share for the same subgroup (row.actual), so a reader can spot who's
+  // own respondents (row.pct); ACTUAL is the real population's share for the
+  // same subgroup (demographics.json's actual), so a reader can spot who's
   // over/under-represented at a glance rather than needing outside context.
   const colHead = el('div', 'ddColHead');
   colHead.append(el('span', 'ddColHeadLabel'));
@@ -543,15 +544,22 @@ function renderDemogTab() {
   colHead.append(el('span', 'ddColHeadCol', 'Actual'));
   body.append(colHead);
 
+  // A group nobody in the poll belongs to has no poll row, but its population share
+  // is exactly what shows it's missing — so it's listed at 0%.
+  const actual = DEMOGRAPHICS.actual[cat.key];
+  const absent = Object.keys(actual)
+    .filter(label => !cat.breakdown.some(row => row.label === label))
+    .map(label => ({ label, pct: 0 }));
+
   const list = el('div', 'ddList');
-  cat.breakdown.forEach((row, i) => {
+  cat.breakdown.concat(absent).forEach((row, i) => {
     const r = el('div', 'ddRow');
     r.style.setProperty('--rc', THEME_COLORS[i % THEME_COLORS.length]);
     r.style.setProperty('--pct', row.pct + '%');
     r.append(el('span', 'ddSwatch'));
     r.append(el('span', 'ddLabel', row.label));
     r.append(el('span', 'ddPct', row.pct + '%'));
-    r.append(el('span', 'ddPct ddPctActual', row.actual + '%'));
+    r.append(el('span', 'ddPct ddPctActual', actual[row.label] + '%'));
     list.append(r);
   });
   body.append(list);

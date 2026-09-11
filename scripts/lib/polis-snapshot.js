@@ -1,7 +1,10 @@
-// A snapshot is one fetch of comhairle's GET /tools/polis/report_data, saved as the raw
-// layer everything downstream is built from:
+// A snapshot is one fetch of comhairle's GET /tools/polis/report_data — plus, for a report
+// configured for it, the poll's participation report (see participation-report.js) —
+// saved as the raw layer everything downstream is built from:
 //
-//   { "source": { api, workflowStepId, fetchedAt }, "reportData": { comments, groups, … } }
+//   { "source": { api, workflowStepId, fetchedAt, participationReport?: { conversationId, workflowId } },
+//     "reportData": { comments, groups, … },
+//     "participationReport"?: { totalParticipants, ageRanges, … } }
 //
 // It is validated when it is written and again whenever it is read, so a snapshot that
 // reaches a later stage is known to be well-formed, whether or not it was edited by hand
@@ -9,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const { REPORTS } = require('./config');
+const { validateParticipationReport } = require('./participation-report');
 
 const snapshotsDir = slug => path.join(REPORTS, slug, 'polis-snapshots');
 
@@ -62,6 +66,13 @@ function validateSnapshot(snapshot) {
     for (const k of ['api', 'workflowStepId', 'fetchedAt']) {
       if (!isText(source[k])) problems.push(`source.${k} is missing`);
     }
+  }
+  if ('participationReport' in snapshot) {
+    const ids = isObject(source) && source.participationReport;
+    if (!isObject(ids) || !isText(ids.conversationId) || !isText(ids.workflowId)) {
+      problems.push('source.participationReport must say which conversationId and workflowId it came from');
+    }
+    problems.push(...validateParticipationReport(snapshot.participationReport));
   }
   if (!isObject(reportData)) {
     problems.push('no "reportData" object');

@@ -1,6 +1,7 @@
 // data/config.json is the registry of reports: which exist, whether each is published,
-// and which Polis workflow step its poll lives at. The build and the pipeline scripts
-// both read it through here, so it is validated in one place.
+// which Polis workflow step its poll lives at, and — for a report that pulls them from
+// comhairle — which conversation and workflow its demographics come from. The build and
+// the pipeline scripts both read it through here, so it is validated in one place.
 const fs = require('fs');
 const path = require('path');
 
@@ -44,6 +45,12 @@ function loadConfig() {
         say('"polis.workflowStepId" must be a workflow step uuid');
       }
     }
+    if (report.demographics !== undefined) {
+      for (const k of ['conversationId', 'workflowId']) {
+        const id = report.demographics && report.demographics[k];
+        if (typeof id !== 'string' || !UUID.test(id)) say(`"demographics.${k}" must be a uuid`);
+      }
+    }
   }
   if (!Object.keys(reports).length) problems.push('no reports listed');
   if (problems.length) throw new Error(`${file}:\n    ${problems.join('\n    ')}`);
@@ -62,4 +69,12 @@ function stepIdFor(config, slug) {
   return report.polis.workflowStepId;
 }
 
-module.exports = { ROOT, REPORTS, loadConfig, stepIdFor };
+// Where comhairle's participation report for this report's poll lives, or null for a
+// report whose demographics aren't pulled from comhairle.
+function demographicsFor(config, slug) {
+  const report = config.reports[slug];
+  const d = report && report.demographics;
+  return d ? { conversationId: d.conversationId, workflowId: d.workflowId } : null;
+}
+
+module.exports = { ROOT, REPORTS, loadConfig, stepIdFor, demographicsFor };

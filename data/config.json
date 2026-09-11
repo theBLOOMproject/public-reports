@@ -6,7 +6,11 @@
     },
     "utah-ai": {
       "published": true,
-      "polis": { "workflowStepId": "9d1041f9-fda6-4597-b4b0-c1260e4b7268" }
+      "polis": { "workflowStepId": "9d1041f9-fda6-4597-b4b0-c1260e4b7268" },
+      "demographics": {
+        "conversationId": "0a580270-f46b-4b8c-b97a-9a28def51336",
+        "workflowId": "73795156-f717-4703-912d-bf0806f482d6"
+      }
     }
   }
 }
