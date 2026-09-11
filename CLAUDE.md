@@ -6,10 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Interactive single-page reports on Bloom Project public engagements, one report per slug, all
 built from the same app code. Currently this repo has both code and data: each report's data
-lives in `data/<slug>/`. `central-oregon-ai` is the Oregon COCAP engagement - six listening
-sessions plus one open Polis-style poll; `utah-common-ground` is, for now, a placeholder copy
-of it. It is published as a static GitHub Pages site — `main` deploys every report on push via
-`.github/workflows/pages.yml`.
+lives in `data/<slug>/`. It is published as a static GitHub Pages site — `main` deploys every 
+report on push via `.github/workflows/pages.yml`.
 
 It is served from `report.bloomproject.us`: each report at `/<slug>/`, with the
 site root and any unmatched path redirecting to bloom-project.org. The custom domain is a

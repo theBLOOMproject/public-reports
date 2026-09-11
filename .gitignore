@@ -10,3 +10,6 @@ references/
 # Review artifacts / working docs, not part of the site.
 *.docx
 *.xlsx
+
+# this is where claude puts its worktrees
+.claude/
