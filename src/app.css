@@ -647,7 +647,7 @@ body.demogs-page .shell{padding-bottom:0}
    pill intact if it ever wraps across two lines. */
 .titleAI{
   background:var(--theme-blue);color:#fff;
-  border-radius:.18em;padding:.1em .18em .04em;
+  border-radius:.18em;padding:.02em .18em;
   -webkit-box-decoration-break:clone;box-decoration-break:clone;
 }
 
