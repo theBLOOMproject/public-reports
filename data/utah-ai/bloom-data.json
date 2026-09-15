@@ -2,72 +2,55 @@
   "themes": [
     {
       "key": "datacenters",
-      "short": "Data Centers",
-      "full": "Data Centers, Water & the Land",
+      "short": "Data Centers & Natural Resources",
       "color": "#CE302B",
       "tags": [
-        "Water",
-        "Environment & Energy",
-        "Siting & Growth",
-        "Community Benefit"
+        "Natural Resources",
+        "Data Centers / Building"
       ]
     },
     {
-      "key": "economy",
-      "short": "Jobs & the Economy",
-      "full": "Jobs, Costs & Who Benefits",
+      "key": "jobs",
+      "short": "Jobs, Costs & Benefits",
       "color": "#8E3AD1",
       "tags": [
-        "Jobs & Automation",
-        "Retraining & Safety Net",
-        "Cost of Living",
-        "Who Benefits"
+        "Jobs",
+        "Economic Fairness"
+      ]
+    },
+    {
+      "key": "companies",
+      "short": "Corporate Responsibility",
+      "color": "#0E6FA6",
+      "tags": [
+        "Companies / AI Companies"
       ]
     },
     {
       "key": "kids",
-      "short": "Kids & Schools",
-      "full": "Kids, Schools & Families",
+      "short": "Kids, Schools & Mental Health",
       "color": "#137A22",
       "tags": [
-        "AI in Schools",
-        "Parents' Role",
-        "Child Development"
+        "Youth",
+        "Schools, Teachers, Parents, Students"
       ]
     },
     {
-      "key": "governance",
-      "short": "Government & Public Voice",
-      "full": "Government, Regulation & Public Voice",
+      "key": "government",
+      "short": "Government & Public Life",
       "color": "#17348C",
       "tags": [
-        "Government Use of AI",
-        "Public Input",
-        "Regulation",
-        "Expertise & Understanding"
+        "Government / Public Sector",
+        "News / Information",
+        "Civil Society"
       ]
     },
     {
-      "key": "accountability",
-      "short": "Privacy & Accountability",
-      "full": "Privacy, Transparency & Accountability",
-      "color": "#0E6FA6",
+      "key": "health",
+      "short": "Health & Mental Health",
+      "color": "#B01B6B",
       "tags": [
-        "Personal Data",
-        "Right to Know",
-        "Corporate Accountability"
-      ]
-    },
-    {
-      "key": "living",
-      "short": "Living with AI",
-      "full": "Living with AI: Promise, Risk & Human Thinking",
-      "color": "#27756B",
-      "tags": [
-        "Benefits & Promise",
-        "Risks & Skepticism",
-        "Human Thinking & Judgment",
-        "Mental Health & Connection"
+        "Health / Mental Health"
       ]
     }
   ],
@@ -102,7 +85,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -136,8 +120,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Community Benefit",
-        "Corporate Accountability"
+        "Data Centers / Building",
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -171,8 +155,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Mental Health & Connection",
-        "Child Development"
+        "Youth",
+        "Health / Mental Health"
       ],
       "inReport": false
     },
@@ -206,7 +190,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Parents' Role"
+        "Youth",
+        "Health / Mental Health"
       ],
       "inReport": false
     },
@@ -240,7 +225,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Parents' Role"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -274,7 +259,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Retraining & Safety Net"
+        "Jobs",
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -308,7 +294,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Right to Know"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -342,7 +328,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Corporate Accountability"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -376,7 +362,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Personal Data"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -410,8 +396,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Public Input",
-        "Government Use of AI"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -445,8 +430,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Government Use of AI",
-        "Right to Know"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -480,7 +464,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Personal Data"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -514,8 +498,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools",
-        "Right to Know"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -549,7 +532,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Retraining & Safety Net"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -583,7 +566,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Cost of Living"
+        "Economic Fairness"
       ],
       "inReport": false
     },
@@ -617,7 +600,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Retraining & Safety Net"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -651,8 +634,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Government Use of AI",
-        "Jobs & Automation"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -686,7 +668,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Benefits & Promise"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -720,7 +702,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Government Use of AI"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -752,7 +734,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Expertise & Understanding"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -784,8 +766,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Risks & Skepticism",
-        "Regulation"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -819,8 +800,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy",
-        "Community Benefit"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -854,7 +834,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -888,7 +868,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Water"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -922,7 +903,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -956,8 +937,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth",
-        "Public Input"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -991,7 +971,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Community Benefit"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -1025,7 +1005,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -1059,7 +1039,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -1093,8 +1073,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools",
-        "Human Thinking & Judgment"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1128,7 +1107,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Human Thinking & Judgment"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1162,7 +1141,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -1196,7 +1175,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Child Development"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1230,8 +1209,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Child Development",
-        "Mental Health & Connection"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1265,7 +1243,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Parents' Role"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1299,7 +1277,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Child Development"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1333,7 +1311,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Child Development"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1367,7 +1345,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Parents' Role"
+        "Youth"
       ],
       "inReport": false
     },
@@ -1401,7 +1379,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Retraining & Safety Net"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1435,7 +1413,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Jobs & Automation"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1469,7 +1447,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Retraining & Safety Net"
+        "Jobs",
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -1503,7 +1482,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Right to Know"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1537,7 +1516,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Benefits & Promise"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1571,7 +1550,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Jobs & Automation"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1605,7 +1584,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -1639,7 +1618,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -1673,7 +1652,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Jobs & Automation"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1707,8 +1686,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Government Use of AI",
-        "Jobs & Automation"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1742,7 +1720,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Who Benefits"
+        "Economic Fairness"
       ],
       "inReport": false
     },
@@ -1776,7 +1754,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Cost of Living"
+        "Jobs",
+        "Economic Fairness"
       ],
       "inReport": false
     },
@@ -1808,7 +1787,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Mental Health & Connection"
+        "Health / Mental Health"
       ],
       "inReport": false
     },
@@ -1840,7 +1819,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Retraining & Safety Net"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1872,7 +1851,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Expertise & Understanding"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -1904,7 +1883,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Jobs & Automation"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -1936,8 +1915,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools",
-        "Public Input"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -1969,7 +1947,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Human Thinking & Judgment"
+        "News / Information"
       ],
       "inReport": false
     },
@@ -2001,8 +1979,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Mental Health & Connection",
-        "Child Development"
+        "Youth",
+        "Health / Mental Health"
       ],
       "inReport": false
     },
@@ -2034,7 +2012,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2066,8 +2044,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Expertise & Understanding",
-        "Regulation"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -2099,8 +2076,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Water",
-        "Environment & Energy"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2132,8 +2109,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Benefits & Promise",
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2165,7 +2141,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Community Benefit"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2197,8 +2173,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy",
-        "Risks & Skepticism"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2230,7 +2206,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Water"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2262,8 +2239,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Child Development",
-        "Human Thinking & Judgment"
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -2295,7 +2271,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2327,7 +2303,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Water"
+        "Natural Resources"
       ],
       "inReport": false
     },
@@ -2359,8 +2335,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Expertise & Understanding",
-        "Environment & Energy"
+        "Natural Resources"
       ],
       "inReport": false
     },
@@ -2392,8 +2367,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Water",
-        "Siting & Growth"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2425,7 +2400,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Regulation"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -2457,7 +2432,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Risks & Skepticism"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -2489,8 +2464,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth",
-        "Who Benefits"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2522,7 +2496,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2554,7 +2528,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Government Use of AI"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -2586,7 +2560,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2618,8 +2593,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "AI in Schools",
-        "Human Thinking & Judgment"
+        "Youth",
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -2651,8 +2626,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth",
-        "Regulation"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2684,7 +2659,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Regulation"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -2716,7 +2691,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Who Benefits"
+        "Economic Fairness"
       ],
       "inReport": false
     },
@@ -2748,7 +2723,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Siting & Growth"
+        "Data Centers / Building",
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -2780,7 +2756,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Benefits & Promise"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2812,7 +2789,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Jobs & Automation"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -2844,7 +2821,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Regulation"
+        "Government / Public Sector",
+        "Economic Fairness"
       ],
       "inReport": false
     },
@@ -2876,7 +2854,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -2908,7 +2887,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Human Thinking & Judgment"
+        "Jobs"
       ],
       "inReport": false
     },
@@ -2940,7 +2919,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Human Thinking & Judgment"
+        "Jobs",
+        "Schools, Teachers, Parents, Students"
       ],
       "inReport": false
     },
@@ -2972,8 +2952,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy",
-        "Regulation"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -3005,8 +2985,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Corporate Accountability",
-        "Regulation"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -3038,8 +3017,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Environment & Energy",
-        "Corporate Accountability"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -3071,7 +3050,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Community Benefit"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -3103,8 +3083,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Risks & Skepticism",
-        "Human Thinking & Judgment"
+        "News / Information"
       ],
       "inReport": false
     },
@@ -3136,7 +3115,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Who Benefits"
+        "Economic Fairness"
       ],
       "inReport": false
     },
@@ -3168,7 +3147,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Corporate Accountability"
+        "Companies / AI Companies"
       ],
       "inReport": false
     },
@@ -3200,7 +3179,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Water"
+        "Natural Resources",
+        "Data Centers / Building"
       ],
       "inReport": false
     },
@@ -3232,7 +3212,7 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Risks & Skepticism"
+        "Government / Public Sector"
       ],
       "inReport": false
     },
@@ -3264,7 +3244,8 @@
       },
       "source": "Open Poll",
       "tags": [
-        "Risks & Skepticism"
+        "Jobs",
+        "Government / Public Sector"
       ],
       "inReport": false
     }
