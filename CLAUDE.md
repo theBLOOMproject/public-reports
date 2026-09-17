@@ -41,10 +41,7 @@ other source, never resolved or fetched.
 `dist/<slug>/index.html`.
 
 `data/config.json` is the registry of reports: each is keyed by its slug (also its directory
-under `data/`), says whether it's `published`, and names the Polis workflow step its poll
-lives at. A plain build includes every listed report, so unpublished ones can be previewed
-locally; the deploy builds with `--published`. A directory under `data/` that config doesn't
-list is skipped with a warning.
+under `data/`).
 
 `dist/` is gitignored and rebuilt from scratch every time — never edit it, and never commit
 it. Only what lands in `dist/` is public, which is why repo sources can stay in the repo.

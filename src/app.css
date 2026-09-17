@@ -996,6 +996,12 @@ em.ic-divided,em.ic-mixed{color:var(--theme-blue)}
 @media (min-width:660px){
   .icStatsWrap{margin:20px -28px -28px;padding:15px 28px 17px}
 }
+/* ?ranked=1 only — the consensus score behind a card's position in that view. */
+.icRank{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 60%,transparent);
+  margin-top:10px;
+}
 .icStatsCap{
   font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:color-mix(in srgb,var(--ink) 55%,transparent);

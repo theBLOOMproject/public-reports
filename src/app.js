@@ -14,6 +14,11 @@ const COUNTIES = J('counties');
 const REPORT = J('report');
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// ?ranked=1 turns the Consensus page into an editor's worksheet: every statement in
+// consensus order instead of the hand-picked list, so whoever maintains
+// consensus-statements.json can see what the votes rank highest. Read once — the hash
+// router never touches location.search, so it holds for the page's lifetime.
+const RANKED = new URLSearchParams(location.search).has('ranked');
 const $ = s => document.querySelector(s);
 const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
 // title-cases a raw ALL-CAPS chip (e.g. demographic tags), with two special
@@ -64,6 +69,23 @@ const isLowData = vote => {
     return groupVoteTotals.some(n => n < MIN_GROUP_VOTES)
 }
 
+// Polis's group-aware consensus: the chance a random member of every group agrees,
+// as the product of each group's Laplace-smoothed agree rate. The +1/+2 is what keeps a
+// tiny unanimous group from scoring like a large one. Recomputing it here rather than
+// shipping Polis's number keeps the ranked view working for a report whose snapshot
+// predates the field, and matches comhairle's values to machine precision.
+//
+// Polis scores agreement only. The disagree side is the same formula over disagrees —
+// our own mirror, with no upstream equivalent — because a statement every group rejects
+// is common ground too, and nothing else in the data surfaces it.
+const consensusOf = vote => {
+  const side = pick => DATA.groups.reduce((p, g) => p * (pick(vote[g.key]) + 1) / (vote[g.key].n + 2), 1);
+  const agree = side(v => v.a), disagree = side(v => v.d);
+  return disagree > agree
+    ? { score: disagree, dir: 'reject' }
+    : { score: agree, dir: 'agree' };
+};
+
 const themeView = theme => {
   const statements = statementsOf(theme).sort((statementA, statementB) =>
     (isLowData(statementA.vote) ? 1 : 0) - (isLowData(statementB.vote) ? 1 : 0) ||
@@ -81,8 +103,17 @@ const themeView = theme => {
 // (groupsOf, isLowData) — hoisting it back above them is a load-time TDZ error.
 //
 // Clearly this is suboptimal and should be fixed. But hey, working outside of a framework is fun right?
+const rankedConsensus = () => DATA.records
+  .filter(r => r.kind === 'poll')
+  // Thin statements stay in, flagged as they are anywhere else: an editor deciding what
+  // belongs on the page is exactly who should see that a high score rests on few votes.
+  .map(r => ({ r, ...consensusOf(r.vote) }))
+  .sort((a, b) => b.score - a.score || Number(a.r.id.slice(1)) - Number(b.r.id.slice(1)));
+
 const VIEWS = Object.freeze({
-  consensus: Object.freeze(CONSENSUS_STATEMENTS.ids.map(id => byId[id]).filter(Boolean)),
+  consensus: Object.freeze(RANKED
+    ? rankedConsensus().map(x => x.r)
+    : CONSENSUS_STATEMENTS.ids.map(id => byId[id]).filter(Boolean)),
   themes: Object.freeze(Object.fromEntries(DATA.themes.map(theme => [theme.key, themeView(theme)]))),
 });
 
@@ -733,7 +764,13 @@ function buildConsensus() {
   const lane = $('#consensusLane');
   lane.innerHTML = '';
   const records = VIEWS.consensus;
-  records.forEach(r => lane.append(buildCard(r, records)));
+  records.forEach((r, i) => lane.append(buildCard(r, records, RANKED ? i + 1 : null)));
+  if (RANKED) {
+    const head = $('#l0-consensus .masthead');
+    head.querySelector('h1').textContent = 'Ranked by consensus';
+    head.querySelector('p').textContent = `All ${records.length} statements, strongest `
+      + 'agreement and strongest rejection together. Not the published page.';
+  }
 }
 
 /* ─── LEVEL 1 ─────────────────────────────────────────── */
@@ -785,7 +822,7 @@ function renderL2() {
 
 /* the statement card — used by both the insight carousels and the
    full All Statements stack */
-function buildCard(r, items) {
+function buildCard(r, items, rank) {
   const card = el('button', 'icard');
   card.dataset.rid = r.id;
 
@@ -795,6 +832,15 @@ function buildCard(r, items) {
   if (icon) av.innerHTML = `<img src="${icon}" alt="">`;
   pill.append(av, el('span', 'txt', label));
   card.append(pill);
+
+  // Ranked view only. The pill above still reads "CONSENSUS (9% AGREE)" on a statement
+  // every group rejects, so the direction here is what tells the two apart until the
+  // pill itself learns to say it.
+  if (rank) {
+    const { score, dir } = consensusOf(r.vote);
+    const votes = DATA.groups.map(g => `${g.key}:${r.vote[g.key].n}`).join(' ');
+    card.append(el('div', 'icRank', `#${rank} · ${dir} · ${score.toFixed(3)} · ${votes}`));
+  }
 
   card.append(el('p', 'icText', '“' + r.text + '”'));
 
