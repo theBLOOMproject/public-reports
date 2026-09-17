@@ -241,7 +241,8 @@ const INTRO_PAGES = [
 const HOME_FIPS = new Set(Object.keys(REPORT.map.homeCounties));
 const HOME_COUNTIES = new Set(Object.values(REPORT.map.homeCounties));
 const DEMOG_MAX_ZOOM_IN = 8;        // tunable: multiple of the home (city-cluster) fit scale
-const DEMOG_MIN_R = 13, DEMOG_MAX_R = 70;
+const DEMOG_MIN_R = (REPORT.map.dotRadius && REPORT.map.dotRadius.min) || 13;
+const DEMOG_MAX_R = (REPORT.map.dotRadius && REPORT.map.dotRadius.max) || 70;
 
 // One-time DOM/data-binding setup. The projection isn't fit to real pixel
 // dimensions yet at this point — #l0-demogs may still be display:none — that
@@ -427,9 +428,18 @@ function fitDemogMap(w, h) {
   });
 
   const [[x0, y0], [x1, y1]] = demogPath.bounds(COUNTIES);
-  const kMin = Math.min(w / (x1 - x0), h / (y1 - y0));
+  // A report whose markers span its whole region (Utah's county markers) already
+  // shows every county at the home fit, so that fit is itself the zoomed-out
+  // bound. Both limits below have to allow it: unclamped, kMin lands above 1
+  // while line 405 sets k=1, and the county bounds alone no longer cover the
+  // viewport — either one makes the home view an illegal zoom state that
+  // d3 silently accepts from zoom.transform and then snaps out of on the
+  // first gesture. Central Oregon's 3-of-36 counties sprawl well past all four
+  // viewport edges, so neither guard changes anything there.
+  const kMin = Math.min(1, w / (x1 - x0), h / (y1 - y0));
   demogZoom.scaleExtent([kMin, DEMOG_MAX_ZOOM_IN])
-    .translateExtent([[x0, y0], [x1, y1]])
+    .translateExtent([[Math.min(x0, 0), Math.min(y0, 0)],
+                      [Math.max(x1, w), Math.max(y1, h)]])
     .extent([[0, 0], [w, h]]);
 
   demogSvg.call(demogZoom.transform, d3.zoomIdentity);

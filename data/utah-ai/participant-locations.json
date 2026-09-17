@@ -1,88 +1,179 @@
 {
   "cities": [
     {
-      "name": "Madras",
-      "county": "Jefferson",
-      "count": 34,
-      "lat": 44.6306,
-      "lng": -121.1292,
+      "name": "Salt Lake County",
+      "county": "Salt Lake",
+      "count": 189,
+      "lat": 40.6679,
+      "lng": -111.9242,
       "major": true
     },
     {
-      "name": "Prineville",
-      "county": "Crook",
-      "count": 28,
-      "lat": 44.2999,
-      "lng": -120.8345,
+      "name": "Utah County",
+      "county": "Utah",
+      "count": 176,
+      "lat": 40.1204,
+      "lng": -111.6686,
       "major": true
     },
     {
-      "name": "Redmond",
-      "county": "Deschutes",
-      "count": 42,
-      "lat": 44.2726,
-      "lng": -121.1739,
+      "name": "Cache County",
+      "county": "Cache",
+      "count": 55,
+      "lat": 41.7341,
+      "lng": -111.7454,
       "major": true
     },
     {
-      "name": "Sisters",
-      "county": "Deschutes",
+      "name": "Davis County",
+      "county": "Davis",
       "count": 52,
-      "lat": 44.2928,
-      "lng": -121.5531,
+      "lat": 41.0376,
+      "lng": -112.2019,
       "major": true
     },
     {
-      "name": "Bend",
-      "county": "Deschutes",
-      "count": 223,
-      "lat": 44.0582,
-      "lng": -121.3153,
+      "name": "Weber County",
+      "county": "Weber",
+      "count": 36,
+      "lat": 41.2703,
+      "lng": -111.8769,
       "major": true
     },
     {
-      "name": "Powell Butte",
-      "county": "Crook",
-      "count": 9,
-      "lat": 44.2476,
-      "lng": -121.0175
+      "name": "Iron County",
+      "county": "Iron",
+      "count": 17,
+      "lat": 37.9093,
+      "lng": -113.3067
     },
     {
-      "name": "Antelope",
-      "county": "Wasco",
-      "count": 9,
-      "lat": 44.9114,
-      "lng": -120.7236
+      "name": "Duchesne County",
+      "county": "Duchesne",
+      "count": 13,
+      "lat": 40.2894,
+      "lng": -110.4296
     },
     {
-      "name": "La Pine",
-      "county": "Deschutes",
-      "count": 6,
-      "lat": 43.6792,
-      "lng": -121.4958
+      "name": "Box Elder County",
+      "county": "Box Elder",
+      "count": 10,
+      "lat": 41.6226,
+      "lng": -113.0603
     },
     {
-      "name": "Camp Sherman",
-      "county": "Jefferson",
+      "name": "Tooele County",
+      "county": "Tooele",
+      "count": 7,
+      "lat": 40.4678,
+      "lng": -113.124
+    },
+    {
+      "name": "Washington County",
+      "county": "Washington",
+      "count": 7,
+      "lat": 37.2625,
+      "lng": -113.4878
+    },
+    {
+      "name": "Wasatch County",
+      "county": "Wasatch",
+      "count": 4,
+      "lat": 40.3349,
+      "lng": -111.1616
+    },
+    {
+      "name": "Juab County",
+      "county": "Juab",
       "count": 3,
-      "lat": 44.4603,
-      "lng": -121.6411
+      "lat": 39.7141,
+      "lng": -112.7905
     },
     {
-      "name": "Culver",
-      "county": "Jefferson",
-      "count": 2,
-      "lat": 44.5247,
-      "lng": -121.2122
+      "name": "Beaver County",
+      "county": "Beaver",
+      "count": 3,
+      "lat": 38.3575,
+      "lng": -113.2389
     },
     {
-      "name": "Terrebonne",
-      "county": "Deschutes",
+      "name": "Uintah County",
+      "county": "Uintah",
+      "count": 3,
+      "lat": 40.1259,
+      "lng": -109.5177
+    },
+    {
+      "name": "Carbon County",
+      "county": "Carbon",
+      "count": 3,
+      "lat": 39.6733,
+      "lng": -110.5885
+    },
+    {
+      "name": "Sanpete County",
+      "county": "Sanpete",
+      "count": 3,
+      "lat": 39.3734,
+      "lng": -111.5769
+    },
+    {
+      "name": "Daggett County",
+      "county": "Daggett",
       "count": 2,
-      "lat": 44.3533,
-      "lng": -121.1808
+      "lat": 40.8901,
+      "lng": -109.5058
+    },
+    {
+      "name": "Summit County",
+      "county": "Summit",
+      "count": 2,
+      "lat": 40.8721,
+      "lng": -110.9685
+    },
+    {
+      "name": "Rich County",
+      "county": "Rich",
+      "count": 1,
+      "lat": 41.6276,
+      "lng": -111.2402
+    },
+    {
+      "name": "San Juan County",
+      "county": "San Juan",
+      "count": 1,
+      "lat": 37.6026,
+      "lng": -109.7916
+    },
+    {
+      "name": "Emery County",
+      "county": "Emery",
+      "count": 1,
+      "lat": 39.009,
+      "lng": -110.7211
+    },
+    {
+      "name": "Grand County",
+      "county": "Grand",
+      "count": 1,
+      "lat": 38.9743,
+      "lng": -109.5734
+    },
+    {
+      "name": "Sevier County",
+      "county": "Sevier",
+      "count": 1,
+      "lat": 38.7468,
+      "lng": -111.8119
+    },
+    {
+      "name": "Piute County",
+      "county": "Piute",
+      "count": 1,
+      "lat": 38.3359,
+      "lng": -112.1294
     }
   ],
-  "other": 27,
-  "total": 437
+  "other": 7,
+  "total": 598
 }
